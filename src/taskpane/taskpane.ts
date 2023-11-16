@@ -16,7 +16,7 @@ export async function insertSticker(color) {
   await PowerPoint.run(async (context) => {
   
     const shapes = context.presentation.getSelectedSlides().getItemAt(0).shapes
-    const textbox = shapes.addTextBox("Hello!");
+    const textbox = shapes.addTextBox("Hello 2!");
     textbox.left = 50;
     textbox.top = 50;
     textbox.height = 50;
