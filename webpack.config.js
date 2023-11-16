@@ -5,7 +5,7 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const urlDev = "https://localhost:3000/";
-const urlProd = "https://www.contoso.com/"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
+const urlProd = "https://l21s.github.io/powerpoint-addin/"
 
 async function getHttpsOptions() {
   const httpsOptions = await devCerts.getHttpsServerOptions();
@@ -75,12 +75,17 @@ module.exports = async (env, options) => {
             to: "[name]" + "[ext]",
             transform(content) {
               if (dev) {
+                let con = content;
+                con = con.replace(new RegExp("BUILD", "g"), "1");
                 return content;
               } else {
-                return content.toString().replace(new RegExp(urlDev, "g"), urlProd);
+                let con = content.toString();
+                con = con.replace(new RegExp(urlDev, "g"), urlProd);
+                con = con.replace(new RegExp("BUILD", "g"), process.env.BUILD_NUMBER);
+                return con;
               }
             },
-          },
+          }
         ],
       }),
       new HtmlWebpackPlugin({
