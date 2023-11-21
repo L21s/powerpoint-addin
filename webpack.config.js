@@ -74,14 +74,10 @@ module.exports = async (env, options) => {
             from: "manifest*.xml",
             to: "[name]" + "[ext]",
             transform(content) {
-              if (dev) {
-                let con = content;
-                con = con.replace(new RegExp("BUILD", "g"), "1");
-                return content;
-              } else {
+              if (!dev) {
                 let con = content.toString();
                 con = con.replace(new RegExp(urlDev, "g"), urlProd);
-                con = con.replace(new RegExp("BUILD", "g"), process.env.BUILD_NUMBER);
+                con = con.replace(new RegExp("1\.0\.0\.0", "g"), "1.0.0." + process.env.BUILD_NUMBER);
                 return con;
               }
             },
