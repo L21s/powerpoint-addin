@@ -78,3 +78,11 @@
 b {
     font-weight: bold;
 }
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin: 0 auto;
+  gap: 5px;
+}

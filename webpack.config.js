@@ -80,8 +80,9 @@ module.exports = async (env, options) => {
                 con = con.replace(new RegExp("1\.0\.0\.0", "g"), "1.0.0." + process.env.BUILD_NUMBER);
                 return con;
               }
+              return content;
             },
-          }
+          },
         ],
       }),
       new HtmlWebpackPlugin({
