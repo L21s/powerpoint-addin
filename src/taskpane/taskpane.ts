@@ -28,8 +28,50 @@ Office.onReady((info) => {
     document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
     document.getElementById("save-initials").onclick = () =>
       localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
+    document.getElementById("create-rows").onclick = () =>
+        createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
+    document.getElementById("create-columns").onclick = () =>
+        createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
   }
 });
+
+export async function createRows(numberOfRows: number) {
+  const lineDistance = 354 / numberOfRows
+  let top = 126;
+
+  for (let _i = 0; _i <= numberOfRows; _i++) {
+    await runPowerPoint((powerPointContext) => {
+      const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+      const line = shapes.addLine(PowerPoint.ConnectorType.straight);
+      line.name = "StraightLine";
+      line.left = 8;
+      line.top = top;
+      line.height = 0;
+      line.width = 944;
+    });
+
+    top += lineDistance;
+  }
+}
+
+export async function createColumns(numberOfColumns: number) {
+  const lineDistance = 848 / numberOfColumns
+  let left= 58;
+
+  for (let _i = 0; _i <= numberOfColumns; _i++) {
+    await runPowerPoint((powerPointContext) => {
+      const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+      const line = shapes.addLine(PowerPoint.ConnectorType.straight);
+      line.name = "StraightLine";
+      line.left = left;
+      line.top = 8;
+      line.height = 524;
+      line.width = 0;
+    });
+
+    left += lineDistance;
+  }
+}
 
 function loadImageIntoLocalStorage(input?: HTMLInputElement) {
   if (!input) return;
