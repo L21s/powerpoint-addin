@@ -16,11 +16,6 @@ Office.onReady((info) => {
       addBackground(selectedColor);
     };
     document.getElementById("remove-background").onclick = () => removeBackground();
-    document.getElementById("insert-image").onclick = () => {
-      const colorPicker = <HTMLInputElement>document.getElementById("image-background-color");
-      const selectedColor = colorPicker.value;
-      insertImageWithBackground(selectedColor);
-    };
     document.getElementById("load-image").onchange = (event) => {
       loadImageIntoLocalStorage(event.target as HTMLInputElement);
     };
