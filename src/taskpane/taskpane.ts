@@ -99,8 +99,7 @@ export async function insertSticker(color) {
     textbox.textFrame.textRange.font.name = "Arial";
     textbox.textFrame.textRange.font.size = 12;
     textbox.textFrame.textRange.font.color = "#5A5A5A";
-    textbox.lineFormat.visible = false;
-    textbox.lineFormat.visible = false;
+    textbox.lineFormat.visible = true;
     console.log(textbox.lineFormat.toJSON);
   });
 }
