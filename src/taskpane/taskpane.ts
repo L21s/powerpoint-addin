@@ -16,9 +16,6 @@ Office.onReady((info) => {
       addBackground(selectedColor);
     };
     document.getElementById("remove-background").onclick = () => removeBackground();
-    document.getElementById("load-image").onchange = (event) => {
-      loadImageIntoLocalStorage(event.target as HTMLInputElement);
-    };
     document.getElementById("yellow-sticker").onclick = () => insertSticker("yellow");
     document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
     document.getElementById("save-initials").onclick = () =>
@@ -68,17 +65,6 @@ export async function createColumns(numberOfColumns: number) {
   }
 }
 
-function loadImageIntoLocalStorage(input?: HTMLInputElement) {
-  if (!input) return;
-  const file = input.files[0];
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = function () {
-    const base64String = (reader.result as string).replace(new RegExp("^data.{0,}base64,"), "");
-    localStorage.setItem("base64Image", base64String);
-  };
-}
-
 export async function insertSticker(color) {
   await runPowerPoint((powerPointContext) => {
     const today = new Date();
@@ -111,34 +97,6 @@ export async function removeBackground() {
   await runPowerPoint((powerPointContext) => {
     const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
     selectedImage.fill.clear();
-  });
-}
-
-export async function insertImageWithBackground(backgroundColor?: string) {
-  if (!backgroundColor) backgroundColor = "white";
-  const base64Image = localStorage.getItem("base64Image");
-  await runPowerPoint((powerPointContext) => {
-    Office.context.document.setSelectedDataAsync(
-      base64Image,
-      {
-        coercionType: Office.CoercionType.Image,
-      },
-      async () => {
-        const id = await getNewestShapeIdAsync();
-        const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
-        shapes.getItem(id).fill.setSolidColor(backgroundColor);
-        await powerPointContext.sync();
-      }
-    );
-  });
-}
-
-async function getNewestShapeIdAsync() {
-  return await PowerPoint.run(async function (context) {
-    const shapes = context.presentation.getSelectedSlides().getItemAt(0).shapes.load();
-    await context.sync();
-    const length = shapes.items.length;
-    return shapes.items[length - 1].id;
   });
 }
 
