@@ -16,9 +16,6 @@ Office.onReady((info) => {
       addBackground(selectedColor);
     };
     document.getElementById("remove-background").onclick = () => removeBackground();
-    document.getElementById("load-image").onchange = (event) => {
-      loadImageIntoLocalStorage(event.target as HTMLInputElement);
-    };
     document.getElementById("yellow-sticker").onclick = () => insertSticker("yellow");
     document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
     document.getElementById("save-initials").onclick = () =>
