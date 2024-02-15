@@ -80,6 +80,8 @@ export async function insertSticker(color) {
     textbox.textFrame.textRange.font.size = 12;
     textbox.textFrame.textRange.font.color = "#5A5A5A";
     textbox.lineFormat.visible = true;
+    textbox.lineFormat.color = "#000000"
+    textbox.lineFormat.weight = 1;
     console.log(textbox.lineFormat.toJSON);
   });
 }
