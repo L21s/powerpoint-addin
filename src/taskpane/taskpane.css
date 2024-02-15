@@ -79,6 +79,28 @@ b {
     font-weight: bold;
 }
 
+.sticker-yellow {
+  background-color: yellow;
+  border: none;
+  padding: 30px 64px;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  box-shadow: 2px 2px 4px #7D7D7D;
+  border-radius: 0.375rem;
+}
+
+.sticker-cyan {
+  background-color: #00ffff;
+  border: none;
+  padding: 30px 64px;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+  box-shadow: 2px 2px 4px #7D7D7D;
+  border-radius: 0.375rem;
+}
+
 .content {
   display: flex;
   justify-content: space-between;
