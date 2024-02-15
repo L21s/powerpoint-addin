@@ -39,6 +39,8 @@ export async function createRows(numberOfRows: number) {
       line.top = top;
       line.height = 0;
       line.width = 944;
+      line.lineFormat.color = "#000000"
+      line.lineFormat.weight = 0.5;
     });
 
     top += lineDistance;
@@ -58,6 +60,8 @@ export async function createColumns(numberOfColumns: number) {
       line.top = 8;
       line.height = 524;
       line.width = 0;
+      line.lineFormat.color = "#000000"
+      line.lineFormat.weight = 0.5;
     });
 
     left += lineDistance;
