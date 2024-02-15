@@ -79,6 +79,10 @@ b {
     font-weight: bold;
 }
 
+.grid {
+  width: 23%;
+}
+
 .sticker-yellow {
   background-color: yellow;
   border: none;
