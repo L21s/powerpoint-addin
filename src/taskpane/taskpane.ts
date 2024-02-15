@@ -92,7 +92,6 @@ export async function insertSticker(color) {
     textbox.lineFormat.visible = true;
     textbox.lineFormat.color = "#000000"
     textbox.lineFormat.weight = 1.25;
-    console.log(textbox.lineFormat.toJSON);
   });
 }
 
