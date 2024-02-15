@@ -15,7 +15,6 @@ Office.onReady((info) => {
       const selectedColor = colorPicker.value;
       addBackground(selectedColor);
     };
-    document.getElementById("remove-background").onclick = () => removeBackground();
     document.getElementById("yellow-sticker").onclick = () => insertSticker("yellow");
     document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
     document.getElementById("save-initials").onclick = () =>
@@ -90,13 +89,6 @@ export async function addBackground(backgroundColor?: string) {
   await runPowerPoint((powerPointContext) => {
     const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
     selectedImage.fill.setSolidColor(backgroundColor);
-  });
-}
-
-export async function removeBackground() {
-  await runPowerPoint((powerPointContext) => {
-    const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
-    selectedImage.fill.clear();
   });
 }
 
