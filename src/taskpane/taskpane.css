@@ -83,6 +83,10 @@ b {
   width: 23%;
 }
 
+.color-picker {
+  width: 100%;
+}
+
 .sticker-yellow {
   background-color: yellow;
   border: none;
