@@ -24,40 +24,45 @@
     <!-- TODO2: Update the header node. -->
     <header class="ms-welcome__header ms-bgColor-neutralLighter">
         <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s" />
-        <h1 class="ms-font-su">L21s PP</h1>
+        <h1 class="ms-font-su">L21s Add-In</h1>
     </header>
     <section id="display-msg" class="ms-welcome__main">
         <div class="padding">
-            <div id="message"></div>
-            Initialen: <input type="text" id="initials" /><button class="ms-Button" id="save-initials">Save</button><br/><br/>
-            <h3>Sticker</h3>
-            <button class="ms-Button" id="yellow-sticker">Yellow</button>
-            <button class="ms-Button" id="cyan-sticker">Cyan</button><br/><br/>
+            <h3 class="ms-font-l">Sticker</h3>
+            <div>
+                Autor
+                <input type="text" id="initials" />
+                <button class="save-button" id="save-initials">Save</button>
+            </div>
+            <button class="sticker-yellow" id="yellow-sticker"></button>
+            <button class="sticker-cyan" id="cyan-sticker"></button>
 
-            <h3>Background Options</h3>
+            <h3 class="ms-font-l">Background</h3>
             <div class="content">
                 <div>
-                    <input type="color" id="background-color" name="head" value="#FFFFFF" />
-                    <label for="background-color">Background color</label>
+                    <input class="color-picker" type="color" id="background-color" name="head" value="#FFFFFF" />
                 </div>
                 <button class="ms-Button" id="fill-background">Fill</button>
-                <button class="ms-Button" id="remove-background">Remove</button>
             </div>
 
-            <h3>Horizontal Lines</h3>
+            <h3 class="ms-font-l">Rows</h3>
             <div class="content">
                 <div>
-                    <label for="number-of-rows">Number of rows</label>
-                    <input type="number" id="number-of-rows" name="head" value=5 />
+                    <button class="grid" id="two-rows">2</button>
+                    <button class="grid" id="three-rows">3</button>
+                    <button class="grid" id="four-rows">4</button>
+                    <input class="grid" type="number" id="number-of-rows" name="head" value=5 />
                 </div>
                 <button class="ms-Button" id="create-rows">Create</button>
             </div>
 
-            <h3>Vertical Lines</h3>
+            <h3 class="ms-font-l">Columns</h3>
             <div class="content">
                 <div>
-                    <label for="number-of-columns">Number of columns</label>
-                    <input type="number" id="number-of-columns" name="head" value=5 />
+                    <button class="grid" id="two-columns">2</button>
+                    <button class="grid" id="three-columns">3</button>
+                    <button class="grid" id="four-columns">4</button>
+                    <input class="grid" type="number" id="number-of-columns" name="head" value=5 />
                 </div>
                 <button class="ms-Button" id="create-columns">Create</button>
             </div>

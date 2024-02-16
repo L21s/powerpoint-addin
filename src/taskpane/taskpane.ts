@@ -15,15 +15,20 @@ Office.onReady((info) => {
       const selectedColor = colorPicker.value;
       addBackground(selectedColor);
     };
-    document.getElementById("remove-background").onclick = () => removeBackground();
     document.getElementById("yellow-sticker").onclick = () => insertSticker("yellow");
     document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
     document.getElementById("save-initials").onclick = () =>
       localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
     document.getElementById("create-rows").onclick = () =>
         createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
+    document.getElementById("two-rows").onclick = () => createRows(2);
+    document.getElementById("three-rows").onclick = () => createRows(3);
+    document.getElementById("four-rows").onclick = () => createRows(4);
     document.getElementById("create-columns").onclick = () =>
         createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
+    document.getElementById("two-columns").onclick = () => createColumns(2);
+    document.getElementById("three-columns").onclick = () => createColumns(3);
+    document.getElementById("four-columns").onclick = () => createColumns(4);
   }
 });
 
@@ -40,6 +45,8 @@ export async function createRows(numberOfRows: number) {
       line.top = top;
       line.height = 0;
       line.width = 944;
+      line.lineFormat.color = "#000000"
+      line.lineFormat.weight = 0.5;
     });
 
     top += lineDistance;
@@ -59,6 +66,8 @@ export async function createColumns(numberOfColumns: number) {
       line.top = 8;
       line.height = 524;
       line.width = 0;
+      line.lineFormat.color = "#000000"
+      line.lineFormat.weight = 0.5;
     });
 
     left += lineDistance;
@@ -81,7 +90,8 @@ export async function insertSticker(color) {
     textbox.textFrame.textRange.font.size = 12;
     textbox.textFrame.textRange.font.color = "#5A5A5A";
     textbox.lineFormat.visible = true;
-    console.log(textbox.lineFormat.toJSON);
+    textbox.lineFormat.color = "#000000"
+    textbox.lineFormat.weight = 1.25;
   });
 }
 
@@ -90,13 +100,6 @@ export async function addBackground(backgroundColor?: string) {
   await runPowerPoint((powerPointContext) => {
     const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
     selectedImage.fill.setSolidColor(backgroundColor);
-  });
-}
-
-export async function removeBackground() {
-  await runPowerPoint((powerPointContext) => {
-    const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
-    selectedImage.fill.clear();
   });
 }
 
