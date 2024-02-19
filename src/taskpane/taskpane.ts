@@ -5,6 +5,9 @@
 
 /* global Office, PowerPoint */
 
+const rowLineName = "RowLine";
+const columnLineName = "ColumnLine";
+
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     let initials = <HTMLInputElement>document.getElementById("initials");
@@ -40,7 +43,7 @@ export async function createRows(numberOfRows: number) {
     await runPowerPoint((powerPointContext) => {
       const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
       const line = shapes.addLine(PowerPoint.ConnectorType.straight);
-      line.name = "StraightLine";
+      line.name = rowLineName;
       line.left = 8;
       line.top = top;
       line.height = 0;
@@ -61,7 +64,7 @@ export async function createColumns(numberOfColumns: number) {
     await runPowerPoint((powerPointContext) => {
       const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
       const line = shapes.addLine(PowerPoint.ConnectorType.straight);
-      line.name = "StraightLine";
+      line.name = columnLineName;
       line.left = left;
       line.top = 8;
       line.height = 524;
