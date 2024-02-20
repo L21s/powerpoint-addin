@@ -39,7 +39,7 @@ Office.onReady((info) => {
 
 async function deleteShapesByName(name: string) {
   await PowerPoint.run(async (context) => {
-    const sheet = context.presentation.slides.getItemAt(0);
+    const sheet = context.presentation.getSelectedSlides().getItemAt(0);
     const shapes = sheet.shapes;
 
     shapes.load();
