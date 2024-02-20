@@ -34,8 +34,73 @@ Office.onReady((info) => {
     document.getElementById("two-columns").onclick = () => createColumns(2);
     document.getElementById("three-columns").onclick = () => createColumns(3);
     document.getElementById("four-columns").onclick = () => createColumns(4);
-  }
+    document.getElementById("icons").onclick = async () => {
+      document.querySelectorAll(".icon-results img")
+      .forEach(img => img.remove());
+
+      try {
+        const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value
+        const urls = await fetchIcons(searchTerm);
+        // getImageElementWithSource(urls)
+        urls.forEach(url => {
+           getImageElementWithSource(url);
+         })
+      } catch (e) {
+        insertStickerWithText("error: " + e.message)
+      }
+    }
+    }
 });
+
+export async function insertStickerWithText(input: string) {
+  await runPowerPoint((powerPointContext) => {
+    const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+    const textbox = shapes.addTextBox(input);
+    textbox.left = 550;
+    textbox.top = 50;
+    textbox.height = 50;
+    textbox.width = 150;
+    textbox.name = "Square";
+    textbox.fill.setSolidColor("white");
+    textbox.textFrame.textRange.font.bold = true;
+    textbox.textFrame.textRange.font.name = "Arial";
+    textbox.textFrame.textRange.font.size = 12;
+    textbox.textFrame.textRange.font.color = "#5A5A5A";
+    textbox.lineFormat.visible = true;
+    textbox.lineFormat.color = "#000000"
+    textbox.lineFormat.weight = 1.25;
+  });
+}
+
+function getImageElementWithSource(source: string) {
+  const iconUrlElement = document.getElementById("icon-urls");
+  const imageElement = document.createElement("img");
+  imageElement.src = source;
+  imageElement.width = 50;
+  imageElement.height = 50;
+  iconUrlElement.appendChild(imageElement);
+}
+
+export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
+/// export async function fetchIcons(searchTerm: string): Promise<string> {
+  // TODO set up own reverse proxy server and renew api key
+  const url = 'https://corsproxy.io/?' + encodeURIComponent('https://api.freepik.com/v1/icons?term=' + searchTerm);
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'X-Freepik-API-Key': 'FPSX6fb1f23cbea7497387b5e5b8eb8943de'
+    }
+  };
+
+  const result = await fetch(url, requestOptions);
+
+  /// const textResult = await result.text();
+  /// await insertStickerWithText("result.text() " + textResult);
+  /// return textResult;
+
+  const response = await result.json();
+  return response.data.map(obj => obj.thumbnails[0].url).slice(0, 50);
+}
 
 async function deleteShapesByName(name: string) {
   await PowerPoint.run(async (context) => {
