@@ -10,9 +10,7 @@ const columnLineName = "ColumnLine";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
-    let initials = <HTMLInputElement>document.getElementById("initials");
-    initials.value = localStorage.getItem("initials");
-
+    // TODO add pop-up window to enter author initials
     document.getElementById("fill-background").onclick = () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");
       const selectedColor = colorPicker.value;
@@ -20,8 +18,6 @@ Office.onReady((info) => {
     };
     document.getElementById("yellow-sticker").onclick = () => insertSticker("yellow");
     document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
-    document.getElementById("save-initials").onclick = () =>
-      localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
     document.getElementById("add-horizontal-grid").onclick = async () => {
       const numberOfExistingRows = await getNumberOfShapesByName(rowLineName) - 1;
       await deleteShapesByName(rowLineName);
