@@ -37,6 +37,26 @@ Office.onReady((info) => {
   }
 });
 
+async function getNumberOfShapesByName(name: string) {
+  let numberOfShapes = 0;
+  await PowerPoint.run(async (context) => {
+    const sheet = context.presentation.getSelectedSlides().getItemAt(0);
+    const shapes = sheet.shapes;
+
+    shapes.load();
+    await context.sync();
+
+    shapes.items.forEach(function (shape) {
+      if (shape.name == name) {
+        numberOfShapes += 1;
+      }
+    });
+    await context.sync();
+  });
+
+  return numberOfShapes;
+}
+
 async function deleteShapesByName(name: string) {
   await PowerPoint.run(async (context) => {
     const sheet = context.presentation.getSelectedSlides().getItemAt(0);
