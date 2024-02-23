@@ -85,3 +85,7 @@
   float: left;
   margin-right: 8px;
 }
+
+.separator {
+  border: 0.5px solid darkgrey;
+}
