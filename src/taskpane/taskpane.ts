@@ -80,6 +80,10 @@ export async function createRows(numberOfRows: number) {
 }
 
 export async function createColumns(numberOfColumns: number) {
+  if (numberOfColumns == 0) {
+    numberOfColumns = 1;
+  }
+
   const lineDistance = 848 / numberOfColumns
   let left= 58;
 
