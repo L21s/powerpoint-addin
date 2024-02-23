@@ -32,6 +32,7 @@ Office.onReady((info) => {
       await deleteShapesByName(rowLineName);
       await createRows(numberOfExistingRows - 1);
     }
+    document.getElementById("remove-all-horizontal-grids").onclick = () => deleteShapesByName(rowLineName);
   }
 });
 
