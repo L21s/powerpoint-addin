@@ -20,28 +20,26 @@
     <link href="taskpane.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body class="ms-font-m ms-welcome ms-Fabric">
-    <!-- TODO2: Update the header node. -->
-    <header class="ms-welcome__header ms-bgColor-neutralLighter">
-        <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s" />
-        <h1 class="ms-font-su">L21s Add-In</h1>
-    </header>
+<body>
     <section id="display-msg" class="ms-welcome__main">
-        <div class="padding">
-            <h3 class="ms-font-l">Sticker</h3>
+        <div class="main-background">
             <div>
-                Autor
-                <input type="text" style="width: 60px" id="initials" />
-                <button class="save-button" id="save-initials">Save</button>
+                <img class="logo-heading" src="../../assets/logo-filled.png" alt="l21s-logo">
+                <div class="addin-heading">L21s</div>
             </div>
+
+            <h3 class="section-heading">Comment Sticker</h3>
             <button class="edit-grid-button" id="yellow-sticker">
                 <img src="../../assets/yellow-sticker.svg" alt="yellow-sticker">
             </button>
             <button class="edit-grid-button" id="cyan-sticker">
                 <img src="../../assets/cyan-sticker.svg" alt="cyan-sticker">
             </button>
+            <button class="edit-grid-button" id="initials-button">
+                <img src="../../assets/initials-button.svg" alt="initials-button">
+            </button>
 
-            <h3 class="ms-font-l">Background</h3>
+            <h3 class="section-heading">Background Color</h3>
             <div class="content">
                 <div>
                     <input style="height: 36px" type="color" id="background-color" name="head" value="#FFFFFF" />
@@ -51,7 +49,7 @@
                 </div>
             </div>
 
-            <h3 class="ms-font-l">Rows</h3>
+            <h3 class="section-heading">Horizontal Grid</h3>
             <div class="content">
                 <div>
                     <button class="edit-grid-button" id="add-horizontal-grid">
@@ -66,7 +64,7 @@
                 </div>
             </div>
 
-            <h3 class="ms-font-l">Columns</h3>
+            <h3 class="section-heading">Vertical Grid</h3>
             <div class="content">
                 <div>
                     <button class="edit-grid-button" id="add-vertical-grid">
