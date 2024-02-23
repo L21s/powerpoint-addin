@@ -22,22 +22,15 @@ Office.onReady((info) => {
     document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
     document.getElementById("save-initials").onclick = () =>
       localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
-    document.getElementById("create-rows").onclick = () =>
-        createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
-    document.getElementById("delete-rows").onclick = () => deleteShapesByName(rowLineName);
-    document.getElementById("two-rows").onclick = () => createRows(2);
-    document.getElementById("three-rows").onclick = () => createRows(3);
-    document.getElementById("four-rows").onclick = () => createRows(4);
-    document.getElementById("create-columns").onclick = () =>
-        createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
-    document.getElementById("delete-columns").onclick = () => deleteShapesByName(columnLineName);
-    document.getElementById("two-columns").onclick = () => createColumns(2);
-    document.getElementById("three-columns").onclick = () => createColumns(3);
-    document.getElementById("four-columns").onclick = () => createColumns(4);
     document.getElementById("add-horizontal-grid").onclick = async () => {
       const numberOfExistingRows = await getNumberOfShapesByName(rowLineName) - 1;
       await deleteShapesByName(rowLineName);
       await createRows(numberOfExistingRows + 1);
+    }
+    document.getElementById("remove-horizontal-grid").onclick = async () => {
+      const numberOfExistingRows = await getNumberOfShapesByName(rowLineName) - 1;
+      await deleteShapesByName(rowLineName);
+      await createRows(numberOfExistingRows - 1);
     }
   }
 });
