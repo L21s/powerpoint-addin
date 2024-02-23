@@ -11,6 +11,7 @@ const columnLineName = "ColumnLine";
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     // TODO add pop-up window to enter author initials
+    // TODO align grid button positions
     document.getElementById("fill-background").onclick = () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");
       const selectedColor = colorPicker.value;
