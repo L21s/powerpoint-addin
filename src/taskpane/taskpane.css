@@ -123,11 +123,38 @@
 
 .edit-grid-button {
   border: none;
-  background: white;
-  padding-top: 6px;
+  background: #FBFBFB;
   border-radius: 4px;
+  padding-top: 6px;
 }
 
 .edit-grid-button:active {
   background-color: lightgray;
+}
+
+.section-heading {
+  color: #7D7D7D;
+  margin-top: 0;
+  margin-bottom: 2px;
+  font-family: 'Helvetica Now Display', serif;
+  font-weight: 150;
+  font-size: small
+}
+
+.addin-heading {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  padding-bottom: 10px;
+  font-family: 'Helvetica Now Display', serif;
+  font-weight: 150;
+  font-size: medium;
+}
+
+.logo-heading {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  float: left;
+  margin-right: 8px;
 }
