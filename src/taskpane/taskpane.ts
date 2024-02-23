@@ -55,6 +55,10 @@ async function deleteShapesByName(name: string) {
 }
 
 export async function createRows(numberOfRows: number) {
+  if (numberOfRows == 0) {
+    numberOfRows = 1;
+  }
+
   const lineDistance = 354 / numberOfRows
   let top = 126;
 
