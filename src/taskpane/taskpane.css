@@ -120,3 +120,14 @@
 .grid-button {
   width: 49%
 }
+
+.edit-grid-button {
+  border: none;
+  background: white;
+  padding-top: 6px;
+  border-radius: 4px;
+}
+
+.edit-grid-button:active {
+  background-color: lightgray;
+}
