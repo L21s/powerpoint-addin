@@ -33,6 +33,11 @@ Office.onReady((info) => {
       await createRows(numberOfExistingRows - 1);
     }
     document.getElementById("remove-all-horizontal-grids").onclick = () => deleteShapesByName(rowLineName);
+    document.getElementById("add-vertical-grid").onclick = async () => {
+      const numberOfExistingColumns = await getNumberOfShapesByName(columnLineName) - 1;
+      await deleteShapesByName(columnLineName);
+      await createColumns(numberOfExistingColumns + 1);
+    }
   }
 });
 
