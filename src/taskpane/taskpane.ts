@@ -38,6 +38,11 @@ Office.onReady((info) => {
       await deleteShapesByName(columnLineName);
       await createColumns(numberOfExistingColumns + 1);
     }
+    document.getElementById("remove-vertical-grid").onclick = async () => {
+      const numberOfExistingColumns = await getNumberOfShapesByName(columnLineName) - 1;
+      await deleteShapesByName(columnLineName);
+      await createColumns(numberOfExistingColumns - 1);
+    }
   }
 });
 
