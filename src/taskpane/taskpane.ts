@@ -34,6 +34,11 @@ Office.onReady((info) => {
     document.getElementById("two-columns").onclick = () => createColumns(2);
     document.getElementById("three-columns").onclick = () => createColumns(3);
     document.getElementById("four-columns").onclick = () => createColumns(4);
+    document.getElementById("add-horizontal-grid").onclick = async () => {
+      const numberOfExistingRows = await getNumberOfShapesByName(rowLineName) - 1;
+      await deleteShapesByName(rowLineName);
+      await createRows(numberOfExistingRows + 1);
+    }
   }
 });
 
