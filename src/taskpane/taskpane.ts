@@ -82,7 +82,6 @@ function getImageElementWithSource(source: string) {
 }
 
 export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
-/// export async function fetchIcons(searchTerm: string): Promise<string> {
   // TODO set up own reverse proxy server and renew api key
   const url = 'https://corsproxy.io/?' + encodeURIComponent('https://api.freepik.com/v1/icons?term=' + searchTerm);
   const requestOptions = {
@@ -93,11 +92,6 @@ export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
   };
 
   const result = await fetch(url, requestOptions);
-
-  /// const textResult = await result.text();
-  /// await insertStickerWithText("result.text() " + textResult);
-  /// return textResult;
-
   const response = await result.json();
   return response.data.map(obj => obj.thumbnails[0].url).slice(0, 50);
 }
