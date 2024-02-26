@@ -1,5 +1,7 @@
 # L21s PowerPoint-AddIn
 
+defaults write com.microsoft.Powerpoint OfficeWebAddinDeveloperExtras -bool true
+
 ## Set up Locally
 
 To start the AddIn locally, `Node.js` and `npm` must be installed.
@@ -34,6 +36,10 @@ command:
 ```zsh Terminal
 npm run stop
 ```
+
+## Debugging
+After running the following command, the developer console is available with right click into the add-in window and selecting element information.  
+`defaults write com.microsoft.Powerpoint OfficeWebAddinDeveloperExtras -bool true` 
 
 ## Helpful links
 
