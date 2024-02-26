@@ -82,7 +82,7 @@ function getImageElementWithSource(source: string) {
 }
 
 export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
-  // TODO set up own reverse proxy server and renew api key
+  // TODO renew api key
   const url = "https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=" + searchTerm;
   const requestOptions = {
     method: 'GET',
