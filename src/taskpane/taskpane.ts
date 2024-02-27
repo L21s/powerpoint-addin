@@ -12,6 +12,11 @@ Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     // TODO add pop-up window to enter author initials
     // TODO align grid button positions
+    document.getElementById("initials").onchange = () => {
+      const initialsElement = <HTMLInputElement>document.getElementById("initials");
+      const initialsInput = initialsElement.value;
+      localStorage.setItem("initials", initialsInput);
+    }
     document.getElementById("fill-background").onclick = () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");
       const selectedColor = colorPicker.value;
