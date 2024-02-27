@@ -90,6 +90,15 @@
   border: 0.5px solid darkgrey;
 }
 
+.initials-input {
+  border: #F2F2F2 solid 3.5px;
+  height: 25px;
+  width: 30px;
+  margin-left: 6px;
+  background: white;
+  border-radius: 4px;
+}
+
 .comment-sticker {
   border: none;
   background: #FBFBFB;
