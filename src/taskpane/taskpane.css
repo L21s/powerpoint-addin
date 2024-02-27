@@ -53,6 +53,7 @@
   background: #FBFBFB;
   border-radius: 4px;
   padding-top: 6px;
+  vertical-align: bottom
 }
 
 .edit-grid-button:active {
