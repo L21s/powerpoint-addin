@@ -10,8 +10,7 @@ const columnLineName = "ColumnLine";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
-    // TODO add pop-up window to enter author initials
-    // TODO align grid button positions
+    // TODO align button and delete button positions
     document.getElementById("initials").onchange = () => {
       const initialsElement = <HTMLInputElement>document.getElementById("initials");
       const initialsInput = initialsElement.value;
