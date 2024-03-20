@@ -75,6 +75,31 @@ export async function createRows(numberOfRows: number) {
   }
 }
 
+async function insertImageByURL(url: string) {
+    const base64Image = linkToBase64(url);
+
+    Office.context.document.setSelectedDataAsync(
+        await base64Image,
+        {
+            coercionType: Office.CoercionType.Image
+        },
+        (asyncResult) => {
+            if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+                console.error("Action failed. Error: " + asyncResult.error.message);
+            }
+        }
+    );
+}
+
+async function linkToBase64(url: string) {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    let binaryString = '';
+    uint8Array.forEach(value => binaryString += String.fromCharCode(value));
+    return btoa(binaryString);
+}
+
 export async function createColumns(numberOfColumns: number) {
   const lineDistance = 848 / numberOfColumns
   let left= 58;
