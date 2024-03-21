@@ -113,12 +113,29 @@ ul {
     gap: 5px;
 }
 
+.content-vertical {
+    display: flex;
+    flex-direction: row;
+    /*margin: 0 auto;*/
+    gap: 5px;
+    width: 100%;
+}
+
 .save-button {
     width: 31%;
 }
 
 .grid-button {
     width: 49%
+}
+
+.logo-button {
+    width: 100%;
+}
+
+.drop-grid-button{
+    width: 79%;
+    margin-top: 5px;
 }
 
 .dropdown-menu {
