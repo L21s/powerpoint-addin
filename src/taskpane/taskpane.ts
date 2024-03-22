@@ -85,19 +85,22 @@ export async function createEmployeeImageShape() {
 }
 
 async function insertImageByURL(url: string) {
+  try {
     const base64Image = linkToBase64(url);
-
     Office.context.document.setSelectedDataAsync(
         await base64Image,
         {
-            coercionType: Office.CoercionType.Image
+          coercionType: Office.CoercionType.Image
         },
         (asyncResult) => {
-            if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-                console.error("Action failed. Error: " + asyncResult.error.message);
-            }
+          if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+            console.error("Action failed. Error: " + asyncResult.error.message);
+          }
         }
     );
+  } catch (error) {
+    console.error("Insert image by URL failed. Error: ", error);
+  }
 }
 
 async function linkToBase64(url: string) {
