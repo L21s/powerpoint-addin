@@ -75,6 +75,15 @@ export async function createRows(numberOfRows: number) {
   }
 }
 
+export async function createEmployeeImageShape() {
+    await runPowerPoint( (powerPointContext) => {
+        const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+        const circle = shapes.addGeometricShape(PowerPoint.GeometricShapeType.ellipse);
+        circle.lineFormat.color = "#E43292";
+        circle.lineFormat.weight = 5;
+    });
+}
+
 async function insertImageByURL(url: string) {
     const base64Image = linkToBase64(url);
 
