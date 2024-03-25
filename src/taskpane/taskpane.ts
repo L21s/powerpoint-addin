@@ -34,6 +34,8 @@ Office.onReady((info) => {
     document.getElementById("two-columns").onclick = () => createColumns(2);
     document.getElementById("three-columns").onclick = () => createColumns(3);
     document.getElementById("four-columns").onclick = () => createColumns(4);
+
+    document.getElementById("insert-image").onclick = () => insertImageByURL("https://www.bing.com/th?id=OIP.7J6J9J9Q9J9J9J9J9J9J9QHaE8&pid=Api&rs=1");
   }
 });
 
