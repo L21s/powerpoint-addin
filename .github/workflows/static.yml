@@ -2,10 +2,6 @@
 name: Build and deploy office add in
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["master"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -36,17 +32,25 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - name: Prepare employee data
+        run: |
+          cp .employee-data-source.json.template .employee-data-source.json
+          sed "s/Add-Your-Access-Token-Here/${{ secrets.GITHUB_PRIVATE_PULL_TOKEN }}/g'
+          npm run update-employee-data
       - run: npm ci
       - run: npm run build 
         env:
           BUILD_NUMBER: ${{ github.run_number }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
+        if: github.ref == "refs/heads/master"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
           # Upload entire repository
           path: 'dist'
+        if: github.ref == "refs/heads/master"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+        if: github.ref == "refs/heads/master"

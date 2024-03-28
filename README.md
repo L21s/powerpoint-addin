@@ -11,6 +11,16 @@ To prepare the project for the first execution, the following two commands must 
 npm install
 ```
 
+Then the `.employee-data-source.json.template` must be copied to `.employee-data-source.json` and the access token
+must be inserted. You can create a Github Access token [here](https://github.com/settings/personal-access-tokens/new).
+
+Afterwards execute:
+```zsh Terminal
+npm run update-employee-data
+```
+
+And then:
+
 ```zsh Terminal
 npm run build:dev
 ```

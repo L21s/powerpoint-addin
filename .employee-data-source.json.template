@@ -1,0 +1,8 @@
+{
+  "github": {
+    "accessToken": "Add-Your-Access-Token-Here",
+    "organization": "L21s",
+    "repository": "employee-data",
+    "branch": "main"
+  }
+}

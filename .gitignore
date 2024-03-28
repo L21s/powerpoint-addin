@@ -178,3 +178,6 @@ dist
 .idea
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,node
+
+.employee-data-source.json
+src/gen

@@ -4,11 +4,12 @@
  */
 
 /* global Office, PowerPoint */
+import EMPLOYEE_DATA from "../gen/employee-data";
 
 const rowLineName = "RowLine";
 const columnLineName = "ColumnLine";
 
-Office.onReady((info) => updateEmployeeImages());
+Office.onReady(() => updateEmployeeImages());
 
 Office.onReady((info) => {
     if (info.host === Office.HostType.PowerPoint) {
@@ -20,6 +21,7 @@ Office.onReady((info) => {
             const selectedColor = colorPicker.value;
             addBackground(selectedColor);
         };
+
         document.getElementById("yellow-sticker").onclick = () => insertSticker("yellow");
         document.getElementById("cyan-sticker").onclick = () => insertSticker("#00ffff");
         document.getElementById("save-initials").onclick = () =>
@@ -37,7 +39,14 @@ Office.onReady((info) => {
         document.getElementById("three-columns").onclick = () => createColumns(3);
         document.getElementById("four-columns").onclick = () => createColumns(4);
 
-        document.getElementById("employee-select").onclick = () => loadImageByJSON("hans-petter");
+        document.getElementById("employee-select").onchange = () => {
+            const selectedEmployee = (document.getElementById("employee-select") as HTMLSelectElement).value;
+            (async () => {
+                const employee = EMPLOYEE_DATA[selectedEmployee];
+                await insertBase64Image((await employee.picture).default);
+            })();
+            (document.getElementById("employee-select") as HTMLSelectElement).value = "";
+        };
     }
 });
 
@@ -79,41 +88,46 @@ export async function createRows(numberOfRows: number) {
     }
 }
 
-async function loadImageByJSON(nameOfEmployee: string) {
-    const employeeConfig = await fetch('./assets/employee-data.json').then(response => response.json());
-    await runPowerPoint(async (powerPointContext) => {
-        try {
-            await insertImage(employeeConfig.find(employee => employee.folder === nameOfEmployee).base64);
-        } catch (error) {
-            console.error("Insert image by JSON failed. Error: ", error);
-        }
-    });
-}
-
 async function updateEmployeeImages() {
-    const employeeConfig = await fetch('./assets/employee-data.json').then(response => response.json());
-
     const selectElement = document.getElementById("employee-select") as HTMLSelectElement;
     selectElement.innerHTML = '';
-    selectElement.add(new Option("--Select an employee--", ""));
+    const defaultOption = new Option("--Select an employee--", "");
+    defaultOption.disabled = true;
+    selectElement.add(defaultOption);
+    selectElement.value = "";
 
-    employeeConfig.employees.forEach(employee => {
+    for (const employeeId of Object.keys(EMPLOYEE_DATA)) {
+        const employee = EMPLOYEE_DATA[employeeId];
+
         let option = document.createElement("option") as HTMLOptionElement;
-        option.text = employee.folder;
-        option.value = employee.folder;
+        option.text = employee.name;
+        option.value = employeeId;
         selectElement.add(option);
-    });
+    }
 
-    employeeConfig.employees.forEach(employee => {
-        linkToBase64(employee.image).then(base64Image => {
-            localStorage.setItem(employee.base64, base64Image);
-        });
-    });
 }
 
-async function insertImage(imagePath: string) {
+async function insertBase64Image(url: string) {
+    let base64Image: string = await fetch(url)
+        .then((response) => response.blob())
+        .then((blob) => new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                resolve(reader.result as string);
+            };
+
+            reader.readAsDataURL(blob);
+        }));
+
+    if (base64Image.startsWith("data:")) {
+        const PREFIX = "base64,";
+
+        // Blob URL, strip prefix
+        const base64Idx = base64Image.indexOf(PREFIX);
+        base64Image = base64Image.substring(base64Idx + PREFIX.length);
+    }
+
     try {
-        const base64Image = await linkToBase64(`./images/${imagePath}`);
         Office.context.document.setSelectedDataAsync(
             base64Image,
             { coercionType: Office.CoercionType.Image },
@@ -126,15 +140,6 @@ async function insertImage(imagePath: string) {
     } catch (error) {
         console.error("Insert image failed. Error: ", error);
     }
-}
-
-async function linkToBase64(imagePath: string) {
-    const response = await fetch(imagePath);
-    const arrayBuffer = await response.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    let binaryString = '';
-    uint8Array.forEach(value => binaryString += String.fromCharCode(value));
-    return btoa(binaryString);
 }
 
 export async function createColumns(numberOfColumns: number) {
