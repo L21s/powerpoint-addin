@@ -83,17 +83,21 @@ function getImageElementWithSource(source: string) {
 
 export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
   // TODO renew api key
-  const url = "https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=" + searchTerm;
+  const url = "https://hammerhead-app-fj5ps.ondigitalocean.app/icons?filters[color]=solid-black&filters[shape]=outline&filters[family-id]=12&term" + searchTerm;
+  const requestHeaders = new Headers();
+    requestHeaders.append("X-Freepik-API-Key", "FPSX6fb1f23cbea7497387b5e5b8eb8943de");
   const requestOptions = {
     method: 'GET',
-    headers: {
-      'X-Freepik-API-Key': 'FPSX6fb1f23cbea7497387b5e5b8eb8943de'
-    }
+    headers: requestHeaders,
   };
 
-  const result = await fetch(url, requestOptions);
-  const response = await result.json();
-  return response.data.map(obj => obj.thumbnails[0].url).slice(0, 50);
+  try {
+    const result = await fetch(url, requestOptions);
+    const response = await result.json();
+    return response.data.map(obj => obj.thumbnails[0].url).slice(0, 50);
+  } catch (e) {
+    throw new Error("Error fetching icons: " + e.message);
+  }
 }
 
 async function deleteShapesByName(name: string) {
