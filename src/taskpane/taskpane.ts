@@ -8,7 +8,7 @@
 const rowLineName = "RowLine";
 const columnLineName = "ColumnLine";
 
-Office.onReady((info) => updateEmployeeImages());
+Office.onReady(() => updateEmployeeImages());
 
 Office.onReady((info) => {
     if (info.host === Office.HostType.PowerPoint) {
@@ -37,7 +37,11 @@ Office.onReady((info) => {
         document.getElementById("three-columns").onclick = () => createColumns(3);
         document.getElementById("four-columns").onclick = () => createColumns(4);
 
-        document.getElementById("employee-select").onclick = () => loadImageByJSON("hans-petter");
+        document.getElementById("employee-select").onchange = () => {
+            const selectedEmployee = (<HTMLSelectElement>document.getElementById("employee-select")).value;
+            insertBase64Image(localStorage.getItem(selectedEmployee));
+            (<HTMLSelectElement>document.getElementById("employee-select")).value = "";
+        };
     }
 });
 
@@ -79,41 +83,28 @@ export async function createRows(numberOfRows: number) {
     }
 }
 
-async function loadImageByJSON(nameOfEmployee: string) {
-    const employeeConfig = await fetch('./assets/employee-data.json').then(response => response.json());
-    await runPowerPoint(async (powerPointContext) => {
-        try {
-            await insertImage(employeeConfig.find(employee => employee.folder === nameOfEmployee).base64);
-        } catch (error) {
-            console.error("Insert image by JSON failed. Error: ", error);
-        }
-    });
-}
-
 async function updateEmployeeImages() {
     const employeeConfig = await fetch('./assets/employee-data.json').then(response => response.json());
 
     const selectElement = document.getElementById("employee-select") as HTMLSelectElement;
     selectElement.innerHTML = '';
-    selectElement.add(new Option("--Select an employee--", ""));
+    const defaultOption = new Option("--Select an employee--", "");
+    defaultOption.disabled = true;
+    selectElement.add(defaultOption);
+    selectElement.value = "";
 
     employeeConfig.employees.forEach(employee => {
         let option = document.createElement("option") as HTMLOptionElement;
-        option.text = employee.folder;
-        option.value = employee.folder;
+        option.text = employee.name;
+        option.value = employee.name;
         selectElement.add(option);
-    });
 
-    employeeConfig.employees.forEach(employee => {
-        linkToBase64(employee.image).then(base64Image => {
-            localStorage.setItem(employee.base64, base64Image);
-        });
+        localStorage.setItem(employee.name, employee.base64);
     });
 }
 
-async function insertImage(imagePath: string) {
+async function insertBase64Image(base64Image: string) {
     try {
-        const base64Image = await linkToBase64(`./images/${imagePath}`);
         Office.context.document.setSelectedDataAsync(
             base64Image,
             { coercionType: Office.CoercionType.Image },
@@ -126,15 +117,6 @@ async function insertImage(imagePath: string) {
     } catch (error) {
         console.error("Insert image failed. Error: ", error);
     }
-}
-
-async function linkToBase64(imagePath: string) {
-    const response = await fetch(imagePath);
-    const arrayBuffer = await response.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    let binaryString = '';
-    uint8Array.forEach(value => binaryString += String.fromCharCode(value));
-    return btoa(binaryString);
 }
 
 export async function createColumns(numberOfColumns: number) {
