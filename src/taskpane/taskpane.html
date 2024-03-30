@@ -5,8 +5,8 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>L21s Add-in</title>
 
@@ -14,75 +14,84 @@
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
 
     <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
-    <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
+    <link rel="stylesheet"
+          href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
 
     <!-- Template styles -->
-    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+    <link href="taskpane.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body class="ms-font-m ms-welcome ms-Fabric">
-    <!-- TODO2: Update the header node. -->
-    <header class="ms-welcome__header ms-bgColor-neutralLighter">
-        <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s" />
-        <h1 class="ms-font-su">L21s Add-In</h1>
-    </header>
-    <section id="display-msg" class="ms-welcome__main">
-        <div class="padding">
-            <h3 class="ms-font-l">Sticker</h3>
+<!-- TODO2: Update the header node. -->
+<header class="ms-welcome__header ms-bgColor-neutralLighter">
+    <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s"/>
+    <h1 class="ms-font-su">L21s Add-In</h1>
+</header>
+<section id="display-msg" class="ms-welcome__main">
+    <div class="padding">
+        <h3 class="ms-font-l">Sticker</h3>
+        <div>
+            Autor
+            <input type="text" id="initials"/>
+            <button class="save-button" id="save-initials">Save</button>
+        </div>
+        <button class="sticker-yellow" id="yellow-sticker"></button>
+        <button class="sticker-cyan" id="cyan-sticker"></button>
+
+        <h3 class="ms-font-l">Background</h3>
+        <div class="content">
             <div>
-                Autor
-                <input type="text" id="initials" />
-                <button class="save-button" id="save-initials">Save</button>
+                <input class="color-picker" type="color" id="background-color" name="head" value="#FFFFFF"/>
             </div>
-            <button class="sticker-yellow" id="yellow-sticker"></button>
-            <button class="sticker-cyan" id="cyan-sticker"></button>
+            <button class="ms-Button" id="fill-background">Fill</button>
+        </div>
 
-            <h3 class="ms-font-l">Background</h3>
-            <div class="content">
-                <div>
-                    <input class="color-picker" type="color" id="background-color" name="head" value="#FFFFFF" />
-                </div>
-                <button class="ms-Button" id="fill-background">Fill</button>
+        <h3 class="ms-font-l">Employee-Images</h3>
+        <div class="content">
+            <label>
+                <select id="employee-select">
+
+                </select>
+
+                <select id="employee-size-select">
+                    <option value="0"   disabled  >-- Select Image Size --</option>
+                    <option value="64"            >S  | 64 x 64</option>
+                    <option value="128" selected  >M  | 128x128</option>
+                    <option value="256"           >L  | 256x256</option>
+                    <option value="512"           >XL | 512x512</option>
+                </select>
+            </label>
+        </div>
+
+        <h3 class="ms-font-l">Rows</h3>
+        <div class="content">
+            <div>
+                <button class="grid" id="two-rows">2</button>
+                <button class="grid" id="three-rows">3</button>
+                <button class="grid" id="four-rows">4</button>
+                <input class="grid" type="number" id="number-of-rows" name="head" value=5/>
             </div>
-
-            <h3 class="ms-font-l">Employee</h3>
-            <div class="content">
-                <label>
-                    <select id="employee-select">
-
-                    </select>
-                </label>
-            </div>
-
-            <h3 class="ms-font-l">Rows</h3>
-            <div class="content">
-                <div>
-                    <button class="grid" id="two-rows">2</button>
-                    <button class="grid" id="three-rows">3</button>
-                    <button class="grid" id="four-rows">4</button>
-                    <input class="grid" type="number" id="number-of-rows" name="head" value=5 />
-                </div>
-                <div>
-                    <button class="grid-button" id="create-rows">Create</button>
-                    <button class="grid-button" id="delete-rows">Delete</button>
-                </div>
-            </div>
-
-            <h3 class="ms-font-l">Columns</h3>
-            <div class="content">
-                <div>
-                    <button class="grid" id="two-columns">2</button>
-                    <button class="grid" id="three-columns">3</button>
-                    <button class="grid" id="four-columns">4</button>
-                    <input class="grid" type="number" id="number-of-columns" name="head" value=5 />
-                </div>
-                <div>
-                    <button class="grid-button" id="create-columns">Create</button>
-                    <button class="grid-button" id="delete-columns">Delete</button>
-                </div>
+            <div>
+                <button class="grid-button" id="create-rows">Create</button>
+                <button class="grid-button" id="delete-rows">Delete</button>
             </div>
         </div>
-    </section>
+
+        <h3 class="ms-font-l">Columns</h3>
+        <div class="content">
+            <div>
+                <button class="grid" id="two-columns">2</button>
+                <button class="grid" id="three-columns">3</button>
+                <button class="grid" id="four-columns">4</button>
+                <input class="grid" type="number" id="number-of-columns" name="head" value=5/>
+            </div>
+            <div>
+                <button class="grid-button" id="create-columns">Create</button>
+                <button class="grid-button" id="delete-columns">Delete</button>
+            </div>
+        </div>
+    </div>
+</section>
 </body>
 
 </html>

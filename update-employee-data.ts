@@ -8,6 +8,9 @@ import Jimp from "jimp";
 import * as Rimraf from "rimraf";
 import {logErrorMessage} from "office-addin-cli";
 
+// Define the border size for the employee images
+const borderSize = 10;
+
 interface EmployeeDataSource {
     github: EmployeeGithubDataSource,
 }
@@ -230,8 +233,17 @@ async function processEmployeeData(data: EmployeeData[]) {
             image.crop(0, 0, wantedSize, wantedSize);
         }
 
+        // Resize the image to 512x512 (if it isn't already)
+        if (wantedSize != 512) {
+            const warningMessage = wantedSize < 512
+                ? `Image is smaller than 512x512 for ${employee.id} resizing to 512x512, this may result in a blurry image!`
+                : `Image is larger than 512x512 for ${employee.id} resizing to 512x512!`;
+            console.warn(warningMessage);
+            wantedSize = 512;
+            image.resize(512, 512);
+        }
+
         const imageCenter = wantedSize / 2;
-        const borderSize = 10;
 
         for (let y = 0; y < wantedSize; y++) {
             for (let x = 0; x < wantedSize; x++) {

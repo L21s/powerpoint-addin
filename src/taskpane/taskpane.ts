@@ -43,7 +43,10 @@ Office.onReady((info) => {
             const selectedEmployee = (document.getElementById("employee-select") as HTMLSelectElement).value;
             (async () => {
                 const employee = EMPLOYEE_DATA[selectedEmployee];
-                await insertBase64Image((await employee.picture).default);
+                const imageSizeElement = document.getElementById("employee-size-select") as HTMLSelectElement;
+                const imageSizeElementIndex = imageSizeElement.selectedIndex;
+                const imageSize = +(imageSizeElement.options[imageSizeElementIndex].value);
+                await insertBase64Image((await employee.picture).default, imageSize);
             })();
             (document.getElementById("employee-select") as HTMLSelectElement).value = "";
         };
@@ -107,15 +110,25 @@ async function updateEmployeeImages() {
 
 }
 
-async function insertBase64Image(url: string) {
+async function insertBase64Image(url: string, sizeInPixels: number) {
     let base64Image: string = await fetch(url)
         .then((response) => response.blob())
-        .then((blob) => new Promise((resolve) => {
+        .then((blob) => new Promise((resolve, reject) => {
+            const img = new Image();
             const reader = new FileReader();
             reader.onload = () => {
-                resolve(reader.result as string);
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = sizeInPixels;
+                    canvas.height = sizeInPixels;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, sizeInPixels, sizeInPixels);
+                    resolve(canvas.toDataURL("image/png"));
+                };
+                img.onerror = reject;
+                img.src = reader.result as string;
             };
-
+            reader.onerror = reject;
             reader.readAsDataURL(blob);
         }));
 
@@ -130,7 +143,7 @@ async function insertBase64Image(url: string) {
     try {
         Office.context.document.setSelectedDataAsync(
             base64Image,
-            { coercionType: Office.CoercionType.Image },
+            {coercionType: Office.CoercionType.Image},
             (asyncResult) => {
                 if (asyncResult.status === Office.AsyncResultStatus.Failed) {
                     console.error("Insert image failed. Error: ", asyncResult.error.message);
