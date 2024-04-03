@@ -35,7 +35,7 @@ jobs:
       - name: Prepare employee data
         run: |
           cp .employee-data-source.json.template .employee-data-source.json
-          sed "s/Add-Your-Access-Token-Here/${{ secrets.GITHUB_PRIVATE_PULL_TOKEN }}/g'
+          sed "s/Add-Your-Access-Token-Here/${{ secrets.PRIVATE_PULL_TOKEN }}/g'
           npm run update-employee-data
       - run: npm ci
       - run: npm run build 
