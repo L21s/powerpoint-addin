@@ -10,6 +10,9 @@ import * as M from "../../lib/materialize/js/materialize.min";
 
 const rowLineName = "RowLine";
 const columnLineName = "ColumnLine";
+const SLIDE_WIDTH = 960;
+const SLIDE_HEIGHT = 540;
+const SLIDE_MARGIN = 8;
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -95,18 +98,18 @@ function insertImageByBase64(base64Name: string) {
 }
 
 export async function createRows(numberOfRows: number) {
-  const lineDistance = 354 / numberOfRows;
-  let top = 126;
+  const lineDistance = SLIDE_HEIGHT / (numberOfRows + 1);
+  let top = lineDistance;
 
-  for (let _i = 0; _i <= numberOfRows; _i++) {
+  for (let _i = 0; _i <= numberOfRows - 1; _i++) {
     await runPowerPoint((powerPointContext) => {
       const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
       const line = shapes.addLine(PowerPoint.ConnectorType.straight);
       line.name = rowLineName;
-      line.left = 8;
+      line.left = SLIDE_MARGIN;
       line.top = top;
       line.height = 0;
-      line.width = 944;
+      line.width = SLIDE_WIDTH - SLIDE_MARGIN * 2;
       line.lineFormat.color = "#000000";
       line.lineFormat.weight = 0.5;
     });
@@ -116,17 +119,18 @@ export async function createRows(numberOfRows: number) {
 }
 
 export async function createColumns(numberOfColumns: number) {
-  const lineDistance = 848 / numberOfColumns;
-  let left = 58;
+  const lineDistance = SLIDE_WIDTH / (numberOfColumns + 1);
+  let left = lineDistance;
 
-  for (let _i = 0; _i <= numberOfColumns; _i++) {
+  for (let _i = 0; _i <= numberOfColumns - 1; _i++) {
     await runPowerPoint((powerPointContext) => {
+      // powerPointContext.presentation.getSelectedShapes() // TODO for columns for selected objects
       const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
       const line = shapes.addLine(PowerPoint.ConnectorType.straight);
       line.name = columnLineName;
       line.left = left;
-      line.top = 8;
-      line.height = 524;
+      line.top = SLIDE_MARGIN;
+      line.height = SLIDE_HEIGHT - SLIDE_MARGIN * 2;
       line.width = 0;
       line.lineFormat.color = "#000000";
       line.lineFormat.weight = 0.5;
