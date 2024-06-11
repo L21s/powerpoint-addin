@@ -101,8 +101,8 @@ export async function createRows(numberOfRows: number) {
   const lineDistance = SLIDE_HEIGHT / (numberOfRows + 1);
   let top = lineDistance;
 
-  for (let _i = 0; _i <= numberOfRows - 1; _i++) {
-    await runPowerPoint((powerPointContext) => {
+  await runPowerPoint((powerPointContext) => {
+    for (let _i = 0; _i <= numberOfRows - 1; _i++) {
       const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
       const line = shapes.addLine(PowerPoint.ConnectorType.straight);
       line.name = rowLineName;
@@ -112,18 +112,18 @@ export async function createRows(numberOfRows: number) {
       line.width = SLIDE_WIDTH - SLIDE_MARGIN * 2;
       line.lineFormat.color = "#000000";
       line.lineFormat.weight = 0.5;
-    });
 
-    top += lineDistance;
-  }
+      top += lineDistance;
+    }
+  });
 }
 
 export async function createColumns(numberOfColumns: number) {
   const lineDistance = SLIDE_WIDTH / (numberOfColumns + 1);
   let left = lineDistance;
-
-  for (let _i = 0; _i <= numberOfColumns - 1; _i++) {
-    await runPowerPoint((powerPointContext) => {
+  console.log(new Date());
+  await runPowerPoint((powerPointContext) => {
+    for (let _i = 0; _i <= numberOfColumns - 1; _i++) {
       // powerPointContext.presentation.getSelectedShapes() // TODO for columns for selected objects
       const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
       const line = shapes.addLine(PowerPoint.ConnectorType.straight);
@@ -134,10 +134,11 @@ export async function createColumns(numberOfColumns: number) {
       line.width = 0;
       line.lineFormat.color = "#000000";
       line.lineFormat.weight = 0.5;
-    });
 
-    left += lineDistance;
-  }
+      left += lineDistance;
+    }
+  });
+  console.log(new Date());
 }
 
 export async function insertSticker(color) {
