@@ -6,7 +6,7 @@
 /* global Office, PowerPoint */
 
 import { base64Images } from "../../base64Image";
-import * as M from "../materialize/js/materialize.min";
+import * as M from "../../lib/materialize/js/materialize.min";
 
 const rowLineName = "RowLine";
 const columnLineName = "ColumnLine";
