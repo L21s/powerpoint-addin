@@ -5,101 +5,104 @@
 <html>
 
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>L21s Add-in</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L21s Add-in</title>
 
-    <!-- Office JavaScript API -->
-    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+  <!-- Office JavaScript API -->
+  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
 
-    <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
-    <link rel="stylesheet"
-          href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css"/>
+  <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
+  <link rel="stylesheet"
+        href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css" />
 
-    <!-- Template styles -->
-    <link href="taskpane.css" rel="stylesheet" type="text/css"/>
+  <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="../materialize/css/materialize.css"/>
+
+  <!-- Template styles -->
+  <link href="taskpane.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body class="ms-font-m ms-welcome ms-Fabric">
 <!-- TODO2: Update the header node. -->
 <header class="ms-welcome__header ms-bgColor-neutralLighter">
-    <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s"/>
-    <h1 class="ms-font-su">L21s Add-In</h1>
+  <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s" />
+  <h1 class="ms-font-su">L21s Add-In</h1>
 </header>
 <section id="display-msg" class="ms-welcome__main">
-    <div class="padding">
-        <h3 class="ms-font-l">Sticker</h3>
-        <div>
-            Autor
-            <label for="initials"></label><input type="text" id="initials"/>
-            <button class="save-button" id="save-initials">Save</button>
-        </div>
-        <button class="sticker-yellow" id="yellow-sticker"></button>
-        <button class="sticker-cyan" id="cyan-sticker"></button>
-
-        <h3 class="ms-font-l">Background</h3>
-        <div class="content">
-            <div>
-                <label for="background-color"></label><input class="color-picker" type="color" id="background-color"
-                                                             name="head" value="#FFFFFF"/>
-            </div>
-            <button class="ms-Button" id="fill-background">Fill</button>
-        </div>
-
-        <h3 class="ms-font-l">Rows</h3>
-        <div class="content">
-            <div>
-                <button class="grid" id="two-rows">2</button>
-                <button class="grid" id="three-rows">3</button>
-                <button class="grid" id="four-rows">4</button>
-                <input class="grid" type="number" id="number-of-rows" name="head" value=5/>
-            </div>
-            <div>
-                <button class="grid-button" id="create-rows">Create</button>
-                <button class="grid-button" id="delete-rows">Delete</button>
-            </div>
-        </div>
-
-        <h3 class="ms-font-l">Columns</h3>
-        <div class="content">
-            <div>
-                <button class="grid" id="two-columns">2</button>
-                <button class="grid" id="three-columns">3</button>
-                <button class="grid" id="four-columns">4</button>
-                <input class="grid" type="number" id="number-of-columns" name="head" value=5/>
-            </div>
-            <div>
-                <button class="grid-button" id="create-columns">Create</button>
-                <button class="grid-button" id="delete-columns">Delete</button>
-            </div>
-        </div>
-
-        <h3 class="ms-font-l">L21's-Logo</h3>
-        <div class="content-vertical">
-            <div class="grid-button">
-                <button class="logo-button" id="logos-with-text"> with Text</button>
-                <div class="dropdown-menu" id="logos-with-text-dropdown">
-                    <button class="drop-grid-button" id="black-logo-with-text">black</button>
-                    <button class="drop-grid-button" id="white-logo-with-text">white</button>
-                    <button class="drop-grid-button" id="blue-logo-with-text">blue</button>
-                    <button class="drop-grid-button" id="pink-logo-with-text">pink</button>
-                </div>
-            </div>
-
-            <div class="grid-button">
-                <button class="logo-button" id="logos-without-text">without Text</button>
-                <div class="dropdown-menu" id="logos-without-text-dropdown">
-                    <button class="drop-grid-button" id="black-logo-without-text">black</button>
-                    <button class="drop-grid-button" id="white-logo-without-text">white</button>
-                    <button class="drop-grid-button" id="blue-logo-without-text">blue</button>
-                    <button class="drop-grid-button" id="pink-logo-without-text">pink</button>
-                </div>
-            </div>
-        </div>
-
+  <div class="padding">
+    <h3 class="ms-font-l">Sticker</h3>
+    <div>
+      Autor
+      <label for="initials"></label><input type="text" id="initials" />
+      <button class="save-button" id="save-initials">Save</button>
     </div>
+    <button class="sticker-yellow" id="yellow-sticker"></button>
+    <button class="sticker-cyan" id="cyan-sticker"></button>
+
+    <h3 class="ms-font-l">Background</h3>
+    <div class="content">
+      <div>
+        <label for="background-color"></label><input class="color-picker" type="color" id="background-color"
+                                                     name="head" value="#FFFFFF" />
+      </div>
+      <button class="ms-Button" id="fill-background">Fill</button>
+    </div>
+
+    <h3 class="ms-font-l">Rows</h3>
+    <div class="content">
+      <div>
+        <button class="grid" id="two-rows">2</button>
+        <button class="grid" id="three-rows">3</button>
+        <button class="grid" id="four-rows">4</button>
+        <input class="grid" type="number" id="number-of-rows" name="head" value=5/>
+      </div>
+      <div>
+        <button class="grid-button" id="create-rows">Create</button>
+        <button class="grid-button" id="delete-rows">Delete</button>
+      </div>
+    </div>
+
+    <h3 class="ms-font-l">Columns</h3>
+    <div class="content">
+      <div>
+        <button class="grid" id="two-columns">2</button>
+        <button class="grid" id="three-columns">3</button>
+        <button class="grid" id="four-columns">4</button>
+        <input class="grid" type="number" id="number-of-columns" name="head" value=5/>
+      </div>
+      <div>
+        <button class="grid-button" id="create-columns">Create</button>
+        <button class="grid-button" id="delete-columns">Delete</button>
+      </div>
+    </div>
+
+    <h3 class="ms-font-l">L21's-Logo</h3>
+    <div class="content-vertical">
+      <button class="logo-button dropdown-trigger btn" id="logos-with-text" href='#' data-target='logos-with-text-dropdown'> with Text</button>
+      <ul id='logos-with-text-dropdown' class='dropdown-content'>
+        <li><a href="#!" id="black-logo-with-text">Black</a></li>
+        <li><a href="#!" id="white-logo-with-text">White</a></li>
+        <li><a href="#!" id="pink-logo-with-text">Pink</a></li>
+        <li><a href="#!" id="blue-logo-with-text">Blue</a></li>
+      </ul>
+
+      <button class="logo-button dropdown-trigger btn" id="logos-without-text" href='#' data-target='logos-without-text-dropdown'> without Text</button>
+      <ul class="dropdown-menu dropdown-content" id="logos-without-text-dropdown">
+        <li><a href="#!" id="black-logo-without-text">Black</a></li>
+        <li><a href="#!" id="white-logo-without-text">White</a></li>
+        <li><a href="#!" id="pink-logo-without-text">Pink</a></li>
+        <li><a href="#!" id="blue-logo-without-text">Blue</a></li>
+      </ul>
+    </div>
+
+  </div>
 </section>
+<script type="text/javascript" src="../materialize/js/materialize.min.js"></script>
 </body>
 
 </html>
