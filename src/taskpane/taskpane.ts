@@ -5,11 +5,16 @@
 
 /* global Office, PowerPoint */
 
+import { base64Images } from "../../base64Image";
+import * as M from "../../lib/materialize/js/materialize.min";
+
 const rowLineName = "RowLine";
 const columnLineName = "ColumnLine";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
+    M.AutoInit(document.body);
+
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
 
@@ -23,17 +28,37 @@ Office.onReady((info) => {
     document.getElementById("save-initials").onclick = () =>
       localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
     document.getElementById("create-rows").onclick = () =>
-        createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
+      createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
     document.getElementById("delete-rows").onclick = () => deleteShapesByName(rowLineName);
     document.getElementById("two-rows").onclick = () => createRows(2);
     document.getElementById("three-rows").onclick = () => createRows(3);
     document.getElementById("four-rows").onclick = () => createRows(4);
     document.getElementById("create-columns").onclick = () =>
-        createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
+      createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
     document.getElementById("delete-columns").onclick = () => deleteShapesByName(columnLineName);
     document.getElementById("two-columns").onclick = () => createColumns(2);
     document.getElementById("three-columns").onclick = () => createColumns(3);
     document.getElementById("four-columns").onclick = () => createColumns(4);
+
+    // Connects the logo dropdown menu buttons with the base64 image
+    // with text
+    document.getElementById("black-logo-with-text").onclick = () =>
+      insertImageByBase64("logoTextBlack");
+    document.getElementById("blue-logo-with-text").onclick = () =>
+      insertImageByBase64("logoTextBlue");
+    document.getElementById("pink-logo-with-text").onclick = () =>
+      insertImageByBase64("logoTextPink");
+    document.getElementById("white-logo-with-text").onclick = () =>
+      insertImageByBase64("logoTextWhite");
+    // without text
+    document.getElementById("black-logo-without-text").onclick = () =>
+      insertImageByBase64("logoBlack");
+    document.getElementById("blue-logo-without-text").onclick = () =>
+      insertImageByBase64("logoBlue");
+    document.getElementById("pink-logo-without-text").onclick = () =>
+      insertImageByBase64("logoPink");
+    document.getElementById("white-logo-without-text").onclick = () =>
+      insertImageByBase64("logoWhite");
   }
 });
 
@@ -45,7 +70,7 @@ async function deleteShapesByName(name: string) {
     shapes.load();
     await context.sync();
 
-    shapes.items.forEach(function (shape) {
+    shapes.items.forEach(function(shape) {
       if (shape.name == name) {
         shape.delete();
       }
@@ -54,8 +79,23 @@ async function deleteShapesByName(name: string) {
   });
 }
 
+function insertImageByBase64(base64Name: string) {
+  // Call Office.js to insert the image into the document.
+  Office.context.document.setSelectedDataAsync(
+    base64Images[base64Name],
+    {
+      coercionType: Office.CoercionType.Image
+    },
+    (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error("Action failed. Error: " + asyncResult.error.message);
+      }
+    }
+  );
+}
+
 export async function createRows(numberOfRows: number) {
-  const lineDistance = 354 / numberOfRows
+  const lineDistance = 354 / numberOfRows;
   let top = 126;
 
   for (let _i = 0; _i <= numberOfRows; _i++) {
@@ -67,7 +107,7 @@ export async function createRows(numberOfRows: number) {
       line.top = top;
       line.height = 0;
       line.width = 944;
-      line.lineFormat.color = "#000000"
+      line.lineFormat.color = "#000000";
       line.lineFormat.weight = 0.5;
     });
 
@@ -76,8 +116,8 @@ export async function createRows(numberOfRows: number) {
 }
 
 export async function createColumns(numberOfColumns: number) {
-  const lineDistance = 848 / numberOfColumns
-  let left= 58;
+  const lineDistance = 848 / numberOfColumns;
+  let left = 58;
 
   for (let _i = 0; _i <= numberOfColumns; _i++) {
     await runPowerPoint((powerPointContext) => {
@@ -88,7 +128,7 @@ export async function createColumns(numberOfColumns: number) {
       line.top = 8;
       line.height = 524;
       line.width = 0;
-      line.lineFormat.color = "#000000"
+      line.lineFormat.color = "#000000";
       line.lineFormat.weight = 0.5;
     });
 
@@ -112,7 +152,7 @@ export async function insertSticker(color) {
     textbox.textFrame.textRange.font.size = 12;
     textbox.textFrame.textRange.font.color = "#5A5A5A";
     textbox.lineFormat.visible = true;
-    textbox.lineFormat.color = "#000000"
+    textbox.lineFormat.color = "#000000";
     textbox.lineFormat.weight = 1.25;
   });
 }

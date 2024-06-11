@@ -3,20 +3,20 @@
  * See LICENSE in the project root for license information.
  */
 
- html,
- body {
-     width: 100%;
-     height: 100%;
-     margin: 0;
-     padding: 0;
- }
- 
- ul {
-     margin: 0;
-     padding: 0;
- }
- 
- .ms-welcome__header {
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+.ms-welcome__header {
     padding: 20px;
     padding-bottom: 30px;
     padding-top: 100px;
@@ -25,9 +25,9 @@
     -webkit-flex-direction: column;
     flex-direction: column;
     align-items: center;
- }
+}
 
- .ms-welcome__main {
+.ms-welcome__main {
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
@@ -39,84 +39,115 @@
     -webkit-flex: 1 0 0;
     flex: 1 0 0;
     padding: 10px 20px;
- }
- 
- .ms-welcome__main > h2 {
-     width: 100%;
-     text-align: center;
- }
- 
- .ms-welcome__features {
-     list-style-type: none;
-     margin-top: 20px;
- }
- 
- .ms-welcome__features.ms-List .ms-ListItem {
-     padding-bottom: 20px;
-     display: -webkit-flex;
-     display: flex;
- }
- 
- .ms-welcome__features.ms-List .ms-ListItem > .ms-Icon {
-     margin-right: 10px;
- }
- 
- .ms-welcome__action.ms-Button--hero {
-     margin-top: 30px;
- }
- 
+}
+
+.ms-welcome__main > h2 {
+    width: 100%;
+    text-align: center;
+}
+
+.ms-welcome__features {
+    list-style-type: none;
+    margin-top: 20px;
+}
+
+.ms-welcome__features.ms-List .ms-ListItem {
+    padding-bottom: 20px;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.ms-welcome__features.ms-List .ms-ListItem > .ms-Icon {
+    margin-right: 10px;
+}
+
+.ms-welcome__action.ms-Button--hero {
+    margin-top: 30px;
+}
+
 .ms-Button.ms-Button--hero .ms-Button-label {
-  color: #0078d7;
+    color: #0078d7;
 }
 
 .ms-Button.ms-Button--hero:hover .ms-Button-label,
-.ms-Button.ms-Button--hero:focus .ms-Button-label{
-  color: #005a9e;
-  cursor: pointer;
+.ms-Button.ms-Button--hero:focus .ms-Button-label {
+    color: #005a9e;
+    cursor: pointer;
 }
 
 .grid {
-  width: 23%;
+    width: 23%;
 }
 
 .color-picker {
-  width: 100%;
+    width: 100%;
 }
 
 .sticker-yellow {
-  background-color: yellow;
-  border: none;
-  padding: 30px 64px;
-  display: inline-block;
-  margin: 16px 2px 2px;
-  cursor: pointer;
-  box-shadow: 2px 2px 4px #7D7D7D;
-  border-radius: 0.375rem;
+    background-color: yellow;
+    border: none;
+    padding: 30px 64px;
+    display: inline-block;
+    margin: 16px 2px 2px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px #7D7D7D;
+    border-radius: 0.375rem;
 }
 
 .sticker-cyan {
-  background-color: #00ffff;
-  border: none;
-  padding: 30px 64px;
-  display: inline-block;
-  margin: 16px 2px 2px;
-  cursor: pointer;
-  box-shadow: 2px 2px 4px #7D7D7D;
-  border-radius: 0.375rem;
+    background-color: #00ffff;
+    border: none;
+    padding: 30px 64px;
+    display: inline-block;
+    margin: 16px 2px 2px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px #7D7D7D;
+    border-radius: 0.375rem;
 }
 
 .content {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  margin: 0 auto;
-  gap: 5px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    margin: 0 auto;
+    gap: 5px;
+}
+
+.content-vertical {
+    display: flex;
+    flex-direction: row;
+    /*margin: 0 auto;*/
+    gap: 5px;
+    width: 100%;
 }
 
 .save-button {
-  width: 31%;
+    width: 31%;
 }
 
 .grid-button {
-  width: 49%
+    width: 49%
+}
+
+.logo-button {
+    width: 100%;
+}
+
+.drop-grid-button{
+    width: 79%;
+    margin-top: 5px;
+}
+
+.dropdown-menu {
+    position: fixed;
+    display: none;
+}
+
+.dropdown button {
+    display: block;
+}
+
+
+.dropdown-menu.show {
+    display: block;
 }
