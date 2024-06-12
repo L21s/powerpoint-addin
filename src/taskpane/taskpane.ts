@@ -15,8 +15,8 @@ const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
 const SLIDE_MARGIN = 8;
 const CONTENT_MARGIN = { top: 126, bottom: 60, right: 54, left: 58 };
-const CONTENT_HEIGHT = 354;
-const CONTENT_WIDTH = 848;
+const CONTENT_HEIGHT = SLIDE_HEIGHT - CONTENT_MARGIN.top - CONTENT_MARGIN.bottom;
+const CONTENT_WIDTH = SLIDE_WIDTH - CONTENT_MARGIN.right - CONTENT_MARGIN.left;
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
