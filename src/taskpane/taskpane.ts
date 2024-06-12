@@ -7,13 +7,14 @@
 
 import { base64Images } from "../../base64Image";
 import * as M from "../../lib/materialize/js/materialize.min";
+import Shape = PowerPoint.Shape;
 
 const rowLineName = "RowLine";
 const columnLineName = "ColumnLine";
 const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
 const SLIDE_MARGIN = 8;
-const CONTENT_MARGIN = {top: 126, bottom: 60, right: 54, left: 58};
+const CONTENT_MARGIN = { top: 126, bottom: 60, right: 54, left: 58 };
 const CONTENT_HEIGHT = 354;
 const CONTENT_WIDTH = 848;
 
@@ -101,47 +102,123 @@ function insertImageByBase64(base64Name: string) {
 }
 
 export async function createRows(numberOfRows: number) {
-  const lineDistance = CONTENT_HEIGHT / numberOfRows;
-  let top = CONTENT_MARGIN.top;
-
-  await runPowerPoint((powerPointContext) => {
-    for (let _i = 0; _i <= numberOfRows - 1; _i++) {
-      console.log("пробежал");
-      const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
-      const line = shapes.addLine(PowerPoint.ConnectorType.straight);
-      line.name = rowLineName;
-      line.left = SLIDE_MARGIN;
-      line.top = top;
-      line.height = 0;
-      line.width = SLIDE_WIDTH - SLIDE_MARGIN * 2;
-      line.lineFormat.color = "#000000";
-      line.lineFormat.weight = 0.5;
-
-      top += lineDistance;
+  await runPowerPoint(async (powerPointContext) => {
+    const singleSelectedShapeOrNull = await getSingleSelectedShapeOrNull(powerPointContext);
+    if (singleSelectedShapeOrNull) {
+      await createRowsForObject(numberOfRows, singleSelectedShapeOrNull, powerPointContext);
+    } else {
+      await createRowsForSlide(numberOfRows, powerPointContext);
     }
   });
 }
 
-export async function createColumns(numberOfColumns: number) {
+export async function createColumns(numberOfRows: number) {
+  await runPowerPoint(async (powerPointContext) => {
+    const singleSelectedShapeOrNull = await getSingleSelectedShapeOrNull(powerPointContext);
+    if (singleSelectedShapeOrNull) {
+      await createColumnsForObject(numberOfRows, singleSelectedShapeOrNull, powerPointContext);
+    } else {
+      await createColumnsForSlide(numberOfRows, powerPointContext);
+    }
+  });
+}
+
+export async function createRowsForSlide(numberOfRows: number, powerPointContext: PowerPoint.RequestContext) {
+  const lineDistance = CONTENT_HEIGHT / numberOfRows;
+  let top = CONTENT_MARGIN.top;
+
+  for (let _i = 0; _i <= numberOfRows; _i++) {
+    const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+    const line = shapes.addLine(
+      PowerPoint.ConnectorType.straight,
+      { left: SLIDE_MARGIN, top: top, width: SLIDE_WIDTH - SLIDE_MARGIN * 2, height: 0.5 }
+    );
+    line.name = rowLineName;
+    line.lineFormat.color = "#000000";
+
+    top += lineDistance;
+  }
+  await powerPointContext.sync();
+}
+
+export async function createColumnsForSlide(numberOfColumns: number, powerPointContext: PowerPoint.RequestContext) {
   const lineDistance = CONTENT_WIDTH / numberOfColumns;
   let left = CONTENT_MARGIN.left;
 
-  await runPowerPoint((powerPointContext) => {
-    for (let _i = 0; _i <= numberOfColumns - 1; _i++) {
-      // powerPointContext.presentation.getSelectedShapes() // TODO for columns for selected objects
-      const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
-      const line = shapes.addLine(PowerPoint.ConnectorType.straight);
-      line.name = columnLineName;
-      line.left = left;
-      line.top = SLIDE_MARGIN;
-      line.height = SLIDE_HEIGHT - SLIDE_MARGIN * 2;
-      line.width = 0;
-      line.lineFormat.color = "#000000";
-      line.lineFormat.weight = 0.5;
+  for (let _i = 0; _i <= numberOfColumns; _i++) {
+    const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+    const line = shapes.addLine(
+      PowerPoint.ConnectorType.straight,
+      { left: left, top: SLIDE_MARGIN, width: 0.5, height: SLIDE_HEIGHT - SLIDE_MARGIN * 2 }
+    );
+    line.name = columnLineName;
+    line.lineFormat.color = "#000000";
 
-      left += lineDistance;
-    }
-  });
+    left += lineDistance;
+  }
+  await powerPointContext.sync();
+}
+
+export async function createColumnsForObject(numberOfColumns: number, selectedShape: Shape, powerPointContext: PowerPoint.RequestContext) {
+  await powerPointContext.sync();
+
+  const lineDistance = selectedShape.width / numberOfColumns;
+  let left = selectedShape.left;
+
+  for (let _i = 0; _i <= numberOfColumns; _i++) {
+    let selectedShapeBottom = selectedShape.top + selectedShape.height;
+    let lineHeight = SLIDE_HEIGHT - CONTENT_MARGIN.bottom - selectedShapeBottom;
+
+    let shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+    const line = shapes.addLine(
+      PowerPoint.ConnectorType.straight,
+      { height: lineHeight, left: left, top: selectedShapeBottom, width: 0.5 }
+    );
+    line.name = columnLineName;
+    line.lineFormat.color = "#000000";
+
+    left += lineDistance;
+    await powerPointContext.sync();
+  }
+}
+
+export async function createRowsForObject(numberOfColumns: number, selectedShape: Shape, powerPointContext: PowerPoint.RequestContext) {
+  await powerPointContext.sync();
+
+  const lineDistance = selectedShape.height / numberOfColumns;
+  let top = selectedShape.top;
+
+  for (let _i = 0; _i <= numberOfColumns; _i++) {
+    let selectedShapeRight = selectedShape.left + selectedShape.width;
+    let lineWidth = SLIDE_WIDTH - CONTENT_MARGIN.right - selectedShapeRight;
+
+    let shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
+    const line = shapes.addLine(
+      PowerPoint.ConnectorType.straight,
+      { height: 0.5, left: selectedShapeRight, top: top, width: lineWidth }
+    );
+    line.name = columnLineName;
+    line.lineFormat.color = "#000000";
+
+    top += lineDistance;
+    await powerPointContext.sync();
+  }
+}
+
+
+export async function getSingleSelectedShapeOrNull(context: PowerPoint.RequestContext) {
+  let selectedShapes = context.presentation.getSelectedShapes();
+  let clientResult = selectedShapes.getCount();
+  await context.sync();
+  let selectedShapesCount = clientResult.value;
+  if (selectedShapesCount != 1) {
+    console.log("error 154");
+    // TODO error handling
+    return null;
+  }
+
+  let selectedShape = selectedShapes.getItemAt(0);
+  return selectedShape.load();
 }
 
 export async function insertSticker(color) {
