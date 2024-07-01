@@ -79,8 +79,22 @@ ul {
     width: 23%;
 }
 
+.number-input-container {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.button-row {
+    margin-bottom: 0;
+}
+
 .color-picker {
     width: 100%;
+}
+
+.sticker-buttons-container{
+    display: flex;
+    justify-content: space-evenly;
 }
 
 .sticker-yellow {

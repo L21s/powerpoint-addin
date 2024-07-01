@@ -36,67 +36,74 @@
 <section id="display-msg" class="ms-welcome__main">
   <div class="padding">
     <h3 class="ms-font-l">Sticker</h3>
-    <div>
-      Autor
-      <label for="initials"></label><input type="text" id="initials" />
-      <button class="save-button" id="save-initials">Save</button>
+    <div class="input-field">
+      <label for="initials">Autor</label><input type="text" id="initials" />
     </div>
-    <button class="sticker-yellow" id="yellow-sticker"></button>
-    <button class="sticker-cyan" id="cyan-sticker"></button>
+    <button class="save-button btn" id="save-initials">Save</button>
+    <div class="sticker-buttons-container">
+      <button class="sticker-button sticker-yellow" id="yellow-sticker"></button>
+      <button class="sticker-button sticker-cyan" id="cyan-sticker"></button>
+    </div>
 
     <h3 class="ms-font-l">Background</h3>
     <div class="content">
       <div>
-        <label for="background-color"></label><input class="color-picker" type="color" id="background-color"
-                                                     name="head" value="#FFFFFF" />
+        <label for="background-color"></label>
+        <input class="color-picker" type="color" id="background-color" name="head" value="#FFFFFF" />
       </div>
-      <button class="ms-Button" id="fill-background">Fill</button>
+      <button class="ms-Button btn" id="fill-background">Fill</button>
     </div>
 
     <h3 class="ms-font-l">Rows</h3>
     <div class="content">
-      <div>
-        <button class="grid" id="two-rows">2</button>
-        <button class="grid" id="three-rows">3</button>
-        <button class="grid" id="four-rows">4</button>
-        <input class="grid" type="number" id="number-of-rows" name="head" value=5/>
+      <div class="row button-row">
+        <button class="grid row-button btn col s3" id="two-rows" data-value="2">2</button>
+        <button class="grid row-button btn col s3" id="three-rows" data-value="3">3</button>
+        <button class="grid row-button btn col s3" id="four-rows" data-value="4">4</button>
+        <div class="input-field col s3 number-input-container">
+          <label for="number-of-rows">Rows</label>
+          <input class="grid" type="number" id="number-of-rows" name="head" value=5 placeholder="5"/>
+        </div>
       </div>
       <div>
-        <button class="grid-button" id="create-rows">Create</button>
-        <button class="grid-button" id="delete-rows">Delete</button>
+        <button class="grid-button btn" id="create-rows">Create</button>
+        <button class="grid-button btn" id="delete-rows">Delete</button>
       </div>
     </div>
 
     <h3 class="ms-font-l">Columns</h3>
     <div class="content">
-      <div>
-        <button class="grid" id="two-columns">2</button>
-        <button class="grid" id="three-columns">3</button>
-        <button class="grid" id="four-columns">4</button>
-        <input class="grid" type="number" id="number-of-columns" name="head" value=5/>
+      <div class="row button-row">
+        <button class="grid column-button btn col s3" id="two-columns" data-value="2">2</button>
+        <button class="grid column-button btn col s3" id="three-columns" data-value="3">3</button>
+        <button class="grid column-button btn col s3" id="four-columns" data-value="4">4</button>
+        <div class="input-field col s3 number-input-container">
+          <label for="number-of-columns">Columns</label>
+          <input class="grid" type="number" id="number-of-columns" name="head" value=5 placeholder="5"/>
+        </div>
       </div>
       <div>
-        <button class="grid-button" id="create-columns">Create</button>
-        <button class="grid-button" id="delete-columns">Delete</button>
+        <button class="grid-button btn" id="create-columns">Create</button>
+        <button class="grid-button btn" id="delete-columns">Delete</button>
       </div>
     </div>
 
     <h3 class="ms-font-l">L21's-Logo</h3>
     <div class="content-vertical">
-      <button class="logo-button dropdown-trigger btn" id="logos-with-text" href='#' data-target='logos-with-text-dropdown'> with Text</button>
+      <button class="dropdown-trigger btn" id="logos-with-text" href='#' data-target='logos-with-text-dropdown'> with Text</button>
       <ul id='logos-with-text-dropdown' class='dropdown-content'>
-        <li><a href="#!" id="black-logo-with-text">Black</a></li>
-        <li><a href="#!" id="white-logo-with-text">White</a></li>
-        <li><a href="#!" id="pink-logo-with-text">Pink</a></li>
-        <li><a href="#!" id="blue-logo-with-text">Blue</a></li>
+        <li class="logo-button"><a href="#!" id="black-logo-with-text" data-value="logoTextBlack">Black</a></li>
+        <li class="logo-button"><a href="#!" id="white-logo-with-text" data-value="logoTextWhite">White</a></li>
+        <li class="logo-button"><a href="#!" id="pink-logo-with-text" data-value="logoTextPink">Pink</a></li>
+        <li class="logo-button"><a href="#!" id="blue-logo-with-text" data-value="logoTextBlue">Blue</a></li>
       </ul>
 
-      <button class="logo-button dropdown-trigger btn" id="logos-without-text" href='#' data-target='logos-without-text-dropdown'> without Text</button>
+      <button class="dropdown-trigger btn" id="logos-without-text" href='#' data-target='logos-without-text-dropdown'> without Text</button>
       <ul class="dropdown-menu dropdown-content" id="logos-without-text-dropdown">
-        <li><a href="#!" id="black-logo-without-text">Black</a></li>
-        <li><a href="#!" id="white-logo-without-text">White</a></li>
-        <li><a href="#!" id="pink-logo-without-text">Pink</a></li>
-        <li><a href="#!" id="blue-logo-without-text">Blue</a></li>
+        <li class="logo-button"><a href="#!" id="black-logo-without-text" data-value="logoBlack">Black</a></li>
+        <li class="logo-button"><a href="#!" id="white-logo-without-text" data-value="logoWhite">White</a></li>
+        <li class="logo-button"><a href="#!" id="pink-logo-without-text" data-value="logoPink">Pink</a></li>
+        <li class="logo-button"><a href="#!" id="blue-logo-without-text" data-value="logoBlue">Blue</a></li>
       </ul>
     </div>
 
