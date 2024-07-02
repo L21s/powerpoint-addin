@@ -10,33 +10,6 @@ import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 
-function initStickerButtons() {
-  document.querySelectorAll(".sticker-button").forEach((button) => {
-    const color = window.getComputedStyle(button as HTMLElement).backgroundColor;
-    (button as HTMLElement).onclick = () => insertSticker(color);
-  });
-
-  document.getElementById("save-initials").onclick = () =>
-    localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
-}
-
-function initRowsAndColumnsButtons() {
-  document.getElementById("create-rows").onclick = () =>
-    createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
-  document.getElementById("delete-rows").onclick = () => deleteShapesByName(rowLineName);
-  document.querySelectorAll(".row-button").forEach((button) => {
-    (button as HTMLElement).onclick = () =>
-      createRows(Number(button.getAttribute("data-value")));
-  });
-
-  document.querySelectorAll(".column-button").forEach((button) => {
-    (button as HTMLElement).onclick = () => createColumns(Number(button.getAttribute("data-value")));
-  });
-  document.getElementById("create-columns").onclick = () =>
-    createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
-  document.getElementById("delete-columns").onclick = () => deleteShapesByName(columnLineName);
-}
-
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     M.AutoInit(document.body);
@@ -58,6 +31,34 @@ Office.onReady((info) => {
     });
   }
 });
+
+function initRowsAndColumnsButtons() {
+  document.getElementById("create-rows").onclick = () =>
+    createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
+  document.getElementById("delete-rows").onclick = () => deleteShapesByName(rowLineName);
+  document.querySelectorAll(".row-button").forEach((button) => {
+    (button as HTMLElement).onclick = () => {
+      createRows(Number(button.getAttribute("data-value")));
+    }
+  });
+
+  document.querySelectorAll(".column-button").forEach((button) => {
+    (button as HTMLElement).onclick = () => createColumns(Number(button.getAttribute("data-value")));
+  });
+  document.getElementById("create-columns").onclick = () =>
+    createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
+  document.getElementById("delete-columns").onclick = () => deleteShapesByName(columnLineName);
+}
+
+function initStickerButtons() {
+  document.querySelectorAll(".sticker-button").forEach((button) => {
+    const color = window.getComputedStyle(button as HTMLElement).backgroundColor;
+    (button as HTMLElement).onclick = () => insertSticker(color);
+  });
+
+  document.getElementById("save-initials").onclick = () =>
+    localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
+}
 
 async function deleteShapesByName(name: string) {
   await PowerPoint.run(async (context) => {
@@ -92,7 +93,6 @@ function insertImageByBase64(base64Name: string) {
 export async function insertSticker(color) {
   await runPowerPoint((powerPointContext) => {
     const today = new Date();
-    console.log(rgbToHex(color))
     const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
     const textBox = shapes.addTextBox(
       localStorage.getItem("initials") + ", " + today.toDateString() + "\n",
@@ -107,13 +107,12 @@ export async function insertSticker(color) {
 function rgbToHex(rgb: String) {
   const regex = /(\d+),\s*(\d+),\s*(\d+)/;
   const matches = rgb.match(regex);
-  console.log(matches);
   function componentToHex(c: String) {
     const hex = Number(c).toString(16);
     return hex.length === 1 ? "0" + hex : hex;
   }
 
-  return "#" + componentToHex(matches[2]) + componentToHex(matches[2]) + componentToHex(matches[3]);
+  return "#" + componentToHex(matches[1]) + componentToHex(matches[2]) + componentToHex(matches[3]);
 }
 
 function setStickerFontProperties(textbox: PowerPoint.Shape) {
