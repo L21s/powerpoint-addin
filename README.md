@@ -35,6 +35,12 @@ command:
 npm run stop
 ```
 
+## Debugging
+After running the following command, the developer console is available with right click into the add-in window and selecting element information.  
+`defaults write com.microsoft.Powerpoint OfficeWebAddinDeveloperExtras -bool true`
+
+⚠️ Mac App Store builds of Office do not support the OfficeWebAddinDeveloperExtras flag.
+
 ## Helpful links
 
 [PowerPoint Api-Documentation](https://learn.microsoft.com/de-de/javascript/api/powerpoint?view=powerpoint-js-preview)
