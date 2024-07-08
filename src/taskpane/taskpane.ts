@@ -29,6 +29,20 @@ Office.onReady((info) => {
     document.querySelectorAll(".logo-button").forEach((button) => {
       (button as HTMLElement).onclick = () => insertImageByBase64(button.getAttribute("data-value"));
     });
+
+    document.getElementById("icons").onclick = async () => {
+      document.querySelectorAll(".icon-results img").forEach((img) => img.remove());
+
+      try {
+        const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
+        const urls = await fetchIcons(searchTerm);
+        urls.forEach((url) => {
+          getImageElementWithSource(url);
+        });
+      } catch (e) {
+        throw new Error("Error retrieving icon urls: " + e);
+      }
+    };
   }
 });
 
@@ -150,4 +164,13 @@ export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
   } catch (e) {
     throw new Error("Error fetching icons: " + e);
   }
+}
+
+function getImageElementWithSource(source: string) {
+  const iconUrlElement = document.getElementById("icon-urls");
+  const imageElement = document.createElement("img");
+  imageElement.src = source;
+  imageElement.width = 50;
+  imageElement.height = 50;
+  iconUrlElement.appendChild(imageElement);
 }
