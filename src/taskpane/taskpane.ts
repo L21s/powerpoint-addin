@@ -9,6 +9,7 @@ import { base64Images } from "../../base64Image";
 import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
+import { FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -35,9 +36,9 @@ Office.onReady((info) => {
 
       try {
         const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
-        const urls = await fetchIcons(searchTerm);
-        urls.forEach((url) => {
-          getImageElementWithSource(url);
+        const result = await fetchIcons(searchTerm);
+        result.forEach((obj) => {
+          getImageElementWithSource(obj.id, obj.url);
         });
       } catch (e) {
         throw new Error("Error retrieving icon urls: " + e);
@@ -147,7 +148,7 @@ export async function addBackground(backgroundColor?: string) {
   });
 }
 
-export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
+export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
   const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=${searchTerm}&family-id=300&filters[shape]=outline&filters[color]=solid-black&filters[free_svg]=premium`;
   const requestHeaders = new Headers();
   requestHeaders.append("X-Freepik-API-Key", "FPSX6fb1f23cbea7497387b5e5b8eb8943de");
@@ -161,16 +162,20 @@ export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
     const response = await result.json();
     return response.data
       .filter((obj) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
-      .map((obj) => obj.thumbnails[0].url)
+      .map((obj) => ({
+        id: obj.id.toString(),
+        url: obj.thumbnails[0].url,
+      }))
       .slice(0, 50);
   } catch (e) {
     throw new Error("Error fetching icons: " + e);
   }
 }
 
-function getImageElementWithSource(source: string) {
+function getImageElementWithSource(id: string, source: string) {
   const iconUrlElement = document.getElementById("icon-urls");
   const imageElement = document.createElement("img");
+  imageElement.id = id;
   imageElement.src = source;
   imageElement.width = 50;
   imageElement.height = 50;
