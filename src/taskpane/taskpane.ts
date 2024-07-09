@@ -148,8 +148,7 @@ export async function addBackground(backgroundColor?: string) {
 }
 
 export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
-  const url =
-    "https://hammerhead-app-fj5ps.ondigitalocean.app/icons?family_id=300&style_id=26&author_id=159&term=" + searchTerm;
+  const url = "https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=" + searchTerm;
   const requestHeaders = new Headers();
   requestHeaders.append("X-Freepik-API-Key", "FPSX6fb1f23cbea7497387b5e5b8eb8943de");
   const requestOptions = {
@@ -160,7 +159,10 @@ export async function fetchIcons(searchTerm: string): Promise<Array<string>> {
   try {
     const result = await fetch(url, requestOptions);
     const response = await result.json();
-    return response.data.map((obj) => obj.thumbnails[0].url).slice(0, 50);
+    return response.data
+      .filter((obj) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
+      .map((obj) => obj.thumbnails[0].url)
+      .slice(0, 50);
   } catch (e) {
     throw new Error("Error fetching icons: " + e);
   }
