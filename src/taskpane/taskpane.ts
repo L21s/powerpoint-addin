@@ -45,7 +45,7 @@ Office.onReady((info) => {
       }
     };
 
-    document.getElementById("icon-urls").addEventListener("click", insertBase64Image);
+    document.getElementById("icon-urls").addEventListener("click", (event) => insertBase64Image(event), false);
   }
 });
 
@@ -185,7 +185,7 @@ function getImageElementWithSource(id: string, source: string) {
 }
 
 async function insertBase64Image(event) {
-  const imageSizeInPixels = 100;
+  const imageSizeInPixels = 500;
   const path = await getDownloadPathForIconWith(event.target.id);
   let base64Image: string = await downloadIconWith(path)
     .then((response) => response.blob())
@@ -216,6 +216,16 @@ async function insertBase64Image(event) {
     const base64Idx = base64Image.indexOf(PREFIX);
     base64Image = base64Image.substring(base64Idx + PREFIX.length);
   }
+
+  Office.context.document.setSelectedDataAsync(
+    base64Image,
+    { coercionType: Office.CoercionType.Image },
+    (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error(`Insert image failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`);
+      }
+    }
+  );
 }
 
 async function getDownloadPathForIconWith(id: string) {
