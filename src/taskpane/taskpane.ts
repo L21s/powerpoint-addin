@@ -45,7 +45,7 @@ Office.onReady((info) => {
       }
     };
 
-    document.getElementById("icon-urls").addEventListener("click", (event) => insertBase64Image(event), false);
+    document.getElementById("icon-urls").addEventListener("click", (event) => insertBase64ImageOn(event), false);
   }
 });
 
@@ -160,7 +160,7 @@ function getImageElementWithSource(id: string, source: string) {
   iconUrlElement.appendChild(imageElement);
 }
 
-async function insertBase64Image(event) {
+async function insertBase64ImageOn(event) {
   const imageSizeInPixels = 500;
   const path = await getDownloadPathForIconWith(event.target.id);
   let base64Image: string = await downloadIconWith(path)
