@@ -199,3 +199,15 @@ async function getDownloadPathForIconWith(id: string) {
     throw new Error("Error getting download url: " + e);
   }
 }
+
+async function downloadIconWith(url: string) {
+  const requestOptions = {
+    method: "GET",
+  };
+
+  try {
+    return await fetch(url, requestOptions);
+  } catch (e) {
+    throw new Error("Error downloading icon: " + e);
+  }
+}
