@@ -44,6 +44,8 @@ Office.onReady((info) => {
         throw new Error("Error retrieving icon urls: " + e);
       }
     };
+
+    document.getElementById("icon-urls").addEventListener("click", insertBase64Image);
   }
 });
 
@@ -180,6 +182,40 @@ function getImageElementWithSource(id: string, source: string) {
   imageElement.width = 50;
   imageElement.height = 50;
   iconUrlElement.appendChild(imageElement);
+}
+
+async function insertBase64Image(event) {
+  const imageSizeInPixels = 100;
+  const path = await getDownloadPathForIconWith(event.target.id);
+  let base64Image: string = await downloadIconWith(path)
+    .then((response) => response.blob())
+    .then(
+      (blob) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          const reader = new FileReader();
+          reader.onload = () => {
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              canvas.width = imageSizeInPixels;
+              canvas.height = imageSizeInPixels;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, imageSizeInPixels, imageSizeInPixels);
+              resolve(canvas.toDataURL("image/png"));
+            };
+            img.onerror = reject;
+            img.src = reader.result as string;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+    );
+
+  if (base64Image.startsWith("data:")) {
+    const PREFIX = "base64,";
+    const base64Idx = base64Image.indexOf(PREFIX);
+    base64Image = base64Image.substring(base64Idx + PREFIX.length);
+  }
 }
 
 async function getDownloadPathForIconWith(id: string) {
