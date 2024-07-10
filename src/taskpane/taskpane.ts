@@ -181,3 +181,21 @@ function getImageElementWithSource(id: string, source: string) {
   imageElement.height = 50;
   iconUrlElement.appendChild(imageElement);
 }
+
+async function getDownloadPathForIconWith(id: string) {
+  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons/${id}/download?format=png`;
+  const requestHeaders = new Headers();
+  requestHeaders.append("X-Freepik-API-Key", "FPSX6fb1f23cbea7497387b5e5b8eb8943de");
+  const requestOptions = {
+    method: "GET",
+    headers: requestHeaders,
+  };
+
+  try {
+    const result = await fetch(url, requestOptions);
+    const response = await result.json();
+    return response.data.url;
+  } catch (e) {
+    throw new Error("Error getting download url: " + e);
+  }
+}
