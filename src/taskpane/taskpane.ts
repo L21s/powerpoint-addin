@@ -38,7 +38,7 @@ Office.onReady((info) => {
         const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
         const result = await fetchIcons(searchTerm);
         result.forEach((obj) => {
-          getImageElementWithSource(obj.id, obj.url);
+          addIconPreviewWith(obj.id, obj.url);
         });
       } catch (e) {
         throw new Error("Error retrieving icon urls: " + e);
@@ -150,7 +150,7 @@ export async function addBackground(backgroundColor?: string) {
   });
 }
 
-function getImageElementWithSource(id: string, source: string) {
+function addIconPreviewWith(id: string, source: string) {
   const iconUrlElement = document.getElementById("icon-urls");
   const imageElement = document.createElement("img");
   imageElement.id = id;
