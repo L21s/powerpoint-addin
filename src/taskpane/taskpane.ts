@@ -10,6 +10,7 @@ import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
+import { FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -137,14 +138,27 @@ export async function addBackground(backgroundColor?: string) {
   });
 }
 
-function addIconPreviewWith(id: string, source: string) {
-  const iconUrlElement = document.getElementById("icon-urls");
-  const imageElement = document.createElement("img");
-  imageElement.id = id;
-  imageElement.src = source;
-  imageElement.width = 50;
-  imageElement.height = 50;
-  iconUrlElement.appendChild(imageElement);
+function addIconPreviewWith(icons: FetchIconResponse[]) {
+  console.log("addIconPreviewWith");
+  for (let i = 0; i < icons.length; i += 5) {
+    console.log("batchProcessing");
+    const batch = icons.slice(i, i + 5);
+
+    const iconUrlElement = document.getElementById("icon-urls");
+    const listElement = document.createElement("li");
+    const anchorElement = document.createElement("a");
+    iconUrlElement.appendChild(listElement);
+    listElement.appendChild(anchorElement);
+
+    batch.forEach((iconResponse) => {
+      const imageElement = document.createElement("img");
+      imageElement.id = iconResponse.id;
+      imageElement.src = iconResponse.url;
+      imageElement.width = 45;
+      imageElement.height = 45;
+      anchorElement.appendChild(imageElement);
+    });
+  }
 }
 
 async function insertBase64ImageOn(event) {
@@ -193,14 +207,14 @@ async function insertBase64ImageOn(event) {
 
 function addIconSearch() {
   document.getElementById("icons").onclick = async () => {
-    document.querySelectorAll(".icon-results img").forEach((img) => img.remove());
+    console.log("clicked");
+    document.querySelectorAll("#icon-urls li").forEach((li) => li.remove());
 
     try {
+      console.log("clicked try");
       const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
       const result = await fetchIcons(searchTerm);
-      result.forEach((obj) => {
-        addIconPreviewWith(obj.id, obj.url);
-      });
+      addIconPreviewWith(result);
     } catch (e) {
       throw new Error("Error retrieving icon urls: " + e);
     }
