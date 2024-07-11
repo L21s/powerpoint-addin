@@ -6,7 +6,7 @@
 /* global Office, PowerPoint */
 
 import { base64Images } from "../../base64Image";
-import * as M from "../../lib/materialize/js/materialize.min";
+import * as M from "../../lib/materialize/js/materialize";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
@@ -32,11 +32,25 @@ Office.onReady((info) => {
       (button as HTMLElement).onclick = () => insertImageByBase64(button.getAttribute("data-value"));
     });
 
+    initDropdownPlaceholder();
     addIconSearch();
     insertIconOnClickOnPreview();
   }
 });
 
+
+function initDropdownPlaceholder() {
+  const ul = document.getElementById("icon-urls");
+  for (let i = 0; i < 15; i++) {
+    const span = document.createElement("span");
+    span.innerText = "Loading...";
+    const a = document.createElement("a");
+    const li = document.createElement("li");
+    a.appendChild(span);
+    li.appendChild(a);
+    ul.appendChild(li);
+  }
+}
 function initRowsAndColumnsButtons() {
   document.getElementById("create-rows").onclick = () =>
     createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
@@ -44,7 +58,7 @@ function initRowsAndColumnsButtons() {
   document.querySelectorAll(".row-button").forEach((button) => {
     (button as HTMLElement).onclick = () => {
       createRows(Number(button.getAttribute("data-value")));
-    }
+    };
   });
 
   document.querySelectorAll(".column-button").forEach((button) => {
@@ -101,7 +115,7 @@ export async function insertSticker(color) {
     const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
     const textBox = shapes.addTextBox(
       localStorage.getItem("initials") + ", " + today.toDateString() + "\n",
-    { height: 50, left: 50, top: 50, width: 150 }
+      { height: 50, left: 50, top: 50, width: 150 }
     );
     textBox.name = "Square";
     textBox.fill.setSolidColor(rgbToHex(color));
@@ -112,6 +126,7 @@ export async function insertSticker(color) {
 function rgbToHex(rgb: String) {
   const regex = /(\d+),\s*(\d+),\s*(\d+)/;
   const matches = rgb.match(regex);
+
   function componentToHex(c: String) {
     const hex = Number(c).toString(16);
     return hex.length === 1 ? "0" + hex : hex;
