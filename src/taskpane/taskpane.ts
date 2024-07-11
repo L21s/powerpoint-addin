@@ -6,7 +6,7 @@
 /* global Office, PowerPoint */
 
 import { base64Images } from "../../base64Image";
-import * as M from "../../lib/materialize/js/materialize";
+import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
@@ -38,19 +38,6 @@ Office.onReady((info) => {
   }
 });
 
-
-function initDropdownPlaceholder() {
-  const ul = document.getElementById("icon-urls");
-  for (let i = 0; i < 15; i++) {
-    const span = document.createElement("span");
-    span.innerText = "Loading...";
-    const a = document.createElement("a");
-    const li = document.createElement("li");
-    a.appendChild(span);
-    li.appendChild(a);
-    ul.appendChild(li);
-  }
-}
 function initRowsAndColumnsButtons() {
   document.getElementById("create-rows").onclick = () =>
     createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
@@ -154,24 +141,20 @@ export async function addBackground(backgroundColor?: string) {
 }
 
 function addIconPreviewWith(icons: FetchIconResponse[]) {
-  console.log("addIconPreviewWith");
   for (let i = 0; i < icons.length; i += 5) {
-    console.log("batchProcessing");
-    const batch = icons.slice(i, i + 5);
-
-    const iconUrlElement = document.getElementById("icon-urls");
+    const iconPreviewElement = document.getElementById("icon-previews");
     const listElement = document.createElement("li");
     const anchorElement = document.createElement("a");
-    iconUrlElement.appendChild(listElement);
+    iconPreviewElement.appendChild(listElement);
     listElement.appendChild(anchorElement);
 
-    batch.forEach((iconResponse) => {
-      const imageElement = document.createElement("img");
-      imageElement.id = iconResponse.id;
-      imageElement.src = iconResponse.url;
-      imageElement.width = 45;
-      imageElement.height = 45;
-      anchorElement.appendChild(imageElement);
+    icons.slice(i, i + 5).forEach((icon) => {
+      const iconPreviewElement = document.createElement("img");
+      iconPreviewElement.id = icon.id;
+      iconPreviewElement.src = icon.url;
+      iconPreviewElement.width = 45;
+      iconPreviewElement.height = 45;
+      anchorElement.appendChild(iconPreviewElement);
     });
   }
 }
@@ -222,11 +205,9 @@ async function insertBase64ImageOn(event) {
 
 function addIconSearch() {
   document.getElementById("icons").onclick = async () => {
-    console.log("clicked");
-    document.querySelectorAll("#icon-urls li").forEach((li) => li.remove());
+    document.querySelectorAll("#icon-previews li").forEach((li) => li.remove());
 
     try {
-      console.log("clicked try");
       const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
       const result = await fetchIcons(searchTerm);
       addIconPreviewWith(result);
@@ -237,5 +218,18 @@ function addIconSearch() {
 }
 
 function insertIconOnClickOnPreview() {
-  document.getElementById("icon-urls").addEventListener("click", (event) => insertBase64ImageOn(event), false);
+  document.getElementById("icon-previews").addEventListener("click", (event) => insertBase64ImageOn(event), false);
+}
+
+function initDropdownPlaceholder() {
+  const iconPreviewElement = document.getElementById("icon-previews");
+  for (let i = 0; i < 15; i++) {
+    const spanElement = document.createElement("span");
+    spanElement.innerText = "Loading...";
+    const anchorElement = document.createElement("a");
+    const listElement = document.createElement("li");
+    iconPreviewElement.appendChild(listElement);
+    listElement.appendChild(anchorElement);
+    anchorElement.appendChild(spanElement);
+  }
 }
