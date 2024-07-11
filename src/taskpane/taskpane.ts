@@ -31,21 +31,8 @@ Office.onReady((info) => {
       (button as HTMLElement).onclick = () => insertImageByBase64(button.getAttribute("data-value"));
     });
 
-    document.getElementById("icons").onclick = async () => {
-      document.querySelectorAll(".icon-results img").forEach((img) => img.remove());
-
-      try {
-        const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
-        const result = await fetchIcons(searchTerm);
-        result.forEach((obj) => {
-          addIconPreviewWith(obj.id, obj.url);
-        });
-      } catch (e) {
-        throw new Error("Error retrieving icon urls: " + e);
-      }
-    };
-
-    document.getElementById("icon-urls").addEventListener("click", (event) => insertBase64ImageOn(event), false);
+    addIconSearch();
+    insertIconOnClickOnPreview();
   }
 });
 
@@ -202,4 +189,24 @@ async function insertBase64ImageOn(event) {
       }
     }
   );
+}
+
+function addIconSearch() {
+  document.getElementById("icons").onclick = async () => {
+    document.querySelectorAll(".icon-results img").forEach((img) => img.remove());
+
+    try {
+      const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
+      const result = await fetchIcons(searchTerm);
+      result.forEach((obj) => {
+        addIconPreviewWith(obj.id, obj.url);
+      });
+    } catch (e) {
+      throw new Error("Error retrieving icon urls: " + e);
+    }
+  };
+}
+
+function insertIconOnClickOnPreview() {
+  document.getElementById("icon-urls").addEventListener("click", (event) => insertBase64ImageOn(event), false);
 }
