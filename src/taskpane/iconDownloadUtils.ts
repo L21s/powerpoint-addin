@@ -23,7 +23,7 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
       .slice(0, 50);
   } catch (e) {
     showFetchIconsErrorInDropdown();
-    initDropdownPlaceholder()
+    initDropdownPlaceholder();
     throw new Error("Error fetching icons: " + e);
   }
 }
