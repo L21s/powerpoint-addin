@@ -223,11 +223,10 @@ function insertIconOnClickOnPreview() {
   document.getElementById("icon-previews").addEventListener("click", (event) => insertBase64ImageOn(event), false);
 }
 
-function initDropdownPlaceholder() {
+export function initDropdownPlaceholder() {
   const iconPreviewElement = document.getElementById("icon-previews");
   for (let i = 0; i < 15; i++) {
     const spanElement = document.createElement("span");
-    spanElement.innerText = "Loading...";
     const anchorElement = document.createElement("a");
     const listElement = document.createElement("li");
     iconPreviewElement.appendChild(listElement);
