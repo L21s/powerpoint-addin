@@ -1,7 +1,7 @@
 export function storeFreepikApiKeyEncryptionSecret() {
-  document.getElementById("save-encryption-secret").onclick = () => {
-    const encryptionSecret = (<HTMLInputElement>document.getElementById("encryption-secret")).value;
-    localStorage.setItem("apiKeyEncryptionSecret", encryptionSecret);
-    (<HTMLTextAreaElement>document.getElementById("encryption-secret")).value = "Secret stored";
+  document.getElementById("save-api-key-secret").onclick = () => {
+    const encryptionSecret = (<HTMLInputElement>document.getElementById("api-key-secret")).value;
+    localStorage.setItem("apiKeySecret", encryptionSecret);
+    (<HTMLTextAreaElement>document.getElementById("api-key-secret")).value = "API key secret stored";
   };
 }
