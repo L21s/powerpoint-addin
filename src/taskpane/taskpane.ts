@@ -10,6 +10,7 @@ import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
+import { storeFreepikApiKeyEncryptionSecret } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
@@ -18,6 +19,7 @@ Office.onReady((info) => {
 
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
+    storeFreepikApiKeyEncryptionSecret();
 
     document.getElementById("fill-background").onclick = async () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");
