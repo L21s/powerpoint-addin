@@ -1,9 +1,10 @@
 import { FetchIconResponse } from "./types";
+import { getDecryptedFreepikApiKey } from "./encryptionUtils";
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
   const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=${searchTerm}&family-id=300&filters[shape]=outline&filters[color]=solid-black&filters[free_svg]=premium`;
   const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", "XXX");
+  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
   const requestOptions = {
     method: "GET",
     headers: requestHeaders,
@@ -27,7 +28,7 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
 export async function getDownloadPathForIconWith(id: string) {
   const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons/${id}/download?format=png`;
   const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", "XXX");
+  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
   const requestOptions = {
     method: "GET",
     headers: requestHeaders,
