@@ -9,6 +9,8 @@ import { base64Images } from "../../base64Image";
 import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
+import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
+import { FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -29,6 +31,10 @@ Office.onReady((info) => {
     document.querySelectorAll(".logo-button").forEach((button) => {
       (button as HTMLElement).onclick = () => insertImageByBase64(button.getAttribute("data-value"));
     });
+
+    initDropdownPlaceholder();
+    addIconSearch();
+    insertIconOnClickOnPreview();
   }
 });
 
@@ -39,7 +45,7 @@ function initRowsAndColumnsButtons() {
   document.querySelectorAll(".row-button").forEach((button) => {
     (button as HTMLElement).onclick = () => {
       createRows(Number(button.getAttribute("data-value")));
-    }
+    };
   });
 
   document.querySelectorAll(".column-button").forEach((button) => {
@@ -96,7 +102,7 @@ export async function insertSticker(color) {
     const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
     const textBox = shapes.addTextBox(
       localStorage.getItem("initials") + ", " + today.toDateString() + "\n",
-    { height: 50, left: 50, top: 50, width: 150 }
+      { height: 50, left: 50, top: 50, width: 150 }
     );
     textBox.name = "Square";
     textBox.fill.setSolidColor(rgbToHex(color));
@@ -107,6 +113,7 @@ export async function insertSticker(color) {
 function rgbToHex(rgb: String) {
   const regex = /(\d+),\s*(\d+),\s*(\d+)/;
   const matches = rgb.match(regex);
+
   function componentToHex(c: String) {
     const hex = Number(c).toString(16);
     return hex.length === 1 ? "0" + hex : hex;
@@ -131,4 +138,98 @@ export async function addBackground(backgroundColor?: string) {
     const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
     selectedImage.fill.setSolidColor(backgroundColor);
   });
+}
+
+function addIconPreviewWith(icons: FetchIconResponse[]) {
+  for (let i = 0; i < icons.length; i += 5) {
+    const iconPreviewElement = document.getElementById("icon-previews");
+    const listElement = document.createElement("li");
+    const anchorElement = document.createElement("a");
+    iconPreviewElement.appendChild(listElement);
+    listElement.appendChild(anchorElement);
+
+    icons.slice(i, i + 5).forEach((icon) => {
+      const iconPreviewElement = document.createElement("img");
+      iconPreviewElement.id = icon.id;
+      iconPreviewElement.src = icon.url;
+      iconPreviewElement.width = 45;
+      iconPreviewElement.height = 45;
+      anchorElement.appendChild(iconPreviewElement);
+    });
+  }
+}
+
+async function insertBase64ImageOn(event) {
+  const imageSizeInPixels = 500;
+  const path = await getDownloadPathForIconWith(event.target.id);
+  let base64Image: string = await downloadIconWith(path)
+    .then((response) => response.blob())
+    .then(
+      (blob) =>
+        new Promise((resolve, reject) => {
+          const img = new Image();
+          const reader = new FileReader();
+          reader.onload = () => {
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              canvas.width = imageSizeInPixels;
+              canvas.height = imageSizeInPixels;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, imageSizeInPixels, imageSizeInPixels);
+              resolve(canvas.toDataURL("image/png"));
+            };
+            img.onerror = reject;
+            img.src = reader.result as string;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+    );
+
+  if (base64Image.startsWith("data:")) {
+    const PREFIX = "base64,";
+    const base64Idx = base64Image.indexOf(PREFIX);
+    base64Image = base64Image.substring(base64Idx + PREFIX.length);
+  }
+
+  Office.context.document.setSelectedDataAsync(
+    base64Image,
+    { coercionType: Office.CoercionType.Image },
+    (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error(`Insert image failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`);
+      }
+    }
+  );
+}
+
+function addIconSearch() {
+  document.getElementById("icons").onclick = async () => {
+    document.querySelectorAll("#icon-previews li").forEach((li) => li.remove());
+
+    try {
+      const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
+      const result = await fetchIcons(searchTerm);
+      addIconPreviewWith(result);
+    } catch (e) {
+      throw new Error("Error retrieving icon urls: " + e);
+    }
+  };
+}
+
+function insertIconOnClickOnPreview() {
+  document.getElementById("icon-previews").addEventListener("click", (event) => insertBase64ImageOn(event), false);
+}
+
+function initDropdownPlaceholder() {
+  const iconPreviewElement = document.getElementById("icon-previews");
+  for (let i = 0; i < 15; i++) {
+    const spanElement = document.createElement("span");
+    spanElement.innerText = "Loading...";
+    const anchorElement = document.createElement("a");
+    const listElement = document.createElement("li");
+    iconPreviewElement.appendChild(listElement);
+    listElement.appendChild(anchorElement);
+    anchorElement.appendChild(spanElement);
+  }
 }
