@@ -28,6 +28,7 @@ ul {
 }
 
 .ms-welcome__main {
+    background-color: white;
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;
