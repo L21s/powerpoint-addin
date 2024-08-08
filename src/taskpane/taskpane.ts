@@ -10,6 +10,7 @@ import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
+import { storeFreepikApiKeySecret } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
@@ -18,6 +19,7 @@ Office.onReady((info) => {
 
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
+    storeFreepikApiKeySecret();
 
     document.getElementById("fill-background").onclick = async () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");
@@ -221,11 +223,10 @@ function insertIconOnClickOnPreview() {
   document.getElementById("icon-previews").addEventListener("click", (event) => insertBase64ImageOn(event), false);
 }
 
-function initDropdownPlaceholder() {
+export function initDropdownPlaceholder() {
   const iconPreviewElement = document.getElementById("icon-previews");
   for (let i = 0; i < 15; i++) {
     const spanElement = document.createElement("span");
-    spanElement.innerText = "Loading...";
     const anchorElement = document.createElement("a");
     const listElement = document.createElement("li");
     iconPreviewElement.appendChild(listElement);

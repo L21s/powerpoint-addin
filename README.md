@@ -41,6 +41,12 @@ After running the following command, the developer console is available with rig
 
 ⚠️ Mac App Store builds of Office do not support the OfficeWebAddinDeveloperExtras flag.
 
+## API key encryption
+If the Freepik API key or the API key secret is renewed, three steps must be executed:
+1. Update the API key or the secret in 1Password.
+2. Encrypt the API key by running `node encryptApiKey.ts` in the root directory of this repository.
+3. Update the `const encryptedFreepikApiKey` in the `src/taskpane/encryptionUtils.ts` file with the encrypted API key.
+
 ## Helpful links
 
 [PowerPoint Api-Documentation](https://learn.microsoft.com/de-de/javascript/api/powerpoint?view=powerpoint-js-preview)
