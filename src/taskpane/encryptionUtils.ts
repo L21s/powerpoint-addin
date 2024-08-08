@@ -1,7 +1,7 @@
 import CryptoJS from "crypto-js";
 
 const encryptedFreepikApiKey =
-  "U2FsdGVkX18258oINhW6ItarhxVnw+paVm8IdfMpDwfw8+I+aJeBKEBK6dz/6wFptAVG5SB+N3ljsBaqN9X2yw==";
+  "U2FsdGVkX1+uakX7Pa7rDwZUW41gsxUcc5Mk1Zf9Ff/RkAhy5TT6snpzfSoe7kn+A7ulqhvrLMasq4hJ/KkwoA==";
 
 export function storeFreepikApiKeySecret() {
   document.getElementById("save-api-key-secret").onclick = () => {
