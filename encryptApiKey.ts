@@ -1,5 +1,5 @@
-const readline = require("readline");
-const cryptoJS = require("crypto-js");
+import readline from 'readline';
+import cryptoJS from 'crypto-js';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -7,7 +7,7 @@ const rl = readline.createInterface({
 });
 
 rl.question("Enter Freepik API key from 1Password: ", (apiKey) => {
-  rl.question("Enter API key secret from 1Password: ", (secret) => {
+  rl.question("Enter encryption key from 1Password: ", (secret) => {
     console.log(`Encrypted API key: ${cryptoJS.AES.encrypt(apiKey, secret).toString()}`);
     rl.close();
   });
