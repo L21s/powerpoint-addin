@@ -59,7 +59,7 @@ function initRowsAndColumnsButtons() {
 }
 
 function initStickerButtons() {
-  document.querySelectorAll(".sticker-button").forEach((button) => {
+  document.querySelectorAll(".button-sticker").forEach((button) => {
     const color = window.getComputedStyle(button as HTMLElement).backgroundColor;
     (button as HTMLElement).onclick = () => insertSticker(color);
   });

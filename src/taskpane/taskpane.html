@@ -24,105 +24,112 @@
   <link type="text/css" rel="stylesheet" href="../../lib/materialize/css/materialize.css"/>
 
   <!-- Template styles -->
-  <link href="taskpane.css" rel="stylesheet" type="text/css" />
+  <link href="taskpane-new.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body class="ms-font-m ms-welcome ms-Fabric">
-<!-- TODO2: Update the header node. -->
-<header class="ms-welcome__header ms-bgColor-neutralLighter">
-  <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s" />
-  <h1 class="ms-font-su">L21s Add-In</h1>
-</header>
-<section id="display-msg" class="ms-welcome__main">
-  <div class="padding">
-    <h3 class="ms-font-l">Encryption Key</h3>
-    <div>
-        <input type="text" id="encryption-key" value="Enter encryption key from 1Password"/>
-        <button class="save-button btn" id="save-encryption-key">Save</button>
-    </div>
+<body>
 
-    <h3 class="ms-font-l">Sticker</h3>
-    <div class="input-field">
-      <label for="initials">Autor</label><input type="text" id="initials" />
-    </div>
-    <button class="save-button btn" id="save-initials">Save</button>
-    <div class="sticker-buttons-container">
-      <button class="sticker-button sticker-yellow" id="yellow-sticker"></button>
-      <button class="sticker-button sticker-cyan" id="cyan-sticker"></button>
-    </div>
+  <section class="header">
+    L21s Add-In
+  </section>
 
-    <h3 class="ms-font-l">Background</h3>
-    <div class="content">
+  <section class="content">
+
+    <div class="container">
       <div>
-        <label for="background-color"></label>
-        <input class="color-picker" type="color" id="background-color" name="head" value="#FFFFFF" />
-      </div>
-      <button class="ms-Button btn" id="fill-background">Fill</button>
-    </div>
-
-    <h3 class="ms-font-l">Rows</h3>
-    <div class="content">
-      <div class="row button-row">
-        <button class="grid row-button btn col s3" id="two-rows" data-value="2">2</button>
-        <button class="grid row-button btn col s3" id="three-rows" data-value="3">3</button>
-        <button class="grid row-button btn col s3" id="four-rows" data-value="4">4</button>
-        <div class="input-field col s3 number-input-container">
-          <label for="number-of-rows">Rows</label>
+        <div class="row">
+          <h1>Rows</h1>
+          <div style="display: flex;">
+            <img id="create-rows" src="../../assets/add_circle.svg" alt="">
+            <img id="delete-rows" src="../../assets/cancel.svg" alt="">
+          </div>
+        </div>
+        <div class="row button-colum">
+          <button class="row-button button-primary dynamical" id="two-rows" data-value="2">2</button>
+          <button class="row-button button-primary dynamical" id="three-rows" data-value="3">3</button>
+          <button class="row-button button-primary dynamical" id="four-rows" data-value="4">4</button>
           <input class="grid" type="number" id="number-of-rows" name="head" value=5 placeholder="5"/>
         </div>
       </div>
       <div>
-        <button class="grid-button btn" id="create-rows">Create</button>
-        <button class="grid-button btn" id="delete-rows">Delete</button>
-      </div>
-    </div>
-
-    <h3 class="ms-font-l">Columns</h3>
-    <div class="content">
-      <div class="row button-row">
-        <button class="grid column-button btn col s3" id="two-columns" data-value="2">2</button>
-        <button class="grid column-button btn col s3" id="three-columns" data-value="3">3</button>
-        <button class="grid column-button btn col s3" id="four-columns" data-value="4">4</button>
-        <div class="input-field col s3 number-input-container">
-          <label for="number-of-columns">Columns</label>
+        <div class="row">
+          <h1>Columns</h1>
+          <div style="display: flex;">
+            <img id="create-columns" src="../../assets/add_circle.svg" alt="">
+            <img id="delete-columns" src="../../assets/cancel.svg" alt="">
+          </div>
+        </div>
+        <div class="row button-row">
+          <button class="column-button button-primary dynamical" id="two-columns" data-value="2">2</button>
+          <button class="column-button button-primary dynamical" id="three-columns" data-value="3">3</button>
+          <button class="column-button button-primary dynamical" id="four-columns" data-value="4">4</button>
           <input class="grid" type="number" id="number-of-columns" name="head" value=5 placeholder="5"/>
         </div>
       </div>
-      <div>
-        <button class="grid-button btn" id="create-columns">Create</button>
-        <button class="grid-button btn" id="delete-columns">Delete</button>
+    </div>
+
+    <div class="container">
+      <h1>Logo</h1>
+      <div class="row">
+        <button class="dropdown-trigger button-primary dynamical" id="logos-with-text" href='#' data-target='logos-with-text-dropdown'>with Text</button>
+        <ul id='logos-with-text-dropdown' class='dropdown-content'>
+          <li class="logo-button" data-value="logoTextBlack"><a href="#!" id="black-logo-with-text">Black</a></li>
+          <li class="logo-button" data-value="logoTextWhite"><a href="#!" id="white-logo-with-text">White</a></li>
+          <li class="logo-button" data-value="logoTextPink"><a href="#!" id="pink-logo-with-text">Pink</a></li>
+          <li class="logo-button" data-value="logoTextBlue"><a href="#!" id="blue-logo-with-text">Blue</a></li>
+        </ul>
+
+        <button class="dropdown-trigger button-primary dynamical" id="logos-without-text" href='#' data-target='logos-without-text-dropdown'>without Text</button>
+        <ul class="dropdown-menu dropdown-content" id="logos-without-text-dropdown">
+          <li class="logo-button" data-value="logoBlack"><a href="#!" id="black-logo-without-text">Black</a></li>
+          <li class="logo-button" data-value="logoWhite"><a href="#!" id="white-logo-without-text">White</a></li>
+          <li class="logo-button" data-value="logoPink"><a href="#!" id="pink-logo-without-text">Pink</a></li>
+          <li class="logo-button" data-value="logoBlue"><a href="#!" id="blue-logo-without-text">Blue</a></li>
+        </ul>
       </div>
     </div>
 
-    <h3 class="ms-font-l">L21's-Logo</h3>
-    <div class="content-vertical">
-      <button class="dropdown-trigger btn" id="logos-with-text" href='#' data-target='logos-with-text-dropdown'>with Text</button>
-      <ul id='logos-with-text-dropdown' class='dropdown-content'>
-        <li class="logo-button" data-value="logoTextBlack"><a href="#!" id="black-logo-with-text">Black</a></li>
-        <li class="logo-button" data-value="logoTextWhite"><a href="#!" id="white-logo-with-text">White</a></li>
-        <li class="logo-button" data-value="logoTextPink"><a href="#!" id="pink-logo-with-text">Pink</a></li>
-        <li class="logo-button" data-value="logoTextBlue"><a href="#!" id="blue-logo-with-text">Blue</a></li>
-      </ul>
-
-      <button class="dropdown-trigger btn" id="logos-without-text" href='#' data-target='logos-without-text-dropdown'>without Text</button>
-      <ul class="dropdown-menu dropdown-content" id="logos-without-text-dropdown">
-        <li class="logo-button" data-value="logoBlack"><a href="#!" id="black-logo-without-text">Black</a></li>
-        <li class="logo-button" data-value="logoWhite"><a href="#!" id="white-logo-without-text">White</a></li>
-        <li class="logo-button" data-value="logoPink"><a href="#!" id="pink-logo-without-text">Pink</a></li>
-        <li class="logo-button" data-value="logoBlue"><a href="#!" id="blue-logo-without-text">Blue</a></li>
-      </ul>
+    <div class="container">
+      <h1>Background</h1>
+      <div class="row">
+        <input type="color" class="input-color-picker" id="background-color" name="head" value="#FFFFFF" />
+        <button class="button-primary dynamical" id="fill-background">Fill</button>
+      </div>
     </div>
 
-    <h3 class="ms-font-l">Icons</h3>
-    <input class="icon-search-button" type="text" id="icon-search-input" />
-    <div class="content">
-      <button class="dropdown-trigger btn" data-target="icon-previews" id="icons">Search</button>
-      <ul id="icon-previews" class="dropdown-content"></ul>
+    <div class="container">
+      <h1>Sticker</h1>
+      <div class="row">
+        <button class="button-sticker first" id="yellow-sticker"></button>
+        <button class="button-sticker second" id="cyan-sticker"></button>
+      </div>
+
+      <h2>Author</h2>
+      <div class="row">
+        <input class="input-text" id="initials" placeholder="Enter your initials" />
+        <button class="button-primary" id="save-initials">Save</button>
+      </div>
     </div>
 
-  </div>
-</section>
-<script type="text/javascript" src="../../lib/materialize/js/materialize.min.js"></script>
+    <div class="container">
+      <h1>Icon</h1>
+      <div class="row">
+        <input class="input-text" id="icon-search-input" placeholder="Search for an icon" />
+        <button class="button-primary dropdown-trigger" data-target="icon-previews" id="icons">Search</button>
+        <ul id="icon-previews" class="dropdown-content"></ul>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Encryption Key</h1>
+      <div class="row">
+        <input class="input-text" id="encryption-key" placeholder="Enter encryption key"/>
+        <button class="button-primary" id="save-encryption-key">Save</button>
+      </div>
+    </div>
+
+  </section>
+
 </body>
 
 </html>

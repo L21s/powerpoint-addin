@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+$primary: #E43292;
+$primary-hoover: #C0267C;
+
+$background: #EEEFF4;
+$background-highlight: #E0E0EC;
+$background-secondary: #FDFDFE;
+
+$sticker-background-first: #FFFF00;
+$sticker-background-second: #03FFFF;
+
+$icon-inactive: #9E9EA1;
+
+$text: #1B1B1D;
+$text-secondary: #BCBCBE;
+
+$border: $text;
+
+body {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background-color: $background;
+  font-family: 'Inter', sans-serif;
+  font-weight: lighter;
+  color: $text;
+
+
+  /* TEXT */
+  h1 {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0;
+    width: 100%;
+  }
+  h2 {
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0;
+  }
+
+  .input-text {
+    color: $text-secondary;
+  }
+
+  /* LAYOUT */
+  .header {
+    background-color: $background-secondary;
+    box-shadow: 0 4px 8px 0 rgba(169, 170, 173, 0.25);
+    display: flex;
+    height: 62px;
+    padding: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    align-self: stretch;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .container {
+    width: 100%;
+    background-color: $background-highlight;
+    border-radius: 6px;
+    padding: 20px;
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .row {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 10px;
+      margin: 0;
+    }
+  }
+
+  /* UI-ELEMENTS */
+  .input-text {
+    font-size: 11px;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    gap: 10px;
+    flex: 1 0 0;
+    border-radius: 8px;
+    border: 1px solid $text-secondary;
+    background: $background-secondary;
+    padding: 0 10px;
+
+    &:not(:placeholder-shown) {
+      color: $text;
+    }
+
+  }
+
+  .button-primary {
+    background-color: transparent;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: flex;
+    width: 96px;
+    height: 35px;
+    min-width: 96px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 8px;
+    color: $primary;
+    border: 2px solid $primary;
+    margin: 0;
+
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+    &:hover {
+      border: 2px solid $primary-hoover;
+      color: $primary-hoover;
+      transform: scale(1.01);
+    }
+
+    &.dynamical {
+      width: 100%;
+    }
+  }
+
+  .button-sticker {
+    height: 49px;
+    flex: 1 0 0;
+    border-radius: 12px;
+    border: 1px solid $border;
+
+    &.first {
+      background: $sticker-background-first;
+    }
+    &.second {
+      background: $sticker-background-second;
+    }
+  }
+
+  .input-color-picker {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    background: #FFF;
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+    border: none;
+  }
+
+  .save-button {
+    width: 31%;
+  }
+
+  .icon-search-button {
+    width: 31%;
+  }
+
+  .icon-results {}
+
+  .grid-button {
+    width: 49%
+  }
+
+  .logo-button {
+    width: 100%;
+    background-color: $background;
+    text-align: center;
+  }
+
+  .drop-grid-button{
+    width: 79%;
+    margin-top: 5px;
+  }
+
+  .dropdown-menu {
+    position: fixed;
+    display: none;
+  }
+
+  .dropdown button {
+    display: block;
+  }
+
+
+  .dropdown-menu.show {
+    display: block;
+  }
+}

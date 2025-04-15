@@ -1,0 +1,158 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+body {
+  position: absolute;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background-color: #EEEFF4;
+  font-family: "Inter", sans-serif;
+  font-weight: lighter;
+  color: #1B1B1D;
+  /* TEXT */
+  /* LAYOUT */
+  /* UI-ELEMENTS */
+}
+body h1 {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 0;
+  width: 100%;
+}
+body h2 {
+  font-weight: bold;
+  font-size: 12px;
+  margin: 0;
+}
+body .input-text {
+  color: #BCBCBE;
+}
+body .header {
+  background-color: #FDFDFE;
+  box-shadow: 0 4px 8px 0 rgba(169, 170, 173, 0.25);
+  display: flex;
+  height: 62px;
+  padding: 16px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+body .content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  gap: 20px;
+  width: 100%;
+}
+body .container {
+  width: 100%;
+  background-color: #E0E0EC;
+  border-radius: 6px;
+  padding: 20px;
+  height: min-content;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+body .container .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  margin: 0;
+}
+body .input-text {
+  font-size: 11px;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
+  border-radius: 8px;
+  border: 1px solid #BCBCBE;
+  background: #FDFDFE;
+  padding: 0 10px;
+}
+body .input-text:not(:placeholder-shown) {
+  color: #1B1B1D;
+}
+body .button-primary {
+  background-color: transparent;
+  font-weight: bold;
+  text-transform: uppercase;
+  display: flex;
+  width: 96px;
+  height: 35px;
+  min-width: 96px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 8px;
+  color: #E43292;
+  border: 2px solid #E43292;
+  margin: 0;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+body .button-primary:hover {
+  border: 2px solid #C0267C;
+  color: #C0267C;
+  transform: scale(1.01);
+}
+body .button-primary.dynamical {
+  width: 100%;
+}
+body .button-sticker {
+  height: 49px;
+  flex: 1 0 0;
+  border-radius: 12px;
+  border: 1px solid #1B1B1D;
+}
+body .button-sticker.first {
+  background: #FFFF00;
+}
+body .button-sticker.second {
+  background: #03FFFF;
+}
+body .input-color-picker {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: #FFF;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.25);
+  border: none;
+}
+body .save-button {
+  width: 31%;
+}
+body .icon-search-button {
+  width: 31%;
+}
+body .grid-button {
+  width: 49%;
+}
+body .logo-button {
+  width: 100%;
+  background-color: #EEEFF4;
+  text-align: center;
+}
+body .drop-grid-button {
+  width: 79%;
+  margin-top: 5px;
+}
+body .dropdown-menu {
+  position: fixed;
+  display: none;
+}
+body .dropdown button {
+  display: block;
+}
+body .dropdown-menu.show {
+  display: block;
+}
+
+/*# sourceMappingURL=taskpane-new.css.map */
