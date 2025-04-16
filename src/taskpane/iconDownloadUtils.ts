@@ -29,7 +29,7 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
 }
 
 export async function getDownloadPathForIconWith(id: string) {
-  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons/${id}/download?format=png`;
+  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons/${id}/download?format=svg`;
   const requestHeaders = new Headers();
   requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
   const requestOptions = {
