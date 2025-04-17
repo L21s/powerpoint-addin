@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+</head>
+<body>
+<script>
+   window.location.href = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize` +
+       `?client_id=236e86e4-f190-48f7-be93-e794ed28382a` +
+       `&response_type=token` +
+       `&redirect_uri=${encodeURIComponent("https://localhost:3000/auth-callback.html")}` +
+       `&scope=${encodeURIComponent("profile openid")}` +
+       `&response_mode=fragment` +
+       `&state=12345`;
+</script>
+</body>
+</html>

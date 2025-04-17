@@ -13,6 +13,9 @@ import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./icon
 import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
 
+//Todo
+let dialog;
+
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     M.AutoInit(document.body);
@@ -20,6 +23,9 @@ Office.onReady((info) => {
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
     storeEncryptionKey();
+
+    //Todo think about position
+    loginWithDialog();
 
     document.getElementById("fill-background").onclick = async () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");
@@ -39,6 +45,47 @@ Office.onReady((info) => {
     insertIconOnClickOnPreview();
   }
 });
+
+
+function loginWithDialog() {
+
+  //Todo replace values in authURL with variables
+  const clientId = "236e86e4-f190-48f7-be93-e794ed28382a";
+  const redirectUri = "https://localhost:3000/auth-callback.html";
+  const scopes = "openid profile https://graph.microsoft.com/User.Read";
+
+  const authUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize` +
+      `?client_id=236e86e4-f190-48f7-be93-e794ed28382a` +
+      `&response_type=token` +
+      `&redirect_uri=${encodeURIComponent("https://localhost:3000/auth-callback.html")}` +
+      `&scope=${encodeURIComponent("profile openid")}` +
+      `&response_mode=fragment` +
+      `&state=12345`;
+
+  //Todo -- production url / test url ... cleanUp
+  // Token speichern --> + caching:
+  // Expiry: Token refresh
+  // LInk mircosoft docu .> https://learn.microsoft.com/en-us/office/dev/add-ins/develop/auth-with-office-dialog-api
+
+  Office.context.ui.displayDialogAsync(`https://localhost:3000/auth.html`, { height: 30, width: 20 },
+      (asyncResult) => {
+        dialog = asyncResult.value;
+        dialog.addEventHandler(Office.EventType.DialogMessageReceived, processMessage);
+      }
+  );
+
+
+}
+
+function processMessage(arg) {
+  //Todo remove log; do something useful with the token ...
+  console.log("Token: " + arg.message);
+  dialog.close();
+}
+
+
+
+
 
 function initRowsAndColumnsButtons() {
   document.getElementById("create-rows").onclick = () =>

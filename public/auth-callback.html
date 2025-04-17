@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Callback</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+</head>
+<body>
+<script>
+    Office.onReady(() => {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const token = params.get("access_token");
+
+        console.log("Office is ready. Processing token...");
+        if (token) {
+            console.log("Sending token to parent:", token);
+            Office.context.ui.messageParent(token);
+        } else {
+            Office.context.ui.messageParent("ERROR: No token found.");
+        }
+    });
+</script>
+</body>
+</html>

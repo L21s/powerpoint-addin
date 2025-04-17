@@ -52,3 +52,6 @@ If the Freepik API key or the encryption key is renewed, three steps must be exe
 [PowerPoint Api-Documentation](https://learn.microsoft.com/de-de/javascript/api/powerpoint?view=powerpoint-js-preview)
 [Office AddIn Scripts](https://github.com/OfficeDev/Office-Addin-Scripts)
 [Office AddIn Samples](https://github.com/OfficeDev/Office-Add-in-samples)
+
+## Info: Microsoft Azure Client Authentication
+[Microsoft Auth-Documentation](https://learn.microsoft.com/en-us/office/dev/add-ins/develop/auth-with-office-dialog-api)

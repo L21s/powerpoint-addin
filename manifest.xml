@@ -81,5 +81,14 @@
         <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to Show L21s Taskpane"/>
       </bt:LongStrings>
     </Resources>
+    <WebApplicationInfo>
+      <Id>236e86e4-f190-48f7-be93-e794ed28382a</Id>
+      <Resource>api://localhost:3000/236e86e4-f190-48f7-be93-e794ed28382a</Resource>
+      <Scopes>
+        <Scope>User.Read</Scope>
+        <Scope>profile</Scope>
+        <Scope>openid</Scope>
+      </Scopes>
+    </WebApplicationInfo>
   </VersionOverrides>
 </OfficeApp>
