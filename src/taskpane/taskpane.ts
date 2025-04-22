@@ -162,7 +162,6 @@ function addIconPreviewWith(icons: FetchIconResponse[]) {
 }
 
 async function insertSvgIconOn(event: any): Promise<void> {
-
   const path = await getDownloadPathForIconWith(event.target.id);
   const svgText = await downloadIconWith(path)
       .then((response) => response.text());
@@ -172,12 +171,12 @@ async function insertSvgIconOn(event: any): Promise<void> {
       { coercionType: Office.CoercionType.XmlSvg },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          console.error(`Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`);
+          const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
+          showErrorPopup(errorMessage);
         }
       }
   );
 }
-
 
 function addIconSearch() {
   document.getElementById("icons").onclick = async () => {
@@ -188,13 +187,28 @@ function addIconSearch() {
       const result = await fetchIcons(searchTerm);
       addIconPreviewWith(result);
     } catch (e) {
-      throw new Error("Error retrieving icon urls: " + e);
+      const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
+      showErrorPopup(errorMessage);
     }
   };
 }
 
 function insertIconOnClickOnPreview() {
   document.getElementById("icon-previews").addEventListener("click", (event) => insertSvgIconOn(event), false);
+}
+
+function showErrorPopup(errorMessage: string) {
+  const popup = document.getElementById("errorPopup");
+  const popupText = document.getElementById("errorPopupText");
+  const closeButton = document.getElementById("closePopupButton");
+
+  if (popup && popupText && closeButton) {
+    popupText.textContent = errorMessage;
+    popup.style.display = "flex";
+    closeButton.addEventListener("click", () => {
+      popup.style.display = "none";
+    });
+  }
 }
 
 export function initDropdownPlaceholder() {
