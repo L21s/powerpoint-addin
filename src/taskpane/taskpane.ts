@@ -161,47 +161,20 @@ function addIconPreviewWith(icons: FetchIconResponse[]) {
   }
 }
 
-async function insertBase64ImageOn(event) {
-  const imageSizeInPixels = 500;
+async function insertSvgIconOn(event: any): Promise<void> {
   const path = await getDownloadPathForIconWith(event.target.id);
-  let base64Image: string = await downloadIconWith(path)
-    .then((response) => response.blob())
-    .then(
-      (blob) =>
-        new Promise((resolve, reject) => {
-          const img = new Image();
-          const reader = new FileReader();
-          reader.onload = () => {
-            img.onload = () => {
-              const canvas = document.createElement("canvas");
-              canvas.width = imageSizeInPixels;
-              canvas.height = imageSizeInPixels;
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(img, 0, 0, imageSizeInPixels, imageSizeInPixels);
-              resolve(canvas.toDataURL("image/png"));
-            };
-            img.onerror = reject;
-            img.src = reader.result as string;
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        })
-    );
-
-  if (base64Image.startsWith("data:")) {
-    const PREFIX = "base64,";
-    const base64Idx = base64Image.indexOf(PREFIX);
-    base64Image = base64Image.substring(base64Idx + PREFIX.length);
-  }
+  const svgText = await downloadIconWith(path)
+      .then((response) => response.text());
 
   Office.context.document.setSelectedDataAsync(
-    base64Image,
-    { coercionType: Office.CoercionType.Image },
-    (asyncResult) => {
-      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-        console.error(`Insert image failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`);
+      svgText,
+      { coercionType: Office.CoercionType.XmlSvg },
+      (asyncResult) => {
+        if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+          const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
+          showErrorPopup(errorMessage);
+        }
       }
-    }
   );
 }
 
@@ -214,13 +187,28 @@ function addIconSearch() {
       const result = await fetchIcons(searchTerm);
       addIconPreviewWith(result);
     } catch (e) {
-      throw new Error("Error retrieving icon urls: " + e);
+      const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
+      showErrorPopup(errorMessage);
     }
   };
 }
 
 function insertIconOnClickOnPreview() {
-  document.getElementById("icon-previews").addEventListener("click", (event) => insertBase64ImageOn(event), false);
+  document.getElementById("icon-previews").addEventListener("click", (event) => insertSvgIconOn(event), false);
+}
+
+function showErrorPopup(errorMessage: string) {
+  const popup = document.getElementById("errorPopup");
+  const popupText = document.getElementById("errorPopupText");
+  const closeButton = document.getElementById("closePopupButton");
+
+  if (popup && popupText && closeButton) {
+    popupText.textContent = errorMessage;
+    popup.style.display = "flex";
+    closeButton.addEventListener("click", () => {
+      popup.style.display = "none";
+    });
+  }
 }
 
 export function initDropdownPlaceholder() {
