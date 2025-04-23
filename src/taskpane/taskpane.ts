@@ -12,6 +12,7 @@ import { columnLineName, rowLineName, createColumns, createRows } from "./rowsCo
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
 import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
+import { addDefinedBackgroundToSVGShape, ShapeTypeKey} from "./svgUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -37,6 +38,7 @@ Office.onReady((info) => {
     initDropdownPlaceholder();
     addIconSearch();
     insertIconOnClickOnPreview();
+    registerAddBackgroundDropdown();
   }
 });
 
@@ -134,6 +136,7 @@ function setStickerFontProperties(textbox: PowerPoint.Shape) {
   textbox.lineFormat.weight = 1.25;
 }
 
+//Todo: old one
 export async function addBackground(backgroundColor?: string) {
   if (!backgroundColor) backgroundColor = "white";
   await runPowerPoint((powerPointContext) => {
@@ -191,6 +194,14 @@ function addIconSearch() {
       showErrorPopup(errorMessage);
     }
   };
+}
+
+//Todo move to the right place
+function registerAddBackgroundDropdown() {
+    document.getElementById('background-shape-selector')?.addEventListener('sl-select', (event: CustomEvent) => {
+      const selectedItem: ShapeTypeKey = event.detail.item.value;
+      addDefinedBackgroundToSVGShape(selectedItem);
+    });
 }
 
 function insertIconOnClickOnPreview() {

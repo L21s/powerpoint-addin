@@ -14,6 +14,7 @@
   <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
 
   <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
+  <!-- Todo to be removed -->
   <link rel="stylesheet"
         href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css" />
 
@@ -21,7 +22,12 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <!--Import materialize.css-->
+  <!-- Todo to be removed -->
   <link type="text/css" rel="stylesheet" href="../../lib/materialize/css/materialize.css"/>
+
+  <!--Import shoelace.style-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
 
   <!-- Template styles -->
   <link href="taskpane.css" rel="stylesheet" type="text/css" />
@@ -121,6 +127,20 @@
       </button>
     </div>
     <input class="icon-search-button" type="text" id="icon-search-input" />
+    <div>
+      <div class="dropdown-selection">
+        <sl-dropdown id="background-shape-selector">
+          <sl-button slot="trigger" caret>Add Background</sl-button>
+          <sl-menu>
+            <sl-menu-item value="Rectangle">Rectangle</sl-menu-item>
+            <sl-menu-item value="Ellipse">Ellipse</sl-menu-item>
+            <sl-menu-item value="Diamond">Diamond</sl-menu-item>
+            <sl-menu-item value="Triangle">Triangle</sl-menu-item>
+            <sl-menu-item value="Parallelogram">Parallelogram</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
+      </div>
+    </div>
     <div class="content">
       <button class="dropdown-trigger btn" data-target="icon-previews" id="icons">Search</button>
       <ul id="icon-previews" class="dropdown-content"></ul>
