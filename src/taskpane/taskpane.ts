@@ -12,7 +12,7 @@ import { columnLineName, rowLineName, createColumns, createRows } from "./rowsCo
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
 import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
-import { addDefinedBackgroundToSVGShape, ShapeTypeKey} from "./svgUtils";
+import {addColoredBackgroundAfterColorSelection, addDefinedBackgroundToSVGShape, ShapeTypeKey} from "./svgUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -39,6 +39,8 @@ Office.onReady((info) => {
     addIconSearch();
     insertIconOnClickOnPreview();
     registerAddBackgroundDropdown();
+    registerFlexiblePicker();
+    registerColorPickerForSelectedShape();
   }
 });
 
@@ -222,6 +224,28 @@ function showErrorPopup(errorMessage: string) {
   }
 }
 
+function registerFlexiblePicker() {
+ document.getElementById("plusButtonFlexPicker").addEventListener("click", async () => {
+   //Todo
+ })
+}
+
+function registerColorPickerForSelectedShape() {
+
+  Array.from(document.getElementsByClassName("color-picker-shape")).forEach((picker) => {
+    picker.addEventListener("click", () => {
+      addColoredBackgroundAfterColorSelection(picker.getAttribute("value"));
+    })
+  });
+  document.getElementById("color-picker-shape-flex").addEventListener("sl-change", async (event) => {
+    const target = event.target as HTMLInputElement | HTMLSelectElement;
+    const selectedValue = target.value;
+    addColoredBackgroundAfterColorSelection(selectedValue);
+  })
+
+}
+
+
 export function initDropdownPlaceholder() {
   const iconPreviewElement = document.getElementById("icon-previews");
   for (let i = 0; i < 15; i++) {
@@ -233,3 +257,5 @@ export function initDropdownPlaceholder() {
     anchorElement.appendChild(spanElement);
   }
 }
+
+

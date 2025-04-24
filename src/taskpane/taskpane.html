@@ -141,6 +141,27 @@
         </sl-dropdown>
       </div>
     </div>
+
+    <div>
+      <sl-dropdown>
+        <sl-button slot="trigger" caret>
+          <sl-icon name="paint-bucket"></sl-icon>
+        </sl-button>
+        <sl-menu style="padding: 0.5rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <sl-color-picker class="color-picker-shape" value="#ffffff" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
+            <sl-color-picker class="color-picker-shape" value="#f28b82" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
+            <sl-color-picker class="color-picker-shape" value="#fdd663" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
+            <sl-color-picker class="color-picker-shape" value="#a7ffeb" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
+            <sl-color-picker class="color-picker-shape" value="#444444" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
+            <sl-button id="plusButtonFlexPicker" size="small" circle>+</sl-button>
+
+          </div>
+        </sl-menu>
+      </sl-dropdown>
+      <sl-color-picker id="color-picker-shape-flex" value="#4a90e2" label="Select a color"></sl-color-picker>
+    </div>
+
     <div class="content">
       <button class="dropdown-trigger btn" data-target="icon-previews" id="icons">Search</button>
       <ul id="icon-previews" class="dropdown-content"></ul>

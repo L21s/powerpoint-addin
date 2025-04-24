@@ -1,8 +1,6 @@
 import {getSelectedShape} from "./powerPointUtil";
 
-
-
-export async function addDefinedBackgroundToSVGShape(shapeType: ShapeTypeKey) {
+export async function addDefinedBackgroundToSVGShape(shapeType: ShapeTypeKey, color: string = "#1ae88f") {
     await PowerPoint.run(async (context) => {
 
         const selectedShape: PowerPoint.Shape = await getSelectedShape();
@@ -13,13 +11,14 @@ export async function addDefinedBackgroundToSVGShape(shapeType: ShapeTypeKey) {
         background.top      = selectedShape.top;
         background.width    = selectedShape.width;
         background.height   = selectedShape.height;
-        background.fill.setSolidColor("lightgreen");
+        background.fill.setSolidColor(color);
 
     })
 
     /**
-     * Note: something like the code stated below should be used right here ... but sadly, the Powerpoint-Context still does not offer this .
+     * Note: something like the code stated below should be used right here ... but sadly, the Powerpoint-Context still does not offer this.
      * This code is supposed to stay as reminder that maybe in future days Microsoft may offer this.
+     * Better: Select Icon --> Bring to front.
      */
     /*await Excel.run(async (context) => {
         const sheet = context.workbook.worksheets.getActiveWorksheet();
@@ -29,6 +28,22 @@ export async function addDefinedBackgroundToSVGShape(shapeType: ShapeTypeKey) {
     });
      */
 }
+
+
+export async function addColoredBackgroundAfterColorSelection(color: string) {
+    await PowerPoint.run(async (context) => {
+
+        const dropdown = document.getElementById('background-shape-selector');
+        const menu = dropdown?.querySelector('sl-menu') as any;
+        const selectedItem = menu?.getSelectedItem?.(); // <- Shoelace API
+        const shape = selectedItem?.value ?? null as ShapeTypeKey;
+        addDefinedBackgroundToSVGShape(shape ? shape : "Rectangle", color)
+        // Todo: does not work;
+    })
+}
+
+
+
 
 const ShapeType = {
     Rectangle: PowerPoint.GeometricShapeType.rectangle,
