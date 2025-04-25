@@ -6,32 +6,68 @@
 /* global Office, PowerPoint */
 
 import { base64Images } from "../../base64Image";
-import * as M from "../../lib/materialize/js/materialize.min";
+//import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
-import { storeEncryptionKey } from "./encryptionUtils";
+//import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
-    M.AutoInit(document.body);
+    //M.AutoInit(document.body);
 
+    /*
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
     storeEncryptionKey();
-
+    
     document.getElementById("fill-background").onclick = async () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");
       const selectedColor = colorPicker.value;
       await addBackground(selectedColor);
     };
+    */
 
     initStickerButtons();
     initRowsAndColumnsButtons();
 
-    document.querySelectorAll(".logo-button").forEach((button) => {
-      (button as HTMLElement).onclick = () => insertImageByBase64(button.getAttribute("data-value"));
+    // images for logo dropdown buttons
+    (document.getElementById("currentWithText") as HTMLImageElement).src =
+      "data:image/png;base64, " + base64Images["logoTextBlack"];
+    (document.getElementById("currentWithoutText") as HTMLImageElement).src =
+      "data:image/png;base64, " + base64Images["logoBlack"];
+
+    document.querySelectorAll(".logo-button, .image-button").forEach((button: HTMLElement) => {
+      // on initialize: insert image for each button (selected + dropdown options)
+      const initImageID = button.getAttribute("data-value");
+      (document.getElementById(initImageID) as HTMLImageElement).src =
+        "data:image/png;base64, " + base64Images[initImageID];
+
+      // on click: change the current image inside the logo buttons, then insert
+      button.onclick = () => {
+        const imageID = button.getAttribute("data-value");
+        const currentImage = document.getElementById(
+          imageID.includes("Text") ? "currentWithText" : "currentWithoutText"
+        ) as HTMLImageElement;
+
+        // on insert: changes the color for the current image shown in the dropdown buttons
+        currentImage.src = "data:image/png;base64, " + base64Images[imageID];
+        currentImage.parentElement.setAttribute("data-value", imageID);
+
+        // add a shadow filter if the current logo is white, otherwise remove it
+        currentImage.style.filter = imageID.includes("White") ? "drop-shadow(0 0 1px #000000)" : "none";
+
+        Office.context.document.setSelectedDataAsync(
+          base64Images[imageID],
+          { coercionType: Office.CoercionType.Image },
+          (asyncResult) => {
+            if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+              console.error("Action failed. Error: " + asyncResult.error.message);
+            }
+          }
+        );
+      };
     });
 
     initDropdownPlaceholder();
@@ -59,13 +95,15 @@ function initRowsAndColumnsButtons() {
 }
 
 function initStickerButtons() {
-  document.querySelectorAll(".sticker-button").forEach((button) => {
+  document.querySelectorAll(".sticky-note").forEach((button) => {
     const color = window.getComputedStyle(button as HTMLElement).backgroundColor;
     (button as HTMLElement).onclick = () => insertSticker(color);
   });
 
+  /*
   document.getElementById("save-initials").onclick = () =>
     localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
+  */
 }
 
 async function deleteShapesByName(name: string) {
@@ -76,7 +114,7 @@ async function deleteShapesByName(name: string) {
     shapes.load();
     await context.sync();
 
-    shapes.items.forEach(function(shape) {
+    shapes.items.forEach(function (shape) {
       if (shape.name == name) {
         shape.delete();
       }
@@ -85,27 +123,16 @@ async function deleteShapesByName(name: string) {
   });
 }
 
-function insertImageByBase64(base64Name: string) {
-  Office.context.document.setSelectedDataAsync(
-    base64Images[base64Name],
-    { coercionType: Office.CoercionType.Image },
-    (asyncResult) => {
-      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-        console.error("Action failed. Error: " + asyncResult.error.message);
-      }
-    }
-  );
-}
-
-
 export async function insertSticker(color) {
   await runPowerPoint((powerPointContext) => {
     const today = new Date();
     const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
-    const textBox = shapes.addTextBox(
-      localStorage.getItem("initials") + ", " + today.toDateString() + "\n",
-      { height: 50, left: 50, top: 50, width: 150 }
-    );
+    const textBox = shapes.addTextBox(localStorage.getItem("initials") + ", " + today.toDateString() + "\n", {
+      height: 50,
+      left: 50,
+      top: 50,
+      width: 150,
+    });
     textBox.name = "Square";
     textBox.fill.setSolidColor(rgbToHex(color));
     setStickerFontProperties(textBox);
@@ -163,19 +190,14 @@ function addIconPreviewWith(icons: FetchIconResponse[]) {
 
 async function insertSvgIconOn(event: any): Promise<void> {
   const path = await getDownloadPathForIconWith(event.target.id);
-  const svgText = await downloadIconWith(path)
-      .then((response) => response.text());
+  const svgText = await downloadIconWith(path).then((response) => response.text());
 
-  Office.context.document.setSelectedDataAsync(
-      svgText,
-      { coercionType: Office.CoercionType.XmlSvg },
-      (asyncResult) => {
-        if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
-          showErrorPopup(errorMessage);
-        }
-      }
-  );
+  Office.context.document.setSelectedDataAsync(svgText, { coercionType: Office.CoercionType.XmlSvg }, (asyncResult) => {
+    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+      const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
+      showErrorPopup(errorMessage);
+    }
+  });
 }
 
 function addIconSearch() {

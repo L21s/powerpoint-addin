@@ -3,132 +3,250 @@
 
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>L21s Add-in</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>L21s Add-in</title>
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
 
-  <!-- Office JavaScript API -->
-  <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
+    <!-- Template styles -->
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
 
-  <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
-  <link rel="stylesheet"
-        href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css" />
+    <!-- Shoelace -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"
+    ></script>
 
-  <!--Import Google Icon Font-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Inter Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-  <!--Import materialize.css-->
-  <link type="text/css" rel="stylesheet" href="../../lib/materialize/css/materialize.css"/>
+  <body>
+    <section class="ms-welcome__main">
+      <div style="display: none">
+        <h3>Background</h3>
+        <div>
+          <div>
+            <label for="background-color"></label>
+            <input class="color-picker" type="color" id="background-color" name="head" value="#FFFFFF" />
+          </div>
+          <button class="ms-Button btn" id="fill-background">Fill</button>
+        </div>
 
-  <!-- Template styles -->
-  <link href="taskpane.css" rel="stylesheet" type="text/css" />
-</head>
-
-<body class="ms-font-m ms-welcome ms-Fabric">
-<!-- TODO2: Update the header node. -->
-<header class="ms-welcome__header ms-bgColor-neutralLighter">
-  <img width="90" height="90" src="../../assets/logo-filled.png" alt="L21s" title="L21s" />
-  <h1 class="ms-font-su">L21s Add-In</h1>
-</header>
-<section id="display-msg" class="ms-welcome__main">
-  <div class="padding">
-    <h3 class="ms-font-l">Encryption Key</h3>
-    <div>
-        <input type="text" id="encryption-key" value="Enter encryption key from 1Password"/>
-        <button class="save-button btn" id="save-encryption-key">Save</button>
-    </div>
-
-    <h3 class="ms-font-l">Sticker</h3>
-    <div class="input-field">
-      <label for="initials">Autor</label><input type="text" id="initials" />
-    </div>
-    <button class="save-button btn" id="save-initials">Save</button>
-    <div class="sticker-buttons-container">
-      <button class="sticker-button sticker-yellow" id="yellow-sticker"></button>
-      <button class="sticker-button sticker-cyan" id="cyan-sticker"></button>
-    </div>
-
-    <h3 class="ms-font-l">Background</h3>
-    <div class="content">
-      <div>
-        <label for="background-color"></label>
-        <input class="color-picker" type="color" id="background-color" name="head" value="#FFFFFF" />
-      </div>
-      <button class="ms-Button btn" id="fill-background">Fill</button>
-    </div>
-
-    <h3 class="ms-font-l">Rows</h3>
-    <div class="content">
-      <div class="row button-row">
-        <button class="grid row-button btn col s3" id="two-rows" data-value="2">2</button>
-        <button class="grid row-button btn col s3" id="three-rows" data-value="3">3</button>
-        <button class="grid row-button btn col s3" id="four-rows" data-value="4">4</button>
-        <div class="input-field col s3 number-input-container">
-          <label for="number-of-rows">Rows</label>
-          <input class="grid" type="number" id="number-of-rows" name="head" value=5 placeholder="5"/>
+        <h3>Icons</h3>
+        <div id="errorPopup" class="ms-MessageBar ms-MessageBar--error" style="display: none">
+          <div id="errorPopupText" class="ms-MessageBar-text"></div>
+          <button id="closePopupButton" class="ms-Button ms-Button--icon ms-Button--iconOnly">
+            <span class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></span>
+          </button>
+        </div>
+        <input class="icon-search-button" type="text" id="icon-search-input" />
+        <div class="content">
+          <button class="dropdown-trigger btn" data-target="icon-previews" id="icons">Search</button>
+          <ul id="icon-previews" class="dropdown-content"></ul>
         </div>
       </div>
-      <div>
-        <button class="grid-button btn" id="create-rows">Create</button>
-        <button class="grid-button btn" id="delete-rows">Delete</button>
-      </div>
-    </div>
 
-    <h3 class="ms-font-l">Columns</h3>
-    <div class="content">
-      <div class="row button-row">
-        <button class="grid column-button btn col s3" id="two-columns" data-value="2">2</button>
-        <button class="grid column-button btn col s3" id="three-columns" data-value="3">3</button>
-        <button class="grid column-button btn col s3" id="four-columns" data-value="4">4</button>
-        <div class="input-field col s3 number-input-container">
-          <label for="number-of-columns">Columns</label>
-          <input class="grid" type="number" id="number-of-columns" name="head" value=5 placeholder="5"/>
+      <div class="section">
+        <div class="title">
+          <sl-icon name="search"></sl-icon>
+          <h3>Search</h3>
+        </div>
+
+        <div class="row">
+          <sl-button variant="default">
+            <sl-icon slot="prefix" name="emoji-smile"></sl-icon>
+            Icons
+          </sl-button>
+          <sl-button variant="default">
+            <sl-icon slot="prefix" name="people"></sl-icon>
+            Team
+          </sl-button>
         </div>
       </div>
-      <div>
-        <button class="grid-button btn" id="create-columns">Create</button>
-        <button class="grid-button btn" id="delete-columns">Delete</button>
+
+      <div class="section">
+        <div class="title">
+          <sl-icon name="sticky"></sl-icon>
+          <h3>Notes</h3>
+        </div>
+
+        <div class="row">
+          <sl-button variant="default" class="sticky-yellow sticky-note">
+            <sl-icon slot="prefix" name="sticky"></sl-icon>
+          </sl-button>
+          <sl-button variant="default" class="sticky-note sticky-cyan">
+            <sl-icon slot="prefix" name="sticky"></sl-icon>
+          </sl-button>
+          <sl-button variant="default" class="sticky-note">
+            <sl-icon slot="prefix" name="sticky"></sl-icon>
+          </sl-button>
+        </div>
       </div>
-    </div>
 
-    <h3 class="ms-font-l">L21's-Logo</h3>
-    <div class="content-vertical">
-      <button class="dropdown-trigger btn" id="logos-with-text" href='#' data-target='logos-with-text-dropdown'>with Text</button>
-      <ul id='logos-with-text-dropdown' class='dropdown-content'>
-        <li class="logo-button" data-value="logoTextBlack"><a href="#!" id="black-logo-with-text">Black</a></li>
-        <li class="logo-button" data-value="logoTextWhite"><a href="#!" id="white-logo-with-text">White</a></li>
-        <li class="logo-button" data-value="logoTextPink"><a href="#!" id="pink-logo-with-text">Pink</a></li>
-        <li class="logo-button" data-value="logoTextBlue"><a href="#!" id="blue-logo-with-text">Blue</a></li>
-      </ul>
+      <div class="section">
+        <div class="title">
+          <sl-icon src="../../assets/logo.svg"></sl-icon>
+          <h3>Logo</h3>
+        </div>
 
-      <button class="dropdown-trigger btn" id="logos-without-text" href='#' data-target='logos-without-text-dropdown'>without Text</button>
-      <ul class="dropdown-menu dropdown-content" id="logos-without-text-dropdown">
-        <li class="logo-button" data-value="logoBlack"><a href="#!" id="black-logo-without-text">Black</a></li>
-        <li class="logo-button" data-value="logoWhite"><a href="#!" id="white-logo-without-text">White</a></li>
-        <li class="logo-button" data-value="logoPink"><a href="#!" id="pink-logo-without-text">Pink</a></li>
-        <li class="logo-button" data-value="logoBlue"><a href="#!" id="blue-logo-without-text">Blue</a></li>
-      </ul>
-    </div>
+        <div class="row">
+          <sl-button-group>
+            <sl-button class="image-button" data-value="logoTextBlack">
+              <img slot="prefix" id="currentWithText" />
+            </sl-button>
+            <sl-dropdown placement="bottom-end">
+              <sl-button slot="trigger" caret></sl-button>
+              <sl-menu id="logos-with-text-dropdown">
+                <sl-menu-item class="logo-button" id="black-logo-with-text" data-value="logoTextBlack">
+                  <img id="logoTextBlack" />
+                </sl-menu-item>
+                <sl-menu-item class="logo-button" id="white-logo-with-text" data-value="logoTextWhite">
+                  <img id="logoTextWhite" />
+                </sl-menu-item>
+                <sl-menu-item class="logo-button" id="pink-logo-with-text" data-value="logoTextPink">
+                  <img id="logoTextPink" />
+                </sl-menu-item>
+                <sl-menu-item class="logo-button" id="blue-logo-with-text" data-value="logoTextBlue">
+                  <img id="logoTextBlue" />
+                </sl-menu-item>
+              </sl-menu>
+            </sl-dropdown>
+          </sl-button-group>
 
-    <h3 class="ms-font-l">Icons</h3>
-    <div id="errorPopup" class="ms-MessageBar ms-MessageBar--error" style="display: none;">
-      <div id="errorPopupText" class="ms-MessageBar-text"></div>
-      <button id="closePopupButton" class="ms-Button ms-Button--icon ms-Button--iconOnly">
-        <span class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></span>
-      </button>
-    </div>
-    <input class="icon-search-button" type="text" id="icon-search-input" />
-    <div class="content">
-      <button class="dropdown-trigger btn" data-target="icon-previews" id="icons">Search</button>
-      <ul id="icon-previews" class="dropdown-content"></ul>
-    </div>
+          <sl-button-group>
+            <sl-button class="image-button" data-value="logoBlack">
+              <img slot="prefix" id="currentWithoutText" />
+            </sl-button>
+            <sl-dropdown placement="bottom-end">
+              <sl-button slot="trigger" caret></sl-button>
+              <sl-menu id="logos-without-text-dropdown">
+                <sl-menu-item class="logo-button" id="black-logo-without-text" data-value="logoBlack">
+                  <img id="logoBlack" />
+                </sl-menu-item>
+                <sl-menu-item class="logo-button" id="white-logo-without-text" data-value="logoWhite">
+                  <img id="logoWhite" />
+                </sl-menu-item>
+                <sl-menu-item class="logo-button" id="pink-logo-without-text" data-value="logoPink">
+                  <img id="logoPink" />
+                </sl-menu-item>
+                <sl-menu-item class="logo-button" id="blue-logo-without-text" data-value="logoBlue">
+                  <img id="logoBlue" />
+                </sl-menu-item>
+              </sl-menu>
+            </sl-dropdown>
+          </sl-button-group>
+        </div>
+      </div>
 
-  </div>
-</section>
-<script type="text/javascript" src="../../lib/materialize/js/materialize.min.js"></script>
-</body>
+      <div class="section">
+        <div class="title">
+          <sl-icon src="https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@7.11.0/icons/regular/fill-color.svg"></sl-icon>
+          <h3>Background Fills</h3>
+        </div>
 
+        <div class="row">
+          <div class="button-grid">
+            <sl-button-group>
+              <sl-button>
+                <sl-icon slot="prefix" name="square"></sl-icon>
+              </sl-button>
+              <sl-button>
+                <sl-icon slot="prefix" name="circle"></sl-icon>
+              </sl-button>
+              <sl-button>
+                <sl-icon slot="prefix" name="triangle"></sl-icon>
+              </sl-button>
+            </sl-button-group>
+            <sl-button-group>
+              <sl-button>
+                <sl-icon slot="prefix" name="pentagon"></sl-icon>
+              </sl-button>
+              <sl-button>
+                <sl-icon slot="prefix" name="hexagon"></sl-icon>
+              </sl-button>
+              <sl-button>
+                <sl-icon slot="prefix" name="triangle" style="transform: rotate(180deg);"></sl-icon>
+              </sl-button>
+            </sl-button-group>
+          </div>
+
+          <sl-button-group class="fill">
+            <sl-button>
+              <sl-icon slot="prefix"
+                src="https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@7.11.0/icons/regular/fill-color.svg"
+              ></sl-icon>
+            </sl-button>
+
+            <sl-dropdown placement="bottom-end">
+              <sl-button slot="trigger" caret></sl-button>
+              <sl-menu>
+                <sl-menu-item>
+                  <!-- colors & colorpicker -->
+                </sl-menu-item>
+              </sl-menu>
+            </sl-dropdown>
+          </sl-button-group>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="title">
+          <sl-icon style="transform: rotate(90deg)" name="layout-split"></sl-icon>
+          <h3>Rows</h3>
+        </div>
+
+        <div class="row" style="align-items: end">
+          <div class="column">
+            <sl-button-group>
+              <sl-button class="row-button" data-value="2">2</sl-button>
+              <sl-button class="row-button" data-value="3">3</sl-button>
+              <sl-button class="row-button" data-value="4">4</sl-button>
+            </sl-button-group>
+            <sl-button-group>
+              <sl-input id="number-of-rows" type="number" value="5" min="5"></sl-input>
+              <sl-button id="create-rows">Insert</sl-button>
+            </sl-button-group>
+          </div>
+          <sl-button id="delete-rows" class="delete" variant="danger" outline>
+            <sl-icon slot="prefix" src="../../assets/feather-icons-trash-2.svg"></sl-icon>
+          </sl-button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="title">
+          <sl-icon name="layout-split"></sl-icon>
+          <h3>Columns</h3>
+        </div>
+
+        <div class="row" style="align-items: end">
+          <div class="column">
+            <sl-button-group>
+              <sl-button class="column-button" data-value="2">2</sl-button>
+              <sl-button class="column-button" data-value="3">3</sl-button>
+              <sl-button class="column-button" data-value="4">4</sl-button>
+            </sl-button-group>
+            <sl-button-group>
+              <sl-input id="number-of-columns" type="number" value="5" min="5"></sl-input>
+              <sl-button id="create-columns">Insert</sl-button>
+            </sl-button-group>
+          </div>
+          <sl-button id="delete-columns" class="delete" variant="danger" outline>
+            <sl-icon slot="prefix" src="../../assets/feather-icons-trash-2.svg"></sl-icon>
+          </sl-button>
+        </div>
+      </div>
+    </section>
+  </body>
 </html>
