@@ -12,7 +12,7 @@ import { columnLineName, rowLineName, createColumns, createRows } from "./rowsCo
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
 import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
-import {addColoredBackgroundAfterColorSelection, addDefinedBackgroundToSVGShape, ShapeTypeKey} from "./svgUtils";
+import { addColoredBackground } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -38,9 +38,7 @@ Office.onReady((info) => {
     initDropdownPlaceholder();
     addIconSearch();
     insertIconOnClickOnPreview();
-    registerAddBackgroundDropdown();
-    registerFlexiblePicker();
-    registerColorPickerForSelectedShape();
+    registerIconBackgroundTools();
   }
 });
 
@@ -198,12 +196,15 @@ function addIconSearch() {
   };
 }
 
-//Todo move to the right place
-function registerAddBackgroundDropdown() {
-    document.getElementById('background-shape-selector')?.addEventListener('sl-select', (event: CustomEvent) => {
-      const selectedItem: ShapeTypeKey = event.detail.item.value;
-      addDefinedBackgroundToSVGShape(selectedItem);
+function registerIconBackgroundTools() {
+  document.getElementById('background-shape-selector')?.addEventListener('sl-change', () => {
+      addColoredBackground();
     });
+  /*
+    //Todo: this usecase would trigger a background insertion when selecting a color --> Probably not needed.
+    document.getElementById("background-color-picker").addEventListener("change", async () => {
+    addColoredBackground();
+  });*/
 }
 
 function insertIconOnClickOnPreview() {
@@ -223,28 +224,6 @@ function showErrorPopup(errorMessage: string) {
     });
   }
 }
-
-function registerFlexiblePicker() {
- document.getElementById("plusButtonFlexPicker").addEventListener("click", async () => {
-   //Todo
- })
-}
-
-function registerColorPickerForSelectedShape() {
-
-  Array.from(document.getElementsByClassName("color-picker-shape")).forEach((picker) => {
-    picker.addEventListener("click", () => {
-      addColoredBackgroundAfterColorSelection(picker.getAttribute("value"));
-    })
-  });
-  document.getElementById("color-picker-shape-flex").addEventListener("sl-change", async (event) => {
-    const target = event.target as HTMLInputElement | HTMLSelectElement;
-    const selectedValue = target.value;
-    addColoredBackgroundAfterColorSelection(selectedValue);
-  })
-
-}
-
 
 export function initDropdownPlaceholder() {
   const iconPreviewElement = document.getElementById("icon-previews");

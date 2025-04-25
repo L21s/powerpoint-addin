@@ -127,39 +127,23 @@
       </button>
     </div>
     <input class="icon-search-button" type="text" id="icon-search-input" />
+
     <div>
-      <div class="dropdown-selection">
-        <sl-dropdown id="background-shape-selector">
-          <sl-button slot="trigger" caret>Add Background</sl-button>
-          <sl-menu>
-            <sl-menu-item value="Rectangle">Rectangle</sl-menu-item>
-            <sl-menu-item value="Ellipse">Ellipse</sl-menu-item>
-            <sl-menu-item value="Diamond">Diamond</sl-menu-item>
-            <sl-menu-item value="Triangle">Triangle</sl-menu-item>
-            <sl-menu-item value="Parallelogram">Parallelogram</sl-menu-item>
-          </sl-menu>
-        </sl-dropdown>
+      <!-- Todo: @Mikias Shape Selection-->
+      <div class="background-shape-selection">
+        <sl-select id="background-shape-selector" label="Add Background" placeholder="Select shape" value="Rectangle">
+          <sl-option value="Rectangle">Rectangle</sl-option>
+          <sl-option value="Ellipse">Ellipse</sl-option>
+          <sl-option value="Diamond">Diamond</sl-option>
+          <sl-option value="Triangle">Triangle</sl-option>
+          <sl-option value="Parallelogram">Parallelogram</sl-option>
+        </sl-select>
       </div>
-    </div>
-
-    <div>
-      <sl-dropdown>
-        <sl-button slot="trigger" caret>
-          <sl-icon name="paint-bucket"></sl-icon>
-        </sl-button>
-        <sl-menu style="padding: 0.5rem;">
-          <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <sl-color-picker class="color-picker-shape" value="#ffffff" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
-            <sl-color-picker class="color-picker-shape" value="#f28b82" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
-            <sl-color-picker class="color-picker-shape" value="#fdd663" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
-            <sl-color-picker class="color-picker-shape" value="#a7ffeb" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
-            <sl-color-picker class="color-picker-shape" value="#444444" opacity="false" style="--grid-size: 1.5rem;"></sl-color-picker>
-            <sl-button id="plusButtonFlexPicker" size="small" circle>+</sl-button>
-
-          </div>
-        </sl-menu>
-      </sl-dropdown>
-      <sl-color-picker id="color-picker-shape-flex" value="#4a90e2" label="Select a color"></sl-color-picker>
+      <!-- Todo: @Mikias Color Selection-->
+      <div>
+        <label for="background-color"></label>
+        <input class="color-picker" type="color" id="background-color-picker" name="head" value="#FFFFFF"/>
+      </div>
     </div>
 
     <div class="content">
