@@ -12,6 +12,7 @@ import { columnLineName, rowLineName, createColumns, createRows } from "./rowsCo
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
 //import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
+import { addColoredBackground } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -73,6 +74,7 @@ Office.onReady((info) => {
     initDropdownPlaceholder();
     addIconSearch();
     insertIconOnClickOnPreview();
+    registerIconBackgroundTools();
   }
 });
 
@@ -161,6 +163,7 @@ function setStickerFontProperties(textbox: PowerPoint.Shape) {
   textbox.lineFormat.weight = 1.25;
 }
 
+//Todo: old one
 export async function addBackground(backgroundColor?: string) {
   if (!backgroundColor) backgroundColor = "white";
   await runPowerPoint((powerPointContext) => {
@@ -215,6 +218,17 @@ function addIconSearch() {
   };
 }
 
+function registerIconBackgroundTools() {
+  document.getElementById('background-shape-selector')?.addEventListener('sl-change', () => {
+      addColoredBackground();
+    });
+  /*
+    //Todo: this usecase would trigger a background insertion when selecting a color --> Probably not needed.
+    document.getElementById("background-color-picker").addEventListener("change", async () => {
+    addColoredBackground();
+  });*/
+}
+
 function insertIconOnClickOnPreview() {
   document.getElementById("icon-previews").addEventListener("click", (event) => insertSvgIconOn(event), false);
 }
@@ -244,3 +258,5 @@ export function initDropdownPlaceholder() {
     anchorElement.appendChild(spanElement);
   }
 }
+
+

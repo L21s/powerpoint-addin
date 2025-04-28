@@ -51,6 +51,25 @@
           </button>
         </div>
         <input class="icon-search-button" type="text" id="icon-search-input" />
+
+    <div>
+      <!-- Todo: @Mikias Shape Selection-->
+      <div class="background-shape-selection">
+        <sl-select id="background-shape-selector" label="Add Background" placeholder="Select shape" value="Rectangle">
+          <sl-option value="Rectangle">Rectangle</sl-option>
+          <sl-option value="Ellipse">Ellipse</sl-option>
+          <sl-option value="Diamond">Diamond</sl-option>
+          <sl-option value="Triangle">Triangle</sl-option>
+          <sl-option value="Parallelogram">Parallelogram</sl-option>
+        </sl-select>
+      </div>
+      <!-- Todo: @Mikias Color Selection-->
+      <div>
+        <label for="background-color"></label>
+        <input class="color-picker" type="color" id="background-color-picker" name="head" value="#FFFFFF"/>
+      </div>
+    </div>
+
         <div class="content">
           <button class="dropdown-trigger btn" data-target="icon-previews" id="icons">Search</button>
           <ul id="icon-previews" class="dropdown-content"></ul>
