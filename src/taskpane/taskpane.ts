@@ -12,6 +12,7 @@ import { columnLineName, rowLineName, createColumns, createRows } from "./rowsCo
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
 import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
+import {fetchEmployeePhotos} from "./employeeService";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -37,6 +38,7 @@ Office.onReady((info) => {
     initDropdownPlaceholder();
     addIconSearch();
     insertIconOnClickOnPreview();
+    fetchEmployeePhotos();
   }
 });
 
