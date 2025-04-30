@@ -12,7 +12,7 @@ import { columnLineName, rowLineName, createColumns, createRows } from "./rowsCo
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
 import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
-import {fetchEmployeePhotos} from "./employeeService";
+import { fetchEmployeePhotos, searchForImages, tmpInsertSingleImage} from "./employeeService";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -38,7 +38,9 @@ Office.onReady((info) => {
     initDropdownPlaceholder();
     addIconSearch();
     insertIconOnClickOnPreview();
+    insertEmployeeOnClickOnPreview();
     fetchEmployeePhotos();
+    registerEmployeePhotos();
   }
 });
 
@@ -163,6 +165,28 @@ function addIconPreviewWith(icons: FetchIconResponse[]) {
   }
 }
 
+// Todo refactor
+function addEmployeePreviewWith(employees: string[]) {
+  for (let i = 0; i < employees.length; i += 5) {
+    const employeePreviewElement = document.getElementById("employee-previews");
+    const listElement = document.createElement("li");
+    const anchorElement = document.createElement("a");
+    employeePreviewElement.appendChild(listElement);
+    listElement.appendChild(anchorElement);
+
+    employees.slice(i, i + 5).forEach((icon) => {
+      const employeePreviewElement = document.createElement("img");
+      employeePreviewElement.id = icon;
+      employeePreviewElement.src = "data:image/png;base64,"+icon;
+      employeePreviewElement.width = 45;
+      employeePreviewElement.height = 45;
+      anchorElement.appendChild(employeePreviewElement);
+    });
+  }
+}
+
+
+
 async function insertSvgIconOn(event: any): Promise<void> {
   const path = await getDownloadPathForIconWith(event.target.id);
   const svgText = await downloadIconWith(path)
@@ -193,6 +217,32 @@ function addIconSearch() {
       showErrorPopup(errorMessage);
     }
   };
+}
+
+// Todo refactor
+function registerEmployeePhotos() {
+  document.getElementById("reload_employee_pictures_button").addEventListener("click", async () => {
+    await fetchEmployeePhotos();
+  })
+
+  document.getElementById("employees").onclick = async () => {
+    document.querySelectorAll("#employee-previews li").forEach((li) => li.remove());
+
+    try {
+      const searchTerm = (<HTMLInputElement>document.getElementById("employee-search-input")).value;
+      const result =  searchForImages(searchTerm);
+      addEmployeePreviewWith(result);
+    } catch (e) {
+      const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
+      showErrorPopup(errorMessage);
+    }
+  };
+}
+
+// Todo refactor
+function insertEmployeeOnClickOnPreview() {
+  document.getElementById("employee-previews").addEventListener("click", async (event) =>
+    tmpInsertSingleImage((event.target as HTMLImageElement).id));
 }
 
 function insertIconOnClickOnPreview() {

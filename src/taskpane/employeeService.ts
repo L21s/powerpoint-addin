@@ -1,42 +1,51 @@
-
-//Todo: GitGub Pictures -> caching with e-Tag
-import {employeeImage} from "./types";
-
-const imageCache = new Map<string, employeeImage>;
+const url = 'https://localhost:8443/employees/photos';
+const imageCache = new Map<string, string>();
+let recentEtag = "";
 
 export async function fetchEmployeePhotos(): Promise<void> {
-    const url = 'https://localhost:8443/employees/photos';
+
     //Todo: Append token
-    const requestOptions = { method: "GET" };
+    const requestOptions = {
+        method: "GET",
+        headers: recentEtag ? { "If-None-Match": recentEtag } : {}
+    };
 
     try {
         const result = await fetch(url, requestOptions);
+        if (result.status === 304) {
+            console.log("Images unchanged. Skipping update.");
+            return;
+        }
+
         const response = await result.json();
-        const photosMap: Map<string, employeeImage> = new Map<string, employeeImage>(Object.entries(response));
-        updateImageCache(photosMap);
+        updateLocalStorageImageCache(new Map(Object.entries(response)));
 
-        console.log("photosMap", photosMap);
-        console.log(searchForImages('eichhorn'));
-        const obj: employeeImage = searchForImages('eichhorn')[0] as employeeImage;
-        console.log(obj);
-        tmpInsertSingleImage(obj.base64value);
-
+        const newEtag = result.headers.get("ETag");
+        if (newEtag) {
+           recentEtag = newEtag;
+            console.log("New Etag set: ", newEtag);
+        }
     } catch (e) {
         throw new Error("Error fetching employee photos: " + e);
     }
 }
 
-function updateImageCache(map: Map<string, employeeImage>) {
-    map.forEach(((value, key) => {imageCache.set(key, value)}));
+function getEmployeePhotos():string[] {
+    return Array.from(imageCache.keys())
+        .map(key => imageCache.get(key));
 }
 
-function searchForImages(name: string): employeeImage[] {
+export function searchForImages(name: string) {
+    if(!name) {
+       return getEmployeePhotos();
+   }
+
     return Array.from(imageCache.keys())
         .filter(key => key.includes(name))
         .map(key => imageCache.get(key));
 }
 
-function tmpInsertSingleImage(base64String: string) {
+export function tmpInsertSingleImage(base64String: string) {
     Office.context.document.setSelectedDataAsync(
          base64String,
         { coercionType: Office.CoercionType.Image },
@@ -46,4 +55,8 @@ function tmpInsertSingleImage(base64String: string) {
                 console.log(errorMessage)
             }
         });
+}
+
+function updateLocalStorageImageCache(map: Map<string, string>) {
+    Array.from(map.keys()).forEach(key => imageCache.set(key, map.get(key)));
 }
