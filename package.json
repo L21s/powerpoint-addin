@@ -64,6 +64,7 @@
     "webpack-dev-server": "4.13.1"
   },
   "prettier": "office-addin-prettier-config",
+  "web-types": "./web-types.json",
   "browserslist": [
     "ie 11"
   ]

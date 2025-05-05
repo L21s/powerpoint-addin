@@ -3,7 +3,6 @@ export type FetchIconResponse = {
   url: string;
 };
 
-
 export const ShapeType = {
   Rectangle: PowerPoint.GeometricShapeType.rectangle,
   Ellipse: PowerPoint.GeometricShapeType.ellipse,

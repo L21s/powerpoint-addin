@@ -60,6 +60,10 @@ body {
     overflow: scroll;
 }
 
+.icon-image, .team-image {
+
+}
+
 ul {
     margin: 0;
     padding: 0;
@@ -114,19 +118,25 @@ sl-input, sl-radio-group, sl-radio-button {
 }
 
 sl-radio-group {
-    &::part(button-group) {
+    &::part(form-control) {
+        width: 100%;
+    }
+
+    &::part(button-group), &::part(button-group__base) {
         display: flex;
         flex-grow: 1;
         gap: 8px;
 
-        sl-radio-button {
+        sl-radio-button::part(base) button {
+            display: flex;
+            flex-grow: 1;
+            border-radius: 4px;
 
             &::part(base) {
                 display: flex;
                 flex-grow: 1;
+                border-radius: 4px;
             }
-            display: flex;
-            flex-grow: 1;
         }
     }
 }

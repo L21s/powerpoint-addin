@@ -49,13 +49,20 @@
 <div id="wrapper">
   <sl-drawer id="search-drawer" placement="bottom">
     <div class="row">
-      <sl-input clearable autofocus>
+      <sl-input clearable autofocus id="search-input">
         <sl-icon name="search" slot="prefix"></sl-icon>
+        <sl-spinner slot="suffix" style="display: none;"></sl-spinner>
       </sl-input>
-      <sl-icon-button id="close-drawer" name="gear"></sl-icon-button>
+      <sl-icon-button id="close-drawer" name="x-lg"></sl-icon-button>
     </div>
-    <div class="drawerTabs" id="icons">ICONS</div>
-    <div class="drawerTabs" id="team">TEAM</div>
+    <div class="drawerTabs" id="icons">
+      ICON IMAGES
+      <img class="icon-image" src="../../assets/logo-filled.png" alt=""/>
+    </div>
+    <div class="drawerTabs" id="team">
+      TEAM IMAGES
+      <img class="team-image" src="../../assets/logo-filled.png" alt=""/>
+    </div>
   </sl-drawer>
 
   <section>
@@ -64,12 +71,12 @@
       <h3>Search</h3>
     </div>
 
-    <sl-radio-group id="active-search" class="row" value="">
-      <sl-radio-button variant="default" class="search-open" value="icons">
+    <sl-radio-group class="row" value="">
+      <sl-radio-button class="search-open" value="icons">
         <sl-icon slot="prefix" name="emoji-smile"></sl-icon>
         Icons
       </sl-radio-button>
-      <sl-radio-button variant="default" class="search-open" value="team">
+      <sl-radio-button class="search-open" value="team">
         <sl-icon slot="prefix" name="people"></sl-icon>
         Team
       </sl-radio-button>
@@ -104,22 +111,22 @@
     <div class="row">
       <sl-button-group>
         <sl-button class="image-button" data-value="logoTextBlack">
-          <img slot="prefix" id="currentWithText" alt="" />
+          <img slot="prefix" id="currentWithText" alt="" src="../../assets/logo-filled.png"/>
         </sl-button>
         <sl-dropdown placement="bottom-end">
           <sl-button slot="trigger" caret></sl-button>
           <sl-menu id="logos-with-text-dropdown">
             <sl-menu-item class="logo-button" id="black-logo-with-text" data-value="logoTextBlack">
-              <img id="logoTextBlack" alt="" />
+              <img id="logoTextBlack" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
             <sl-menu-item class="logo-button" id="white-logo-with-text" data-value="logoTextWhite">
-              <img id="logoTextWhite" alt="" />
+              <img id="logoTextWhite" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
             <sl-menu-item class="logo-button" id="pink-logo-with-text" data-value="logoTextPink">
-              <img id="logoTextPink" alt="" />
+              <img id="logoTextPink" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
             <sl-menu-item class="logo-button" id="blue-logo-with-text" data-value="logoTextBlue">
-              <img id="logoTextBlue" alt="" />
+              <img id="logoTextBlue" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
           </sl-menu>
         </sl-dropdown>
@@ -127,22 +134,22 @@
 
       <sl-button-group>
         <sl-button class="image-button" data-value="logoBlack">
-          <img slot="prefix" id="currentWithoutText" alt="" />
+          <img slot="prefix" id="currentWithoutText" alt="" src="../../assets/logo-filled.png"/>
         </sl-button>
         <sl-dropdown placement="bottom-end">
           <sl-button slot="trigger" caret></sl-button>
           <sl-menu id="logos-without-text-dropdown">
             <sl-menu-item class="logo-button" id="black-logo-without-text" data-value="logoBlack">
-              <img id="logoBlack" alt="" />
+              <img id="logoBlack" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
             <sl-menu-item class="logo-button" id="white-logo-without-text" data-value="logoWhite">
-              <img id="logoWhite" alt="" />
+              <img id="logoWhite" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
             <sl-menu-item class="logo-button" id="pink-logo-without-text" data-value="logoPink">
-              <img id="logoPink" alt="" />
+              <img id="logoPink" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
             <sl-menu-item class="logo-button" id="blue-logo-without-text" data-value="logoBlue">
-              <img id="logoBlue" alt="" />
+              <img id="logoBlue" alt="" src="../../assets/logo-filled.png"/>
             </sl-menu-item>
           </sl-menu>
         </sl-dropdown>
@@ -190,16 +197,16 @@
                    src="https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@7.11.0/icons/solid/fill-color.svg"></sl-icon>
         </sl-button>
         <sl-menu class="color-options">
-          <sl-menu-item variant="default" class="fixed-color" size="small"
-                        style="background-color: #ffffff" circle></sl-menu-item>
-          <sl-menu-item variant="default" class="fixed-color" size="small"
-                        style="background-color: #000000" circle></sl-menu-item>
-          <sl-menu-item variant="default" class="fixed-color" size="small"
-                        style="background-color: #ff0000" circle></sl-menu-item>
-          <sl-menu-item variant="default" class="fixed-color" size="small"
-                        style="background-color: #0048ff" circle></sl-menu-item>
-          <sl-menu-item variant="default" class="fixed-color" size="small"
-                        style="background-color: #00ff00" circle></sl-menu-item>
+          <sl-menu-item class="fixed-color"
+                        style="background-color: #ffffff"></sl-menu-item>
+          <sl-menu-item class="fixed-color"
+                        style="background-color: #000000"></sl-menu-item>
+          <sl-menu-item class="fixed-color"
+                        style="background-color: #ff0000"></sl-menu-item>
+          <sl-menu-item class="fixed-color"
+                        style="background-color: #0048ff"></sl-menu-item>
+          <sl-menu-item class="fixed-color"
+                        style="background-color: #00ff00"></sl-menu-item>
           <sl-divider vertical></sl-divider>
           <div id="color-picker">
             <sl-icon name="palette"></sl-icon>

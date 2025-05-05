@@ -11,7 +11,7 @@ import { columnLineName, createColumns, createRows, rowLineName } from "./rowsCo
 import { downloadIconWith, fetchIcons, getDownloadPathForIconWith } from "./iconDownloadUtils";
 //import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse, ShapeTypeKey } from "./types";
-import { addColoredBackground, chooseNewColor, RGBAToHex } from "./iconUtils";
+import { addColoredBackground, chooseNewColor, RGBAToHex, debounce } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -30,6 +30,17 @@ Office.onReady((info) => {
     (document.getElementById("currentWithoutText") as HTMLImageElement).src =
       "data:image/png;base64, " + base64Images["logoBlack"];
 
+    const processInputChanges = debounce(() => {
+      console.log("fetch icons");
+      (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
+    });
+
+    // add debounced search to image search bar
+    document.getElementById("search-input").addEventListener("sl-input", () => {
+      (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
+      processInputChanges();
+    });
+
     changeAndInsertLogoImage();
     initDropdownPlaceholder();
     addIconSearch();
@@ -42,10 +53,9 @@ Office.onReady((info) => {
 function openAndCloseDrawer() {
   const drawer = document.getElementById("search-drawer") as any;
   const wrapper = document.getElementById("wrapper") as HTMLElement;
-  const openButtons = document.querySelectorAll(".search-open");
-  const activeSearch = document.getElementById("active-search") as HTMLInputElement;
+  const searchButtons = document.querySelectorAll(".search-open");
 
-  openButtons.forEach((searchButton: HTMLInputElement) => {
+  searchButtons.forEach((searchButton: HTMLInputElement) => {
     searchButton.onclick = () => {
       drawer.open = true;
       wrapper.style.overflow = "hidden";
@@ -58,6 +68,7 @@ function openAndCloseDrawer() {
       document.querySelectorAll(".drawerTabs").forEach((drawerTab: HTMLElement) => {
         drawerTab.style.display = "none";
       });
+      console.log("test:" + searchButton.value);
       document.getElementById(searchButton.value).style.display = "flex";
     };
   });
@@ -65,7 +76,6 @@ function openAndCloseDrawer() {
   document.getElementById("close-drawer").onclick = () => {
     drawer.open = false;
     wrapper.style.overflow = "scroll";
-    activeSearch.value = "";
   };
 }
 
@@ -144,7 +154,7 @@ async function deleteShapesByName(name: string) {
     shapes.load();
     await context.sync();
 
-    shapes.items.forEach(function(shape) {
+    shapes.items.forEach(function (shape) {
       if (shape.name == name) {
         shape.delete();
       }
@@ -161,7 +171,7 @@ export async function insertSticker(color: string) {
       height: 50,
       left: 50,
       top: 50,
-      width: 150
+      width: 150,
     });
     textBox.name = "Square";
     textBox.fill.setSolidColor(RGBAToHex(color));
@@ -217,6 +227,7 @@ function addIconSearch() {
     try {
       const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
       const result = await fetchIcons(searchTerm);
+      console.log(result);
       addIconPreviewWith(result);
     } catch (e) {
       const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
