@@ -6,28 +6,19 @@
 /* global Office, PowerPoint */
 
 import { base64Images } from "../../base64Image";
-//import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
-import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
-import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
+import { columnLineName, createColumns, createRows, rowLineName } from "./rowsColumns";
+import { downloadIconWith, fetchIcons, getDownloadPathForIconWith } from "./iconDownloadUtils";
 //import { storeEncryptionKey } from "./encryptionUtils";
-import { FetchIconResponse } from "./types";
-import { addColoredBackground } from "./iconUtils";
+import { FetchIconResponse, ShapeTypeKey } from "./types";
+import { addColoredBackground, chooseNewColor, RGBAToHex } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
-    //M.AutoInit(document.body);
-
     /*
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
     storeEncryptionKey();
-    
-    document.getElementById("fill-background").onclick = async () => {
-      const colorPicker = <HTMLInputElement>document.getElementById("background-color");
-      const selectedColor = colorPicker.value;
-      await addBackground(selectedColor);
-    };
     */
 
     initStickerButtons();
@@ -39,44 +30,79 @@ Office.onReady((info) => {
     (document.getElementById("currentWithoutText") as HTMLImageElement).src =
       "data:image/png;base64, " + base64Images["logoBlack"];
 
-    document.querySelectorAll(".logo-button, .image-button").forEach((button: HTMLElement) => {
-      // on initialize: insert image for each button (selected + dropdown options)
-      const initImageID = button.getAttribute("data-value");
-      (document.getElementById(initImageID) as HTMLImageElement).src =
-        "data:image/png;base64, " + base64Images[initImageID];
-
-      // on click: change the current image inside the logo buttons, then insert
-      button.onclick = () => {
-        const imageID = button.getAttribute("data-value");
-        const currentImage = document.getElementById(
-          imageID.includes("Text") ? "currentWithText" : "currentWithoutText"
-        ) as HTMLImageElement;
-
-        // on insert: changes the color for the current image shown in the dropdown buttons
-        currentImage.src = "data:image/png;base64, " + base64Images[imageID];
-        currentImage.parentElement.setAttribute("data-value", imageID);
-
-        // add a shadow filter if the current logo is white, otherwise remove it
-        currentImage.style.filter = imageID.includes("White") ? "drop-shadow(0 0 1px #000000)" : "none";
-
-        Office.context.document.setSelectedDataAsync(
-          base64Images[imageID],
-          { coercionType: Office.CoercionType.Image },
-          (asyncResult) => {
-            if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-              console.error("Action failed. Error: " + asyncResult.error.message);
-            }
-          }
-        );
-      };
-    });
-
+    changeAndInsertLogoImage();
     initDropdownPlaceholder();
     addIconSearch();
+    openAndCloseDrawer();
     insertIconOnClickOnPreview();
     registerIconBackgroundTools();
   }
 });
+
+function openAndCloseDrawer() {
+  const drawer = document.getElementById("search-drawer") as any;
+  const wrapper = document.getElementById("wrapper") as HTMLElement;
+  const openButtons = document.querySelectorAll(".search-open");
+  const activeSearch = document.getElementById("active-search") as HTMLInputElement;
+
+  openButtons.forEach((searchButton: HTMLInputElement) => {
+    searchButton.onclick = () => {
+      drawer.open = true;
+      wrapper.style.overflow = "hidden";
+      wrapper.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      // carousel: make tabs switch depending on value searchButton.value ("icons" or "team")
+      document.querySelectorAll(".drawerTabs").forEach((drawerTab: HTMLElement) => {
+        drawerTab.style.display = "none";
+      });
+      document.getElementById(searchButton.value).style.display = "flex";
+    };
+  });
+
+  document.getElementById("close-drawer").onclick = () => {
+    drawer.open = false;
+    wrapper.style.overflow = "scroll";
+    activeSearch.value = "";
+  };
+}
+
+function changeAndInsertLogoImage() {
+  document.querySelectorAll(".logo-button, .image-button").forEach((button: HTMLElement) => {
+    // on initialize: insert image for each button (selected + dropdown options)
+    const initImageID = button.getAttribute("data-value");
+    (document.getElementById(initImageID) as HTMLImageElement).src =
+      "data:image/png;base64, " + base64Images[initImageID];
+
+    // on click: change the current image inside the logo buttons, then insert
+    button.onclick = () => {
+      const imageID = button.getAttribute("data-value");
+      const currentImage = document.getElementById(
+        // which dropdown button was changed?
+        imageID.includes("Text") ? "currentWithText" : "currentWithoutText"
+      ) as HTMLImageElement;
+
+      // on insert: changes the current image shown in the dropdown button
+      currentImage.src = "data:image/png;base64, " + base64Images[imageID];
+      currentImage.parentElement.setAttribute("data-value", imageID);
+
+      // add a shadow filter if the current logo is white, otherwise remove it
+      currentImage.style.filter = imageID.includes("White") ? "drop-shadow(0 0 1px #000000)" : "none";
+
+      Office.context.document.setSelectedDataAsync(
+        base64Images[imageID],
+        { coercionType: Office.CoercionType.Image },
+        (asyncResult) => {
+          if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+            console.error("Action failed. Error: " + asyncResult.error.message);
+          }
+        }
+      );
+    };
+  });
+}
 
 function initRowsAndColumnsButtons() {
   document.getElementById("create-rows").onclick = () =>
@@ -111,12 +137,14 @@ function initStickerButtons() {
 async function deleteShapesByName(name: string) {
   await PowerPoint.run(async (context) => {
     const sheet = context.presentation.getSelectedSlides().getItemAt(0);
+    sheet.load("shapes");
+    await context.sync();
     const shapes = sheet.shapes;
 
     shapes.load();
     await context.sync();
 
-    shapes.items.forEach(function (shape) {
+    shapes.items.forEach(function(shape) {
       if (shape.name == name) {
         shape.delete();
       }
@@ -125,7 +153,7 @@ async function deleteShapesByName(name: string) {
   });
 }
 
-export async function insertSticker(color) {
+export async function insertSticker(color: string) {
   await runPowerPoint((powerPointContext) => {
     const today = new Date();
     const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
@@ -133,24 +161,12 @@ export async function insertSticker(color) {
       height: 50,
       left: 50,
       top: 50,
-      width: 150,
+      width: 150
     });
     textBox.name = "Square";
-    textBox.fill.setSolidColor(rgbToHex(color));
+    textBox.fill.setSolidColor(RGBAToHex(color));
     setStickerFontProperties(textBox);
   });
-}
-
-function rgbToHex(rgb: String) {
-  const regex = /(\d+),\s*(\d+),\s*(\d+)/;
-  const matches = rgb.match(regex);
-
-  function componentToHex(c: String) {
-    const hex = Number(c).toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
-  }
-
-  return "#" + componentToHex(matches[1]) + componentToHex(matches[2]) + componentToHex(matches[3]);
 }
 
 function setStickerFontProperties(textbox: PowerPoint.Shape) {
@@ -161,15 +177,6 @@ function setStickerFontProperties(textbox: PowerPoint.Shape) {
   textbox.lineFormat.visible = true;
   textbox.lineFormat.color = "#000000";
   textbox.lineFormat.weight = 1.25;
-}
-
-//Todo: old one
-export async function addBackground(backgroundColor?: string) {
-  if (!backgroundColor) backgroundColor = "white";
-  await runPowerPoint((powerPointContext) => {
-    const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
-    selectedImage.fill.setSolidColor(backgroundColor);
-  });
 }
 
 function addIconPreviewWith(icons: FetchIconResponse[]) {
@@ -219,14 +226,23 @@ function addIconSearch() {
 }
 
 function registerIconBackgroundTools() {
-  document.getElementById('background-shape-selector')?.addEventListener('sl-change', () => {
-      addColoredBackground();
-    });
-  /*
-    //Todo: this usecase would trigger a background insertion when selecting a color --> Probably not needed.
-    document.getElementById("background-color-picker").addEventListener("change", async () => {
-    addColoredBackground();
-  });*/
+  document.querySelectorAll(".shape-option").forEach((button: HTMLElement) => {
+    button.onclick = () => {
+      addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
+    };
+  });
+
+  // when color-picker value is changed, update the selected color in the paint-bucket
+  document.getElementById("background-color-picker").addEventListener("change", async () => {
+    const colorSelect = document.getElementById("background-color-picker") as HTMLInputElement;
+    chooseNewColor(colorSelect.value);
+  });
+
+  document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
+    button.onclick = () => {
+      chooseNewColor(RGBAToHex(button.style.backgroundColor));
+    };
+  });
 }
 
 function insertIconOnClickOnPreview() {
@@ -248,6 +264,7 @@ function showErrorPopup(errorMessage: string) {
 }
 
 export function initDropdownPlaceholder() {
+  /*
   const iconPreviewElement = document.getElementById("icon-previews");
   for (let i = 0; i < 15; i++) {
     const spanElement = document.createElement("span");
@@ -257,6 +274,5 @@ export function initDropdownPlaceholder() {
     listElement.appendChild(anchorElement);
     anchorElement.appendChild(spanElement);
   }
+    */
 }
-
-

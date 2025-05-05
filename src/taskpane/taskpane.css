@@ -5,215 +5,340 @@
 
 html,
 body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    overflow: hidden;
+}
+
+#wrapper {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    height: 100%;
+    gap: 20px;
+    overflow: scroll;
+}
+
+#search-drawer {
+    --size: calc(100% - 104px);
+
+    &::part(footer), &::part(header), &::part(overlay) {
+        display: none;
+    }
+
+    &::part(body) {
+        padding: 12px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow: hidden;
+    }
+
+    > .row {
+        width: 100%;
+        align-items: center;
+        height: fit-content;
+
+        sl-input {
+            min-width: 0;
+        }
+
+        sl-icon-button::part(base) {
+            padding-right: 0;
+        }
+    }
+}
+
+.drawerTabs {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
 }
 
 ul {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 button.sticker {
-  padding: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: #fff15c;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #fff15c;
 }
 
-.delete,
-.fill {
-  sl-icon {
-    font-size: 20px;
-  }
-
-  &::part(base),
-  sl-button::part(base) {
-    border-top: 0;
-    border-bottom: 0;
-  }
-
-  &::part(base),
-  > sl-button::part(base) {
-    border-left: 0;
-  }
-  &::part(base),
-  sl-dropdown > sl-button::part(base) {
-    border-right: 0;
-  }
-}
-
-.section {
-  padding: 0 20px;
-  padding-top: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  align-self: stretch;
-  justify-content: center;
-  gap: 10px;
-
-  > *:not(.title) {
-    width: 100%;
-
-    sl-button-group:not(.fill),
-    sl-button:not(.sticky-note),
-    sl-input {
-      flex-grow: 1;
+.delete {
+    sl-icon {
+        font-size: 20px;
     }
-  }
+
+    &::part(base),
+    sl-button::part(base) {
+        border-top: 0;
+        border-bottom: 0;
+    }
+
+    &::part(base),
+    > sl-button::part(base) {
+        border-left: 0;
+    }
+
+    &::part(base),
+    sl-dropdown > sl-button::part(base) {
+        border-right: 0;
+    }
+}
+
+section {
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    justify-content: center;
+    gap: 10px;
+
+    > *:not(.title) {
+        width: 100%;
+    }
+}
+
+sl-button-group,
+sl-button:not(.sticky-note),
+sl-input, sl-radio-group, sl-radio-button {
+    flex-grow: 1;
+}
+
+sl-radio-group {
+    &::part(button-group) {
+        display: flex;
+        flex-grow: 1;
+        gap: 8px;
+
+        sl-radio-button {
+
+            &::part(base) {
+                display: flex;
+                flex-grow: 1;
+            }
+            display: flex;
+            flex-grow: 1;
+        }
+    }
 }
 
 sl-button sl-icon {
-  font-size: 16px; /*  icon size */
+    font-size: 16px; /*  icon size */
 }
 
 .title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
 
-  h3 {
-    font-size: 12px;
-    line-height: 1.4;
-    margin: 0;
-  }
+    h3 {
+        font-size: 12px;
+        line-height: 1.4;
+        margin: 0;
+    }
 
-  sl-icon {
-    opacity: 0.6;
-  }
+    sl-icon {
+        opacity: 0.6;
+    }
 }
 
 .row {
-  display: inline-flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 8px;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 8px;
 }
 
 .column {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
 }
 
 #number-of-columns,
 #number-of-rows {
-  width: 0;
+    width: 0;
 }
+
 #create-columns,
 #create-rows {
-  flex-grow: 0;
+    flex-grow: 0;
 }
 
 .button-grid {
-  flex-grow: 1;
+    flex-grow: 1;
 
-  sl-button-group {
-    width: 100%;
+    sl-button-group {
+        width: 100%;
 
-    &:first-child {
-      margin-bottom: -1px;
+        &:first-child {
+            margin-bottom: -1px;
 
-      sl-button:first-of-type::part(base) {
-        border-radius: 4px 0 0;
-      }
-      sl-button:last-of-type::part(base) {
-        border-radius: 0 4px 0 0;
-      }
+            sl-button:first-of-type::part(base) {
+                border-radius: 4px 0 0;
+            }
+
+            sl-button:last-of-type::part(base) {
+                border-radius: 0 4px 0 0;
+            }
+        }
+
+        &:last-child {
+            sl-button:first-of-type::part(base) {
+                border-radius: 0 0 0 4px;
+            }
+
+            sl-button:last-of-type::part(base) {
+                border-radius: 0 0 4px 0;
+            }
+        }
     }
-    &:last-child {
-      sl-button:first-of-type::part(base) {
-        border-radius: 0 0 0 4px;
-      }
-      sl-button:last-of-type::part(base) {
-        border-radius: 0 0 4px 0;
-      }
-    }
-  }
 }
 
 sl-button.delete::part(base):hover {
-  color: var(--sl-color-danger-600);
-  background-color: var(--sl-color-danger-50);
+    color: var(--sl-color-danger-600);
+    background-color: var(--sl-color-danger-50);
 }
+
 sl-button.delete::part(base):active {
-  color: var(--sl-color-danger-700);
-  background-color: var(--sl-color-danger-100);
+    color: var(--sl-color-danger-700);
+    background-color: var(--sl-color-danger-100);
 }
 
 sl-button-group img {
-  height: 20px;
+    height: 20px;
 
-  &#logoWhite,
-  &#logoTextWhite {
-    -webkit-filter: drop-shadow(0 0 1px #000000);
-    filter: drop-shadow(0 0 1px #000000);
-  }
+    &#logoWhite,
+    &#logoTextWhite {
+        -webkit-filter: drop-shadow(0 0 1px #000000);
+        filter: drop-shadow(0 0 1px #000000);
+    }
 }
+
 sl-menu-item.logo-button::part(label) {
-  display: inline-flex;
-  padding: 8px;
+    display: inline-flex;
+    padding: 8px;
 }
 
 h3 {
-  color: #717680;
-  font-family: Inter;
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 0;
-  letter-spacing: 0.06px;
+    color: #717680;
+    font-family: Inter;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0;
+    letter-spacing: 0.06px;
 }
 
-.ms-welcome__main {
-  background-color: white;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  -webkit-flex: 1 0 0;
-  flex: 1 0 0;
-  height: 100%;
+#paint-bucket {
+    sl-icon:not(#current-color) {
+        font-size: 24px;
+        z-index: 1;
+        color: rgba(0, 0, 0, 0.25);
+    }
+
+    &::part(base) {
+        border: none;
+    }
+
+    &::part(label) {
+        padding: 0;
+        width: 6px;
+    }
 }
 
-/*
-.ms-welcome__main > h2 {
-  width: 100%;
-  text-align: center;
+#current-color {
+    font-size: 24px;
+    position: absolute;
+    color: #ffffff;
 }
-
-.ms-welcome__features.ms-List .ms-ListItem {
-  display: -webkit-flex;
-  display: flex;
-}
-
-.button-row {
-  margin-bottom: 0;
-}
-*/
 
 .color-picker {
-  width: 100%;
+    width: 100%;
+}
+
+.color-options {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 8px;
+
+    > sl-menu-item {
+        border-radius: 50%;
+        height: 32px;
+        width: 32px;
+
+        &::part(base) {
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            background: none;
+        }
+    }
+
+    sl-divider {
+        height: 32px;
+        margin: 0;
+    }
+}
+
+#color-picker {
+    position: relative;
+
+    sl-icon {
+        position: absolute;
+        height: 16px;
+        top: 8px;
+        left: 8px;
+        color: rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+    }
+}
+
+input[type="color"] {
+    margin: 0;
+    border: none;
+    height: 32px;
+    width: 32px;
+
+    &::-webkit-color-swatch-wrapper {
+        padding: 0;
+        margin: 0;
+    }
+
+    &::-webkit-color-swatch {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        cursor: pointer;
+    }
 }
 
 .sticky-note {
-  border-radius: 6px;
-  background-color: white;
-  /* background color has to be applied on adding a sticky note */
+    border-radius: 200px;
+    background-color: white;
+    /* background color has to be applied on adding a sticky note */
 }
 
 .sticky-cyan,
 sl-button.sticky-cyan::part(base) {
-  background-color: #00ffff;
+    background-color: #00ffff;
 }
+
 .sticky-yellow,
 sl-button.sticky-yellow::part(base) {
-  background-color: yellow;
+    background-color: yellow;
 }
 
 /*
@@ -277,22 +402,22 @@ sl-button.sticky-yellow::part(base) {
 
 /*Todo: to be refinded */
 #errorPopup {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  background-color: #d9534f;
-  color: white;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 16px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 350px;
-  z-index: 1000;
-  align-items: center;
-  justify-content: space-between;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    background-color: #d9534f;
+    color: white;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 350px;
+    z-index: 1000;
+    align-items: center;
+    justify-content: space-between;
 }
 
 /*

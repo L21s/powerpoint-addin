@@ -9,7 +9,8 @@ export const ShapeType = {
   Ellipse: PowerPoint.GeometricShapeType.ellipse,
   Diamond: PowerPoint.GeometricShapeType.diamond,
   Triangle: PowerPoint.GeometricShapeType.triangle,
-  Parallelogram: PowerPoint.GeometricShapeType.parallelogram,
+  Pentagon: PowerPoint.GeometricShapeType.pentagon,
+  Hexagon: PowerPoint.GeometricShapeType.hexagon,
 } as const;
 
 export type ShapeTypeKey = keyof typeof ShapeType; // "Rectangle" | "Ellipse" | ...
