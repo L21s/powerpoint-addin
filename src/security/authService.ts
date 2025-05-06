@@ -10,7 +10,8 @@ const msalConfig = {
         authority: `https://login.microsoftonline.com/a40cd802-97bc-4645-88f7-89bff678a616/v2.0`,
         redirectUri: redirectUri,
         supportsNestedAppAuth: true,
-        tenantId: tenantId
+        tenantId: tenantId,
+        nonce: '12'
     },
     cache: {
         cacheLocation: 'sessionStorage',
