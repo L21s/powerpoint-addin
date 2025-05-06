@@ -1,11 +1,14 @@
 import { FetchIconResponse } from "./types";
-import { getDecryptedFreepikApiKey } from "./encryptionUtils";
 import { initDropdownPlaceholder } from "./taskpane";
+import {getToken} from "../security/authService";
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
-  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=${searchTerm}&family-id=300&filters[shape]=outline&filters[color]=solid-black&filters[free_svg]=premium`;
+  localStorage.clear();
+  const url = `https://localhost:8443/icons?term=${searchTerm}`;
+  const token = await getToken();
   const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
+  requestHeaders.append("Authorization", `Bearer ${token}`);
+
   const requestOptions = {
     method: "GET",
     headers: requestHeaders,
@@ -29,9 +32,10 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
 }
 
 export async function getDownloadPathForIconWith(id: string) {
-  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons/${id}/download?format=svg`;
+  const url = `https://localhost:8443/icons/${id}/download?format=svg`;
+  const token = await getToken();
   const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
+  requestHeaders.append("Authorization", `Bearer ${token}`);
   const requestOptions = {
     method: "GET",
     headers: requestHeaders,

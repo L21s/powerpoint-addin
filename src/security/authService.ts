@@ -1,7 +1,7 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 
 const clientId = "236e86e4-f190-48f7-be93-e794ed28382a";
-const redirectUri = "https://localhost:3000/auth-callback.html";
+const redirectUri = "https://localhost:3000/taskpane.html";
 const tenantId = "a40cd802-97bc-4645-88f7-89bff678a616";
 
 const msalConfig = {
@@ -26,20 +26,20 @@ const msalApp = new PublicClientApplication(msalConfig);
 msalApp.initialize();
 
 export async function loginWithDialog() {
-
     await msalApp.loginPopup(loginRequest).then(loginResponse => {msalApp.setActiveAccount(loginResponse.account);})
-    console.log(msalApp.getActiveAccount());
-    getToken();
+    await setInitials();
 }
 
-export function getToken() {
-
+export async function getToken(): Promise<string> {
     const activeAccount = msalApp.getActiveAccount();
-    console.log(`active account: `,activeAccount);
     const tokenRequest = {
         scopes: ["profile openid api://b4a241d6-4efe-497e-af56-8fc3a236f4d2/Freepik"],
         account: activeAccount,
     };
+    return  (await msalApp.acquireTokenSilent(tokenRequest)).accessToken;
+}
 
-    msalApp.acquireTokenSilent(tokenRequest).then(tokenResponse => {return console.log(tokenResponse.accessToken)})
+export async function setInitials() {
+    const initials = msalApp.getActiveAccount().name;
+    localStorage.setItem("initials", initials);
 }
