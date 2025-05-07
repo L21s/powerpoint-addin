@@ -1,7 +1,7 @@
 import { getSelectedShape } from "./powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "./types";
 
-export async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
+async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
     // #0. Get slide and selected shape
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
@@ -53,7 +53,7 @@ export async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
    */
 }
 
-export function chooseNewColor(color: string) {
+function chooseNewColor(color: string) {
   // apply new color to paint bucket icon
   document.getElementById("current-color").style.color = color;
 }
@@ -68,12 +68,22 @@ export function RGBAToHex(rgba: string) {
     .join("")}`;
 }
 
-export function debounce(func, timeout = 500) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, timeout);
-  };
+export function registerIconBackgroundTools() {
+  document.querySelectorAll(".shape-option").forEach((button: HTMLElement) => {
+    button.onclick = () => {
+      addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
+    };
+  });
+
+  // when color-picker value is changed, update the selected color in the paint-bucket
+  document.getElementById("background-color-picker").addEventListener("change", async () => {
+    const colorSelect = document.getElementById("background-color-picker") as HTMLInputElement;
+    chooseNewColor(colorSelect.value);
+  });
+
+  document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
+    button.onclick = () => {
+      chooseNewColor(RGBAToHex(button.style.backgroundColor));
+    };
+  });
 }

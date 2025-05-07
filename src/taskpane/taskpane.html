@@ -30,39 +30,31 @@
 
 <body>
 <!-- still part of the old version -->
-<div style="display: none;">
-  <h3>Icons</h3>
-  <div id="errorPopup" class="ms-MessageBar ms-MessageBar--error" style="display: none">
-    <div id="errorPopupText" class="ms-MessageBar-text"></div>
-    <button id="closePopupButton" class="ms-Button ms-Button--icon ms-Button--iconOnly">
-      <span class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></span>
-    </button>
-  </div>
-  <label for="icon-search-input"></label>
-  <input class="icon-search-button" type="text" id="icon-search-input" />
-  <div class="content">
-    <button class="dropdown-trigger btn" data-target="icon-previews">Search</button>
-    <ul id="icon-previews" class="dropdown-content"></ul>
-  </div>
+<div id="errorPopup" class="ms-MessageBar ms-MessageBar--error" style="display: none">
+  <div id="errorPopupText" class="ms-MessageBar-text"></div>
+  <button id="closePopupButton" class="ms-Button ms-Button--icon ms-Button--iconOnly">
+    <span class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></span>
+  </button>
 </div>
 
 <div id="wrapper">
   <sl-drawer id="search-drawer" placement="bottom">
     <div class="row">
-      <sl-input clearable autofocus id="search-input">
+      <sl-input clearable autofocus autocorrect="off" placeholder="search icons..." id="search-input">
         <sl-icon name="search" slot="prefix"></sl-icon>
         <sl-spinner slot="suffix" style="display: none;"></sl-spinner>
       </sl-input>
       <sl-icon-button id="close-drawer" name="x-lg"></sl-icon-button>
     </div>
+    <h3 id="search-result-title">Recently used icons</h3>
     <div class="drawerTabs" id="icons">
-      ICON IMAGES
-      <img class="icon-image" src="../../assets/logo-filled.png" alt=""/>
+      <div id="icon-previews" class="preview"></div>
     </div>
+    <!-- add back in later for team images
     <div class="drawerTabs" id="team">
-      TEAM IMAGES
-      <img class="team-image" src="../../assets/logo-filled.png" alt=""/>
+      <div id="team-previews" class="preview"></div>
     </div>
+    -->
   </sl-drawer>
 
   <section>
@@ -71,12 +63,12 @@
       <h3>Search</h3>
     </div>
 
-    <sl-radio-group class="row" value="">
+    <sl-radio-group id="active-search" class="row" value="">
       <sl-radio-button class="search-open" value="icons">
         <sl-icon slot="prefix" name="emoji-smile"></sl-icon>
         Icons
       </sl-radio-button>
-      <sl-radio-button class="search-open" value="team">
+      <sl-radio-button class="search-open" value="team" disabled>
         <sl-icon slot="prefix" name="people"></sl-icon>
         Team
       </sl-radio-button>

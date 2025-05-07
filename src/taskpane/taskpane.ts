@@ -8,47 +8,46 @@
 import { base64Images } from "../../base64Image";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, createColumns, createRows, rowLineName } from "./rowsColumns";
-import { downloadIconWith, fetchIcons, getDownloadPathForIconWith } from "./iconDownloadUtils";
-//import { storeEncryptionKey } from "./encryptionUtils";
-import { FetchIconResponse, ShapeTypeKey } from "./types";
-import { addColoredBackground, chooseNewColor, RGBAToHex, debounce } from "./iconUtils";
+import { debounce, fetchIcons, addToIconPreview, recentIcons } from "./iconDownloadUtils";
+import { RGBAToHex, registerIconBackgroundTools } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
-    /*
-    let initials = <HTMLInputElement>document.getElementById("initials");
-    initials.value = localStorage.getItem("initials");
-    storeEncryptionKey();
-    */
-
     initStickerButtons();
     initRowsAndColumnsButtons();
-
-    // images for logo dropdown buttons
-    (document.getElementById("currentWithText") as HTMLImageElement).src =
-      "data:image/png;base64, " + base64Images["logoTextBlack"];
-    (document.getElementById("currentWithoutText") as HTMLImageElement).src =
-      "data:image/png;base64, " + base64Images["logoBlack"];
-
-    const processInputChanges = debounce(() => {
-      console.log("fetch icons");
-      (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
-    });
-
-    // add debounced search to image search bar
-    document.getElementById("search-input").addEventListener("sl-input", () => {
-      (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
-      processInputChanges();
-    });
-
-    changeAndInsertLogoImage();
-    initDropdownPlaceholder();
-    addIconSearch();
     openAndCloseDrawer();
-    insertIconOnClickOnPreview();
+    registerSearch();
     registerIconBackgroundTools();
+    changeAndInsertLogoImage();
   }
 });
+
+function registerSearch() {
+  const processInputChanges = debounce(async () => {
+    const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
+
+    try {
+      document.getElementById("icon-previews").replaceChildren();
+      let result = recentIcons;
+      if (searchTerm) result = await fetchIcons(searchTerm);
+      addToIconPreview(result);
+    } catch (e) {
+      const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
+      showErrorPopup(errorMessage);
+    }
+
+    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
+    document.getElementById("search-result-title").innerText = searchTerm
+      ? 'search results for "' + searchTerm + '"'
+      : "Recently used icons";
+  });
+
+  // add debounced search to input
+  document.getElementById("search-input").addEventListener("sl-input", () => {
+    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
+    processInputChanges();
+  });
+}
 
 function openAndCloseDrawer() {
   const drawer = document.getElementById("search-drawer") as any;
@@ -64,22 +63,35 @@ function openAndCloseDrawer() {
         behavior: "smooth",
       });
 
-      // carousel: make tabs switch depending on value searchButton.value ("icons" or "team")
+      /** FOR LATER: make tabs switch depending on value searchButton.value ("icons" or "team") */
+      /*
+      // refocus input
+      (document.getElementById("search-input") as HTMLInputElement).focus();
+
       document.querySelectorAll(".drawerTabs").forEach((drawerTab: HTMLElement) => {
         drawerTab.style.display = "none";
       });
-      console.log("test:" + searchButton.value);
       document.getElementById(searchButton.value).style.display = "flex";
+      */
     };
   });
 
   document.getElementById("close-drawer").onclick = () => {
     drawer.open = false;
     wrapper.style.overflow = "scroll";
+    // reset search input & radio button
+    (document.getElementById("search-input") as HTMLInputElement).value = "";
+    (document.getElementById("active-search") as HTMLInputElement).value = "";
   };
 }
 
 function changeAndInsertLogoImage() {
+  // images for logo dropdown buttons
+  (document.getElementById("currentWithText") as HTMLImageElement).src =
+    "data:image/png;base64, " + base64Images["logoTextBlack"];
+  (document.getElementById("currentWithoutText") as HTMLImageElement).src =
+    "data:image/png;base64, " + base64Images["logoBlack"];
+
   document.querySelectorAll(".logo-button, .image-button").forEach((button: HTMLElement) => {
     // on initialize: insert image for each button (selected + dropdown options)
     const initImageID = button.getAttribute("data-value");
@@ -137,11 +149,6 @@ function initStickerButtons() {
     const color = window.getComputedStyle(button as HTMLElement).backgroundColor;
     (button as HTMLElement).onclick = () => insertSticker(color);
   });
-
-  /*
-  document.getElementById("save-initials").onclick = () =>
-    localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
-  */
 }
 
 async function deleteShapesByName(name: string) {
@@ -189,78 +196,7 @@ function setStickerFontProperties(textbox: PowerPoint.Shape) {
   textbox.lineFormat.weight = 1.25;
 }
 
-function addIconPreviewWith(icons: FetchIconResponse[]) {
-  for (let i = 0; i < icons.length; i += 5) {
-    const iconPreviewElement = document.getElementById("icon-previews");
-    const listElement = document.createElement("li");
-    const anchorElement = document.createElement("a");
-    iconPreviewElement.appendChild(listElement);
-    listElement.appendChild(anchorElement);
-
-    icons.slice(i, i + 5).forEach((icon) => {
-      const iconPreviewElement = document.createElement("img");
-      iconPreviewElement.id = icon.id;
-      iconPreviewElement.src = icon.url;
-      iconPreviewElement.width = 45;
-      iconPreviewElement.height = 45;
-      anchorElement.appendChild(iconPreviewElement);
-    });
-  }
-}
-
-async function insertSvgIconOn(event: any): Promise<void> {
-  const path = await getDownloadPathForIconWith(event.target.id);
-  const svgText = await downloadIconWith(path).then((response) => response.text());
-
-  Office.context.document.setSelectedDataAsync(svgText, { coercionType: Office.CoercionType.XmlSvg }, (asyncResult) => {
-    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-      const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
-      showErrorPopup(errorMessage);
-    }
-  });
-}
-
-function addIconSearch() {
-  document.getElementById("icons").onclick = async () => {
-    document.querySelectorAll("#icon-previews li").forEach((li) => li.remove());
-
-    try {
-      const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
-      const result = await fetchIcons(searchTerm);
-      console.log(result);
-      addIconPreviewWith(result);
-    } catch (e) {
-      const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
-      showErrorPopup(errorMessage);
-    }
-  };
-}
-
-function registerIconBackgroundTools() {
-  document.querySelectorAll(".shape-option").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
-    };
-  });
-
-  // when color-picker value is changed, update the selected color in the paint-bucket
-  document.getElementById("background-color-picker").addEventListener("change", async () => {
-    const colorSelect = document.getElementById("background-color-picker") as HTMLInputElement;
-    chooseNewColor(colorSelect.value);
-  });
-
-  document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      chooseNewColor(RGBAToHex(button.style.backgroundColor));
-    };
-  });
-}
-
-function insertIconOnClickOnPreview() {
-  document.getElementById("icon-previews").addEventListener("click", (event) => insertSvgIconOn(event), false);
-}
-
-function showErrorPopup(errorMessage: string) {
+export function showErrorPopup(errorMessage: string) {
   const popup = document.getElementById("errorPopup");
   const popupText = document.getElementById("errorPopupText");
   const closeButton = document.getElementById("closePopupButton");
@@ -272,18 +208,4 @@ function showErrorPopup(errorMessage: string) {
       popup.style.display = "none";
     });
   }
-}
-
-export function initDropdownPlaceholder() {
-  /*
-  const iconPreviewElement = document.getElementById("icon-previews");
-  for (let i = 0; i < 15; i++) {
-    const spanElement = document.createElement("span");
-    const anchorElement = document.createElement("a");
-    const listElement = document.createElement("li");
-    iconPreviewElement.appendChild(listElement);
-    listElement.appendChild(anchorElement);
-    anchorElement.appendChild(spanElement);
-  }
-    */
 }

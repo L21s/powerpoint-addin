@@ -11,6 +11,7 @@ body {
     padding: 0;
     background-color: white;
     overflow: hidden;
+    font-family: Inter;
 }
 
 #wrapper {
@@ -27,25 +28,34 @@ body {
 #search-drawer {
     --size: calc(100% - 104px);
 
+    h3 {
+        padding: 0 24px;
+    }
+
     &::part(footer), &::part(header), &::part(overlay) {
         display: none;
     }
 
     &::part(body) {
-        padding: 12px 24px;
+        padding: 16px 0;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 20px;
         overflow: hidden;
     }
 
     > .row {
-        width: 100%;
         align-items: center;
         height: fit-content;
+        padding: 0 24px;
 
         sl-input {
             min-width: 0;
+
+            &::part(clear-button) {
+                padding-right: 12px;
+                width: fit-content;
+            }
         }
 
         sl-icon-button::part(base) {
@@ -55,18 +65,54 @@ body {
 }
 
 .drawerTabs {
-    width: 100%;
     height: 100%;
     overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 24px;
+    min-width: 0;
 }
 
-.icon-image, .team-image {
-
-}
-
-ul {
+#icon-previews {
     margin: 0;
     padding: 0;
+    gap: 4px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    sl-button {
+        flex-grow: unset;
+        position: relative;
+
+        &::part(base) {
+            padding: 8px;
+            border: none;
+        }
+
+        &::part(label) {
+            display: none;
+        }
+
+        > img {
+            width: 52px;
+            visibility: visible;
+        }
+    }
+
+    sl-button[loading] {
+        > img {
+            transition: opacity 0.25s;
+            opacity: 0.2;
+        }
+
+        &::part(spinner) {
+            font-size: 36px;
+            --track-width: 6px;
+            --indicator-color: var(--sl-color-primary-600);
+        }
+    }
 }
 
 button.sticker {
@@ -122,22 +168,14 @@ sl-radio-group {
         width: 100%;
     }
 
+    sl-radio-button::part(button) {
+        border-radius: 4px;
+    }
+
     &::part(button-group), &::part(button-group__base) {
         display: flex;
         flex-grow: 1;
         gap: 8px;
-
-        sl-radio-button::part(base) button {
-            display: flex;
-            flex-grow: 1;
-            border-radius: 4px;
-
-            &::part(base) {
-                display: flex;
-                flex-grow: 1;
-                border-radius: 4px;
-            }
-        }
     }
 }
 
@@ -150,12 +188,6 @@ sl-button sl-icon {
     justify-content: center;
     align-items: center;
     gap: 4px;
-
-    h3 {
-        font-size: 12px;
-        line-height: 1.4;
-        margin: 0;
-    }
 
     sl-icon {
         opacity: 0.6;
@@ -242,12 +274,14 @@ sl-menu-item.logo-button::part(label) {
 }
 
 h3 {
-    color: #717680;
+    text-transform: uppercase;
     font-family: Inter;
     font-weight: 700;
-    text-transform: uppercase;
-    line-height: 0;
+    font-size: 12px;
+    line-height: 1.4;
     letter-spacing: 0.06px;
+    margin: 0;
+    opacity: 0.6;
 }
 
 #paint-bucket {
@@ -263,7 +297,7 @@ h3 {
 
     &::part(label) {
         padding: 0;
-        width: 6px;
+        width: 4px;
     }
 }
 
@@ -271,10 +305,6 @@ h3 {
     font-size: 24px;
     position: absolute;
     color: #ffffff;
-}
-
-.color-picker {
-    width: 100%;
 }
 
 .color-options {
@@ -317,6 +347,7 @@ h3 {
     }
 }
 
+/* color picker input */
 input[type="color"] {
     margin: 0;
     border: none;
@@ -351,66 +382,7 @@ sl-button.sticky-yellow::part(base) {
     background-color: yellow;
 }
 
-/*
-.content {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  margin: 0 auto;
-  gap: 5px;
-}
-
-.content-vertical {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  gap: 5px;
-  width: 100%;
-}
-
-.dropdown-trigger {
-  width: 100%;
-}
-
-.save-button {
-  width: 31%;
-}
-
-.icon-search-button {
-  width: 31%;
-}
-
-.icon-results {
-}
-
-.grid-button {
-  width: 49%;
-}
-
-.logo-button {
-  width: 100%;
-}
-
-.drop-grid-button {
-  width: 79%;
-  margin-top: 5px;
-}
-
-.dropdown-menu {
-  position: fixed;
-  display: none;
-}
-
-.dropdown button {
-  display: block;
-}
-
-.dropdown-menu.show {
-  display: block;
-}
-*/
-
-/*Todo: to be refinded */
+/*Todo: to be refined */
 #errorPopup {
     position: fixed;
     bottom: 20px;
@@ -429,30 +401,3 @@ sl-button.sticky-yellow::part(base) {
     align-items: center;
     justify-content: space-between;
 }
-
-/*
-.ms-MessageBar-text {
-  margin-right: 40px;
-  flex-grow: 1;
-}
-
-.ms-Button--iconOnly {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-}
-
-.ms-Button--iconOnly:hover {
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 50%;
-}
-
-.ms-Icon--Cancel {
-  font-size: 18px;
-  color: white;
-}
-*/
