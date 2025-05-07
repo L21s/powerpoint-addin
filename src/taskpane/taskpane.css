@@ -79,7 +79,6 @@ body {
     padding: 0;
     gap: 4px;
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
 
     sl-button {
@@ -113,12 +112,6 @@ body {
             --indicator-color: var(--sl-color-primary-600);
         }
     }
-}
-
-button.sticker {
-    padding: 10px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    background: #fff15c;
 }
 
 .delete {
@@ -279,7 +272,6 @@ h3 {
     font-weight: 700;
     font-size: 12px;
     line-height: 1.4;
-    letter-spacing: 0.06px;
     margin: 0;
     opacity: 0.6;
 }
@@ -369,7 +361,6 @@ input[type="color"] {
 .sticky-note {
     border-radius: 200px;
     background-color: white;
-    /* background color has to be applied on adding a sticky note */
 }
 
 .sticky-cyan,

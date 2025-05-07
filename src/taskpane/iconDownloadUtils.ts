@@ -21,7 +21,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
   });
 }
 
-async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse): Promise<void> {
+async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
   const button = e.target as HTMLButtonElement;
 
   // show loading spinner on button while SVG is loaded into slide

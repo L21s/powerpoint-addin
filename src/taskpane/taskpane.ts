@@ -62,17 +62,6 @@ function openAndCloseDrawer() {
         top: 0,
         behavior: "smooth",
       });
-
-      /** FOR LATER: make tabs switch depending on value searchButton.value ("icons" or "team") */
-      /*
-      // refocus input
-      (document.getElementById("search-input") as HTMLInputElement).focus();
-
-      document.querySelectorAll(".drawerTabs").forEach((drawerTab: HTMLElement) => {
-        drawerTab.style.display = "none";
-      });
-      document.getElementById(searchButton.value).style.display = "flex";
-      */
     };
   });
 
