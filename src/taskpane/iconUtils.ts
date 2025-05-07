@@ -1,12 +1,13 @@
-import {getSelectedShape} from "./powerPointUtil";
+import { getSelectedShapeWith } from "./powerPointUtil";
 import {ShapeType, ShapeTypeKey} from "./types";
+import ShapeZOrder = PowerPoint.ShapeZOrder;
 
 export async function addColoredBackground() {
     await PowerPoint.run(async (context) => {
 
             // #0. Get slide and selected shape
             const slide = context.presentation.getSelectedSlides().getItemAt(0);
-            const selectedShape: PowerPoint.Shape = await getSelectedShape();
+            const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
 
             // #1. Get selected background shape
             const shapeSelect       = document.getElementById('background-shape-selector') as HTMLSelectElement;
@@ -23,6 +24,11 @@ export async function addColoredBackground() {
             background.width    = selectedShape.width;
             background.height   = selectedShape.height;
             background.fill.setSolidColor(colorSelectValue ? colorSelectValue : 'lightgreen');
+
+            background.setZOrder(ShapeZOrder.sendToBack);
+            await context.sync();
+            slide.shapes.addGroup([background, selectedShape]);
+            await context.sync();
     })
 
     /**
