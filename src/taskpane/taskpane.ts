@@ -10,16 +10,15 @@ import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
-import { storeEncryptionKey } from "./encryptionUtils";
 import { FetchIconResponse } from "./types";
+import { loginWithDialog } from "../security/authService";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
+    loginWithDialog();
     M.AutoInit(document.body);
-
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
-    storeEncryptionKey();
 
     document.getElementById("fill-background").onclick = async () => {
       const colorPicker = <HTMLInputElement>document.getElementById("background-color");

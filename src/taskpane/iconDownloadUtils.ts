@@ -1,14 +1,14 @@
 import { FetchIconResponse } from "./types";
-import { getDecryptedFreepikApiKey } from "./encryptionUtils";
 import { initDropdownPlaceholder } from "./taskpane";
+import { getAccessToken } from "../security/authService";
+
+const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
-  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=${searchTerm}&family-id=300&filters[shape]=outline&filters[color]=solid-black&filters[free_svg]=premium`;
-  const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
+  const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
   const requestOptions = {
     method: "GET",
-    headers: requestHeaders,
+    headers: await getRequestHeadersWithAuthorization(),
   };
 
   try {
@@ -29,12 +29,10 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
 }
 
 export async function getDownloadPathForIconWith(id: string) {
-  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons/${id}/download?format=svg`;
-  const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
+  const url = `${proxyBaseUrl}/icons/${id}/download?format=svg`;
   const requestOptions = {
     method: "GET",
-    headers: requestHeaders,
+    headers: await getRequestHeadersWithAuthorization(),
   };
 
   try {
@@ -67,4 +65,11 @@ function showFetchIconsErrorInDropdown() {
   iconPreviewElement.appendChild(listElement);
   listElement.appendChild(anchorElement);
   anchorElement.appendChild(spanElement);
+}
+
+async function getRequestHeadersWithAuthorization(): Promise<Headers> {
+  const token = await getAccessToken();
+  const requestHeaders = new Headers();
+  requestHeaders.append("Authorization", `Bearer ${token}`);
+  return requestHeaders;
 }
