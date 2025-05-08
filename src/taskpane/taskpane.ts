@@ -13,11 +13,10 @@ import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./icon
 import { FetchIconResponse } from "./types";
 import {loginWithDialog} from "../security/authService";
 
-
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
-    M.AutoInit(document.body);
     loginWithDialog();
+    M.AutoInit(document.body);
     let initials = <HTMLInputElement>document.getElementById("initials");
     initials.value = localStorage.getItem("initials");
 
