@@ -5,58 +5,56 @@
 
 /* global Office, PowerPoint */
 
-import { base64Images } from "../../base64Image";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, createColumns, createRows, rowLineName } from "./rowsColumns";
-import { debounce, fetchIcons, addToIconPreview, recentIcons } from "./iconDownloadUtils";
-import { RGBAToHex, registerIconBackgroundTools } from "./iconUtils";
+import { addToIconPreview, debounce, fetchIcons, recentIcons } from "./iconDownloadUtils";
+import { registerIconBackgroundTools } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     initStickerButtons();
     initRowsAndColumnsButtons();
-    openAndCloseDrawer();
+    registerDrawerToggle();
     registerSearch();
     registerIconBackgroundTools();
-    changeAndInsertLogoImage();
+    registerLogoImageInsert();
   }
 });
 
+const processInputChanges = debounce(async () => {
+  const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
+
+  try {
+    document.getElementById("icon-previews").replaceChildren();
+    let result = recentIcons;
+    if (searchTerm) result = await fetchIcons(searchTerm);
+    addToIconPreview(result);
+  } catch (e) {
+    const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
+    showErrorPopup(errorMessage);
+  }
+
+  (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
+  document.getElementById("search-result-title").innerText = searchTerm
+    ? 'Search results for "' + searchTerm + '"'
+    : "Recently used icons";
+});
+
 function registerSearch() {
-  const processInputChanges = debounce(async () => {
-    const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
-
-    try {
-      document.getElementById("icon-previews").replaceChildren();
-      let result = recentIcons;
-      if (searchTerm) result = await fetchIcons(searchTerm);
-      addToIconPreview(result);
-    } catch (e) {
-      const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
-      showErrorPopup(errorMessage);
-    }
-
-    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
-    document.getElementById("search-result-title").innerText = searchTerm
-      ? 'search results for "' + searchTerm + '"'
-      : "Recently used icons";
-  });
-
-  // add debounced search to input
   document.getElementById("search-input").addEventListener("sl-input", () => {
     (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
     processInputChanges();
   });
 }
 
-function openAndCloseDrawer() {
-  const drawer = document.getElementById("search-drawer") as any;
+function registerDrawerToggle() {
+  const drawer = document.getElementById("search-drawer") as HTMLElement;
   const wrapper = document.getElementById("wrapper") as HTMLElement;
   const searchButtons = document.querySelectorAll(".search-open");
 
   searchButtons.forEach((searchButton: HTMLInputElement) => {
     searchButton.onclick = () => {
-      drawer.open = true;
+      drawer["open"] = true;
       wrapper.style.overflow = "hidden";
       wrapper.scrollTo({
         top: 0,
@@ -66,44 +64,34 @@ function openAndCloseDrawer() {
   });
 
   document.getElementById("close-drawer").onclick = () => {
-    drawer.open = false;
+    drawer["open"] = false;
     wrapper.style.overflow = "scroll";
-    // reset search input & radio button
+
     (document.getElementById("search-input") as HTMLInputElement).value = "";
     (document.getElementById("active-search") as HTMLInputElement).value = "";
   };
 }
 
-function changeAndInsertLogoImage() {
-  // images for logo dropdown buttons
-  (document.getElementById("currentWithText") as HTMLImageElement).src =
-    "data:image/png;base64, " + base64Images["logoTextBlack"];
-  (document.getElementById("currentWithoutText") as HTMLImageElement).src =
-    "data:image/png;base64, " + base64Images["logoBlack"];
+function registerLogoImageInsert() {
+  document.querySelectorAll(".logo-dropdown, .logo-dropdown-option").forEach((button: HTMLElement) => {
+    button.onclick = async () => {
+      const selectedImageSrc = button.getElementsByTagName("img")[0].src;
 
-  document.querySelectorAll(".logo-button, .image-button").forEach((button: HTMLElement) => {
-    // on initialize: insert image for each button (selected + dropdown options)
-    const initImageID = button.getAttribute("data-value");
-    (document.getElementById(initImageID) as HTMLImageElement).src =
-      "data:image/png;base64, " + base64Images[initImageID];
-
-    // on click: change the current image inside the logo buttons, then insert
-    button.onclick = () => {
-      const imageID = button.getAttribute("data-value");
-      const currentImage = document.getElementById(
-        // which dropdown button was changed?
-        imageID.includes("Text") ? "currentWithText" : "currentWithoutText"
+      const currentDropdownImage = document.getElementById(
+        // which dropdown image has to be changed?
+        selectedImageSrc.includes("Text") ? "currentWithText" : "currentWithoutText"
       ) as HTMLImageElement;
 
-      // on insert: changes the current image shown in the dropdown button
-      currentImage.src = "data:image/png;base64, " + base64Images[imageID];
-      currentImage.parentElement.setAttribute("data-value", imageID);
+      currentDropdownImage.src = selectedImageSrc;
 
-      // add a shadow filter if the current logo is white, otherwise remove it
-      currentImage.style.filter = imageID.includes("White") ? "drop-shadow(0 0 1px #000000)" : "none";
+      if (selectedImageSrc.includes("White")) {
+        currentDropdownImage.classList.add("white-shadow");
+      } else {
+        currentDropdownImage.classList.remove("white-shadow");
+      }
 
       Office.context.document.setSelectedDataAsync(
-        base64Images[imageID],
+        await getBase64(selectedImageSrc),
         { coercionType: Office.CoercionType.Image },
         (asyncResult) => {
           if (asyncResult.status === Office.AsyncResultStatus.Failed) {
@@ -113,6 +101,19 @@ function changeAndInsertLogoImage() {
       );
     };
   });
+}
+
+async function getBase64(imageSrc: string) {
+  const response = await fetch(imageSrc);
+  const blob = await response.blob();
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+
+    reader.onload = () => resolve((reader.result as string).split(",")[1]);
+    reader.onerror = (error) => reject(error);
+  }) as Promise<string>;
 }
 
 function initRowsAndColumnsButtons() {
@@ -170,7 +171,7 @@ export async function insertSticker(color: string) {
       width: 150,
     });
     textBox.name = "Square";
-    textBox.fill.setSolidColor(RGBAToHex(color));
+    textBox.fill.setSolidColor(color);
     setStickerFontProperties(textBox);
   });
 }

@@ -1,16 +1,31 @@
 import { getSelectedShape } from "./powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "./types";
 
+function addColorToRecent(colorValue: string) {
+  const recentColorElements = document.querySelectorAll(".fixed-color");
+  let recentColors = [];
+
+  recentColorElements.forEach((button: HTMLElement) => {
+    recentColors.push(button.style.backgroundColor);
+  });
+
+  if (!recentColors.includes(colorValue)) {
+    recentColors.unshift(colorValue);
+    recentColors.pop();
+
+    for (let index = 0; index < recentColors.length; index++) {
+      (recentColorElements[index] as HTMLElement).style.backgroundColor = recentColors[index];
+    }
+  }
+}
+
 async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
-    // #0. Get slide and selected shape
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
     const selectedShape: PowerPoint.Shape = await getSelectedShape();
 
-    // #1. Get current background color from paint bucket icon
-    const colorValue = RGBAToHex(document.getElementById("current-color").style.color);
+    const colorValue = document.getElementById("paint-bucket-color").style.color;
 
-    // #2. Build background with given background shape (shapeSelectValue)
     const background: PowerPoint.Shape = slide.shapes.addGeometricShape(
       ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
     );
@@ -18,25 +33,9 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.top = selectedShape.top;
     background.width = selectedShape.width;
     background.height = selectedShape.height;
-    background.fill.setSolidColor(colorValue ? colorValue : "lightgreen");
+    background.fill.setSolidColor(colorValue ? RGBToHex(colorValue) : "lightgreen");
 
-    // #3. After inserting background, add color as recently used color in the dropdown
-    const recentColorElements = document.querySelectorAll(".fixed-color");
-    let recentColors = [];
-
-    recentColorElements.forEach((button: HTMLElement) => {
-      recentColors.push(RGBAToHex(button.style.backgroundColor));
-    });
-
-    // only add the color if it's not already added
-    if (!recentColors.includes(colorValue)) {
-      recentColors.unshift(colorValue);
-      recentColors.pop();
-
-      for (let index = 0; index < recentColors.length; index++) {
-        (recentColorElements[index] as HTMLElement).style.backgroundColor = recentColors[index];
-      }
-    }
+    addColorToRecent(colorValue);
   });
 
   /**
@@ -54,18 +53,20 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
 }
 
 function chooseNewColor(color: string) {
-  // apply new color to paint bucket icon
-  document.getElementById("current-color").style.color = color;
+  document.getElementById("paint-bucket-color").style.color = color;
 }
 
-export function RGBAToHex(rgba: string) {
-  return `#${rgba
-    .match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.?\d*))?\)$/)
-    .slice(1)
-    .map((n, i) =>
-      (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n)).toString(16).padStart(2, "0").replace("NaN", "")
-    )
-    .join("")}`;
+export function RGBToHex(rgb: string) {
+  return (
+    "#" +
+    rgb
+      .match(/\d+/g)
+      .map((colorVal) => {
+        const hexVal = Number(colorVal).toString(16);
+        return hexVal.length === 1 ? "0" + hexVal : hexVal;
+      })
+      .join("")
+  );
 }
 
 export function registerIconBackgroundTools() {
@@ -75,15 +76,13 @@ export function registerIconBackgroundTools() {
     };
   });
 
-  // when color-picker value is changed, update the selected color in the paint-bucket
-  document.getElementById("background-color-picker").addEventListener("change", async () => {
-    const colorSelect = document.getElementById("background-color-picker") as HTMLInputElement;
-    chooseNewColor(colorSelect.value);
+  document.getElementById("background-color-picker").addEventListener("change", async (e) => {
+    chooseNewColor((e.target as HTMLInputElement).value);
   });
 
   document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
     button.onclick = () => {
-      chooseNewColor(RGBAToHex(button.style.backgroundColor));
+      chooseNewColor(button.style.backgroundColor);
     };
   });
 }

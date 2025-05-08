@@ -97,46 +97,46 @@
 
     <div class="row">
       <sl-button-group>
-        <sl-button class="image-button" data-value="logoTextBlack">
-          <img slot="prefix" id="currentWithText" alt="" src="../../assets/logo-filled.png"/>
+        <sl-button class="logo-dropdown">
+          <img slot="prefix" id="currentWithText" alt="" src="../../assets/logoTextBlack.png" />
         </sl-button>
         <sl-dropdown placement="bottom-end">
           <sl-button slot="trigger" caret></sl-button>
-          <sl-menu id="logos-with-text-dropdown">
-            <sl-menu-item class="logo-button" id="black-logo-with-text" data-value="logoTextBlack">
-              <img id="logoTextBlack" alt="" src="../../assets/logo-filled.png"/>
+          <sl-menu>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoTextBlack.png" />
             </sl-menu-item>
-            <sl-menu-item class="logo-button" id="white-logo-with-text" data-value="logoTextWhite">
-              <img id="logoTextWhite" alt="" src="../../assets/logo-filled.png"/>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoTextWhite.png" class="white-shadow"/>
             </sl-menu-item>
-            <sl-menu-item class="logo-button" id="pink-logo-with-text" data-value="logoTextPink">
-              <img id="logoTextPink" alt="" src="../../assets/logo-filled.png"/>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoTextPink.png" />
             </sl-menu-item>
-            <sl-menu-item class="logo-button" id="blue-logo-with-text" data-value="logoTextBlue">
-              <img id="logoTextBlue" alt="" src="../../assets/logo-filled.png"/>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoTextBlue.png" />
             </sl-menu-item>
           </sl-menu>
         </sl-dropdown>
       </sl-button-group>
 
       <sl-button-group>
-        <sl-button class="image-button" data-value="logoBlack">
-          <img slot="prefix" id="currentWithoutText" alt="" src="../../assets/logo-filled.png"/>
+        <sl-button class="logo-dropdown">
+          <img slot="prefix" id="currentWithoutText" alt="" src="../../assets/logoBlack.png" />
         </sl-button>
         <sl-dropdown placement="bottom-end">
           <sl-button slot="trigger" caret></sl-button>
-          <sl-menu id="logos-without-text-dropdown">
-            <sl-menu-item class="logo-button" id="black-logo-without-text" data-value="logoBlack">
-              <img id="logoBlack" alt="" src="../../assets/logo-filled.png"/>
+          <sl-menu>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoBlack.png" />
             </sl-menu-item>
-            <sl-menu-item class="logo-button" id="white-logo-without-text" data-value="logoWhite">
-              <img id="logoWhite" alt="" src="../../assets/logo-filled.png"/>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoWhite.png" class="white-shadow"/>
             </sl-menu-item>
-            <sl-menu-item class="logo-button" id="pink-logo-without-text" data-value="logoPink">
-              <img id="logoPink" alt="" src="../../assets/logo-filled.png"/>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoPink.png" />
             </sl-menu-item>
-            <sl-menu-item class="logo-button" id="blue-logo-without-text" data-value="logoBlue">
-              <img id="logoBlue" alt="" src="../../assets/logo-filled.png"/>
+            <sl-menu-item class="logo-dropdown-option">
+              <img alt="" src="../../assets/logoBlue.png" />
             </sl-menu-item>
           </sl-menu>
         </sl-dropdown>
@@ -146,7 +146,7 @@
 
   <section>
     <div class="title">
-      <sl-icon src="https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@7.11.0/icons/regular/fill-color.svg"></sl-icon>
+      <sl-icon src="../../assets/iconoir-regular-fill-color.svg"></sl-icon>
       <h3>Background Fills</h3>
     </div>
 
@@ -179,9 +179,9 @@
       <sl-dropdown placement="bottom-end" hoist>
         <sl-button id="paint-bucket" slot="trigger" caret>
           <sl-icon slot="prefix"
-                   src="https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@7.11.0/icons/regular/fill-color.svg"></sl-icon>
-          <sl-icon id="current-color" slot="prefix" style="color: #ffffff"
-                   src="https://cdn.jsdelivr.net/gh/lucaburgio/iconoir@7.11.0/icons/solid/fill-color.svg"></sl-icon>
+                   src="../../assets/iconoir-regular-fill-color.svg"></sl-icon>
+          <sl-icon id="paint-bucket-color" slot="prefix" style="color: #ffffff"
+                   src="../../assets/iconoir-solid-fill-color.svg"></sl-icon>
         </sl-button>
         <sl-menu class="color-options">
           <sl-menu-item class="fixed-color"
@@ -211,21 +211,23 @@
       <h3>Rows</h3>
     </div>
 
-    <div class="row" style="align-items: end">
+    <div class="row grid-section">
       <div class="column">
         <sl-button-group>
           <sl-button class="row-button" data-value="2">2</sl-button>
           <sl-button class="row-button" data-value="3">3</sl-button>
           <sl-button class="row-button" data-value="4">4</sl-button>
         </sl-button-group>
-        <sl-button-group>
-          <sl-input id="number-of-rows" type="number" value="5" min="5"></sl-input>
-          <sl-button id="create-rows">Insert</sl-button>
-        </sl-button-group>
+        <div class="row">
+          <sl-button-group>
+            <sl-input id="number-of-rows" type="number" value="5" min="5"></sl-input>
+            <sl-button id="create-rows">Insert</sl-button>
+          </sl-button-group>
+          <sl-button id="delete-rows" class="delete" variant="danger" outline>
+            <sl-icon slot="prefix" src="../../assets/feather-icons-trash-2.svg"></sl-icon>
+          </sl-button>
+        </div>
       </div>
-      <sl-button id="delete-rows" class="delete" variant="danger" outline>
-        <sl-icon slot="prefix" src="../../assets/feather-icons-trash-2.svg"></sl-icon>
-      </sl-button>
     </div>
   </section>
 
@@ -235,21 +237,23 @@
       <h3>Columns</h3>
     </div>
 
-    <div class="row" style="align-items: end">
+    <div class="row grid-section" style="padding: 0;">
       <div class="column">
         <sl-button-group>
           <sl-button class="column-button" data-value="2">2</sl-button>
           <sl-button class="column-button" data-value="3">3</sl-button>
           <sl-button class="column-button" data-value="4">4</sl-button>
         </sl-button-group>
-        <sl-button-group>
-          <sl-input id="number-of-columns" type="number" value="5" min="5"></sl-input>
-          <sl-button id="create-columns">Insert</sl-button>
-        </sl-button-group>
+        <div class="row">
+          <sl-button-group>
+            <sl-input id="number-of-columns" type="number" value="5" min="5"></sl-input>
+            <sl-button id="create-columns">Insert</sl-button>
+          </sl-button-group>
+          <sl-button id="delete-columns" class="delete" variant="danger" outline>
+            <sl-icon slot="prefix" src="../../assets/feather-icons-trash-2.svg"></sl-icon>
+          </sl-button>
+        </div>
       </div>
-      <sl-button id="delete-columns" class="delete" variant="danger" outline>
-        <sl-icon slot="prefix" src="../../assets/feather-icons-trash-2.svg"></sl-icon>
-      </sl-button>
     </div>
   </section>
 </div>

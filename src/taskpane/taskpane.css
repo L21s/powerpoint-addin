@@ -201,11 +201,6 @@ sl-button sl-icon {
     width: 100%;
 }
 
-#number-of-columns,
-#number-of-rows {
-    width: 0;
-}
-
 #create-columns,
 #create-rows {
     flex-grow: 0;
@@ -241,29 +236,30 @@ sl-button sl-icon {
     }
 }
 
-sl-button.delete::part(base):hover {
-    color: var(--sl-color-danger-600);
-    background-color: var(--sl-color-danger-50);
-}
+sl-button.delete {
+    &::part(base):hover {
+        color: var(--sl-color-danger-600);
+        background-color: var(--sl-color-danger-50);
+    }
 
-sl-button.delete::part(base):active {
-    color: var(--sl-color-danger-700);
-    background-color: var(--sl-color-danger-100);
+    &::part(base):active {
+        color: var(--sl-color-danger-700);
+        background-color: var(--sl-color-danger-100);
+    }
 }
 
 sl-button-group img {
     height: 20px;
-
-    &#logoWhite,
-    &#logoTextWhite {
-        -webkit-filter: drop-shadow(0 0 1px #000000);
-        filter: drop-shadow(0 0 1px #000000);
-    }
 }
 
-sl-menu-item.logo-button::part(label) {
+sl-menu-item.logo-dropdown-option::part(label) {
     display: inline-flex;
     padding: 8px;
+}
+
+.white-shadow {
+    -webkit-filter: drop-shadow(0 0 1px #000000);
+    filter: drop-shadow(0 0 1px #000000);
 }
 
 h3 {
@@ -277,26 +273,46 @@ h3 {
 }
 
 #paint-bucket {
-    sl-icon:not(#current-color) {
+    sl-icon {
         font-size: 24px;
-        z-index: 1;
         color: rgba(0, 0, 0, 0.25);
+
+        &:not(#paint-bucket-color) {
+            z-index: 1;
+            position: absolute;
+        }
     }
 
     &::part(base) {
         border: none;
+        padding-right: 0;
+    }
+
+    &::part(caret) {
+        padding-left: 2px;
+        padding-right: 12px;
     }
 
     &::part(label) {
-        padding: 0;
-        width: 4px;
+        display: none;
     }
 }
 
-#current-color {
-    font-size: 24px;
-    position: absolute;
-    color: #ffffff;
+.grid-section {
+    align-items: end;
+    box-sizing: border-box;
+
+    sl-button.delete {
+        flex-grow: unset;
+    }
+
+    sl-input {
+        width: 0;
+
+        &::part(base) {
+            border-radius: 4px 0 0 4px;
+        }
+    }
 }
 
 .color-options {

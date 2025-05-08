@@ -21,16 +21,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
   });
 }
 
-async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
-  const button = e.target as HTMLButtonElement;
-
-  // show loading spinner on button while SVG is loaded into slide
-  button["loading"] = true;
-
-  const path = await getDownloadPathForIconWith(icon.id);
-  const svgText = await downloadIconWith(path).then((response) => response.text());
-
-  // add the icon to list of recently used icons (only if not already added, max. 12)
+function addIconToRecent(icon: FetchIconResponse) {
   if (!recentIcons.includes(icon)) {
     recentIcons.unshift({
       id: icon.id,
@@ -39,8 +30,18 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
 
     if (recentIcons.length > 12) recentIcons.pop();
   }
+}
 
-  // insert SVG
+async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
+  const button = e.target as HTMLButtonElement;
+
+  button["loading"] = true;
+
+  addIconToRecent(icon);
+
+  const path = await getDownloadPathForIconWith(icon.id);
+  const svgText = await downloadIconWith(path).then((response) => response.text());
+
   try {
     Office.context.document.setSelectedDataAsync(
       svgText,
@@ -56,7 +57,6 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
     throw new Error("Error inserting SVG icon: " + e);
   }
 
-  // reset spinner / button state at the end
   button["loading"] = false;
 }
 
@@ -73,20 +73,22 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
     const result = await fetch(url, requestOptions);
     const response = await result.json();
     return response.data
-      .filter((obj) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
-      .map((obj) => ({
+      .filter((obj: any) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
+      .map((obj: any) => ({
         id: obj.id.toString(),
         url: obj.thumbnails[0].url,
       }))
       .slice(0, 50);
   } catch (e) {
-    const iconPreviewElement = document.getElementById("icon-previews");
-    const spanElement = document.createElement("div");
-    spanElement.innerText = "Error fetching icons";
-    iconPreviewElement.appendChild(spanElement);
-
-    throw new Error("Error fetching icons: " + e);
+    showErrorMessageInDrawer();
   }
+}
+
+function showErrorMessageInDrawer() {
+  const iconPreviewElement = document.getElementById("icon-previews");
+  const spanElement = document.createElement("div");
+  spanElement.innerText = "Error fetching icons";
+  iconPreviewElement.appendChild(spanElement);
 }
 
 async function getDownloadPathForIconWith(id: string) {
@@ -119,12 +121,12 @@ export async function downloadIconWith(url: string) {
   }
 }
 
-export function debounce(func, timeout = 500) {
-  let timer;
-  return (...args) => {
+export function debounce(func: Function) {
+  let timer: NodeJS.Timeout;
+  return (...args: any[]) => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       func.apply(this, args);
-    }, timeout);
+    }, 500);
   };
 }
