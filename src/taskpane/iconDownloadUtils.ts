@@ -1,14 +1,14 @@
 import { FetchIconResponse } from "./types";
 import { initDropdownPlaceholder } from "./taskpane";
-import {getToken} from "../security/authService";
+import { getAccessToken } from "../security/authService";
 
-const baseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
+const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
-  const url = `${baseUrl}/icons?term=${searchTerm}`;
+  const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
   const requestOptions = {
     method: "GET",
-    headers: await getAuthorizedRequestHeaders(),
+    headers: await getRequestHeadersWithAuthorization(),
   };
 
   try {
@@ -29,10 +29,10 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
 }
 
 export async function getDownloadPathForIconWith(id: string) {
-  const url = `${baseUrl}/icons/${id}/download?format=svg`;
+  const url = `${proxyBaseUrl}/icons/${id}/download?format=svg`;
   const requestOptions = {
     method: "GET",
-    headers: await getAuthorizedRequestHeaders(),
+    headers: await getRequestHeadersWithAuthorization(),
   };
 
   try {
@@ -67,8 +67,8 @@ function showFetchIconsErrorInDropdown() {
   anchorElement.appendChild(spanElement);
 }
 
-async function getAuthorizedRequestHeaders(): Promise<Headers> {
-  const token = await getToken();
+async function getRequestHeadersWithAuthorization(): Promise<Headers> {
+  const token = await getAccessToken();
   const requestHeaders = new Headers();
   requestHeaders.append("Authorization", `Bearer ${token}`);
   return requestHeaders;

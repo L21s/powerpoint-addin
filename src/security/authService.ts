@@ -25,12 +25,14 @@ const loginRequest = {
 const msalApp = new PublicClientApplication(msalConfig);
 msalApp.initialize();
 
-export async function loginWithDialog() {
-    await msalApp.loginPopup(loginRequest).then(loginResponse => {msalApp.setActiveAccount(loginResponse.account);})
-    setInitials();
+export function loginWithDialog() {
+    msalApp.loginPopup(loginRequest).then(loginResponse => {
+        msalApp.setActiveAccount(loginResponse.account);
+        setInitials();
+    })
 }
 
-export async function getToken(): Promise<string> {
+export async function getAccessToken(): Promise<string> {
     const activeAccount = msalApp.getActiveAccount();
     const tokenRequest = {
         scopes: [scopes],
