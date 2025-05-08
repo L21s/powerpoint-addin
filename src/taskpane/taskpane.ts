@@ -11,7 +11,7 @@ import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
 import { FetchIconResponse } from "./types";
-import {loginWithDialog} from "../security/authService";
+import { loginWithDialog } from "../security/authService";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
