@@ -3,6 +3,7 @@ import { PublicClientApplication } from "@azure/msal-browser";
 const clientId = "236e86e4-f190-48f7-be93-e794ed28382a";
 const authUri = `https://login.microsoftonline.com/a40cd802-97bc-4645-88f7-89bff678a616/v2.0`;
 const redirectUri = "https://localhost:3000/taskpane.html";
+const scopes = "profile openid api://b4a241d6-4efe-497e-af56-8fc3a236f4d2/Freepik";
 
 const msalConfig = {
     auth: {
@@ -18,7 +19,7 @@ const msalConfig = {
 };
 
 const loginRequest = {
-    scopes: ["profile openid api://b4a241d6-4efe-497e-af56-8fc3a236f4d2/Freepik"]
+    scopes: [scopes]
 };
 
 const msalApp = new PublicClientApplication(msalConfig);
@@ -32,7 +33,7 @@ export async function loginWithDialog() {
 export async function getToken(): Promise<string> {
     const activeAccount = msalApp.getActiveAccount();
     const tokenRequest = {
-        scopes: ["profile openid api://b4a241d6-4efe-497e-af56-8fc3a236f4d2/Freepik"],
+        scopes: [scopes],
         account: activeAccount,
     };
     return  (await msalApp.acquireTokenSilent(tokenRequest)).accessToken;
