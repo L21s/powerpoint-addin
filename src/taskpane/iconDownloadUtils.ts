@@ -1,7 +1,7 @@
 import { FetchIconResponse } from "./types";
-import { getDecryptedFreepikApiKey } from "./encryptionUtils";
 import { showErrorPopup } from "./taskpane";
 
+const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
 export let recentIcons = [];
 
 export function addToIconPreview(icons: FetchIconResponse[]) {
@@ -57,13 +57,12 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
   button["loading"] = false;
 }
 
+
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
-  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons?term=${searchTerm}&family-id=300&filters[shape]=outline&filters[color]=solid-black&filters[free_svg]=premium`;
-  const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
+  const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
   const requestOptions = {
     method: "GET",
-    headers: requestHeaders,
+    headers: await getRequestHeadersWithAuthorization(),
   };
 
   try {
@@ -88,13 +87,11 @@ function showErrorMessageInDrawer() {
   iconPreviewElement.appendChild(spanElement);
 }
 
-async function getDownloadPathForIconWith(id: string) {
-  const url = `https://hammerhead-app-fj5ps.ondigitalocean.app/icons/${id}/download?format=svg`;
-  const requestHeaders = new Headers();
-  requestHeaders.append("X-Freepik-API-Key", getDecryptedFreepikApiKey());
+export async function getDownloadPathForIconWith(id: string) {
+  const url = `${proxyBaseUrl}/icons/${id}/download?format=svg`;
   const requestOptions = {
     method: "GET",
-    headers: requestHeaders,
+    headers: await getRequestHeadersWithAuthorization(),
   };
 
   try {
@@ -126,4 +123,11 @@ export function debounce(func: Function) {
       func.apply(this, args);
     }, 500);
   };
+}
+
+async function getRequestHeadersWithAuthorization(): Promise<Headers> {
+  const token = await getAccessToken();
+  const requestHeaders = new Headers();
+  requestHeaders.append("Authorization", `Bearer ${token}`);
+  return requestHeaders;
 }
