@@ -5,39 +5,116 @@
 
 /* global Office, PowerPoint */
 
-import { base64Images } from "../../base64Image";
-import * as M from "../../lib/materialize/js/materialize.min";
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
-import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
-import { FetchIconResponse } from "./types";
+import { addToIconPreview, debounce, fetchIcons, recentIcons } from "./iconDownloadUtils";
 import { loginWithDialog } from "../security/authService";
+import { registerIconBackgroundTools } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     loginWithDialog();
-    M.AutoInit(document.body);
-    let initials = <HTMLInputElement>document.getElementById("initials");
-    initials.value = localStorage.getItem("initials");
-
-    document.getElementById("fill-background").onclick = async () => {
-      const colorPicker = <HTMLInputElement>document.getElementById("background-color");
-      const selectedColor = colorPicker.value;
-      await addBackground(selectedColor);
-    };
-
     initStickerButtons();
     initRowsAndColumnsButtons();
-
-    document.querySelectorAll(".logo-button").forEach((button) => {
-      (button as HTMLElement).onclick = () => insertImageByBase64(button.getAttribute("data-value"));
-    });
-
-    initDropdownPlaceholder();
-    addIconSearch();
-    insertIconOnClickOnPreview();
+    registerDrawerToggle();
+    registerSearch();
+    registerIconBackgroundTools();
+    registerLogoImageInsert();
   }
 });
+
+const processInputChanges = debounce(async () => {
+  const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
+
+  try {
+    document.getElementById("icon-previews").replaceChildren();
+    let result = recentIcons;
+    if (searchTerm) result = await fetchIcons(searchTerm);
+    addToIconPreview(result);
+  } catch (e) {
+    const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
+    showErrorPopup(errorMessage);
+  }
+
+  (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
+  document.getElementById("search-result-title").innerText = searchTerm
+    ? 'Search results for "' + searchTerm + '"'
+    : "Recently used icons";
+});
+
+function registerSearch() {
+  document.getElementById("search-input").addEventListener("sl-input", () => {
+    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
+    processInputChanges();
+  });
+}
+
+function registerDrawerToggle() {
+  const drawer = document.getElementById("search-drawer") as HTMLElement;
+  const wrapper = document.getElementById("wrapper") as HTMLElement;
+  const searchButtons = document.querySelectorAll(".search-open");
+
+  searchButtons.forEach((searchButton: HTMLInputElement) => {
+    searchButton.onclick = () => {
+      drawer["open"] = true;
+      wrapper.style.overflow = "hidden";
+      wrapper.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    };
+  });
+
+  document.getElementById("close-drawer").onclick = () => {
+    drawer["open"] = false;
+    wrapper.style.overflow = "scroll";
+
+    (document.getElementById("search-input") as HTMLInputElement).value = "";
+    (document.getElementById("active-search") as HTMLInputElement).value = "";
+  };
+}
+
+function registerLogoImageInsert() {
+  document.querySelectorAll(".logo-dropdown, .logo-dropdown-option").forEach((button: HTMLElement) => {
+    button.onclick = async () => {
+      const selectedImageSrc = button.getElementsByTagName("img")[0].src;
+      const currentDropdownImage = document.getElementById(
+        selectedImageSrc.includes("Text") ? "currentWithText" : "currentWithoutText"
+      ) as HTMLImageElement;
+
+      currentDropdownImage.src = selectedImageSrc;
+      if (selectedImageSrc.includes("White")) {
+        currentDropdownImage.classList.add("white-shadow");
+      } else {
+        currentDropdownImage.classList.remove("white-shadow");
+      }
+
+      Office.context.document.setSelectedDataAsync(
+        // setSelectedDataAsync does not accept "data:image/png;base64," part of the base64 string -> remove it with split
+        ((await getImageAsBase64(selectedImageSrc)) as string).split(",")[1],
+        { coercionType: Office.CoercionType.Image },
+        (asyncResult) => {
+          if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+            console.error("Action failed. Error: " + asyncResult.error.message);
+          }
+        }
+      );
+    };
+  });
+}
+
+async function getImageAsBase64(imageSrc: string) {
+  const response = await fetch(imageSrc);
+  const blob = await response.blob();
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  }) as Promise<string>;
+}
 
 function initRowsAndColumnsButtons() {
   document.getElementById("create-rows").onclick = () =>
@@ -58,24 +135,23 @@ function initRowsAndColumnsButtons() {
 }
 
 function initStickerButtons() {
-  document.querySelectorAll(".sticker-button").forEach((button) => {
-    const color = window.getComputedStyle(button as HTMLElement).backgroundColor;
+  document.querySelectorAll(".sticky-note").forEach((button) => {
+    const color = button.getAttribute("data-color");
     (button as HTMLElement).onclick = () => insertSticker(color);
   });
-
-  document.getElementById("save-initials").onclick = () =>
-    localStorage.setItem("initials", (<HTMLInputElement>document.getElementById("initials")).value);
 }
 
 async function deleteShapesByName(name: string) {
   await PowerPoint.run(async (context) => {
     const sheet = context.presentation.getSelectedSlides().getItemAt(0);
+    sheet.load("shapes");
+    await context.sync();
     const shapes = sheet.shapes;
 
     shapes.load();
     await context.sync();
 
-    shapes.items.forEach(function(shape) {
+    shapes.items.forEach(function (shape) {
       if (shape.name == name) {
         shape.delete();
       }
@@ -84,43 +160,20 @@ async function deleteShapesByName(name: string) {
   });
 }
 
-function insertImageByBase64(base64Name: string) {
-  Office.context.document.setSelectedDataAsync(
-    base64Images[base64Name],
-    { coercionType: Office.CoercionType.Image },
-    (asyncResult) => {
-      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-        console.error("Action failed. Error: " + asyncResult.error.message);
-      }
-    }
-  );
-}
-
-
-export async function insertSticker(color) {
+export async function insertSticker(color: string) {
   await runPowerPoint((powerPointContext) => {
     const today = new Date();
     const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
-    const textBox = shapes.addTextBox(
-      localStorage.getItem("initials") + ", " + today.toDateString() + "\n",
-      { height: 50, left: 50, top: 50, width: 150 }
-    );
+    const textBox = shapes.addTextBox(localStorage.getItem("initials") + ", " + today.toDateString() + "\n", {
+      height: 50,
+      left: 50,
+      top: 50,
+      width: 150,
+    });
     textBox.name = "Square";
-    textBox.fill.setSolidColor(rgbToHex(color));
+    textBox.fill.setSolidColor(color);
     setStickerFontProperties(textBox);
   });
-}
-
-function rgbToHex(rgb: String) {
-  const regex = /(\d+),\s*(\d+),\s*(\d+)/;
-  const matches = rgb.match(regex);
-
-  function componentToHex(c: String) {
-    const hex = Number(c).toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
-  }
-
-  return "#" + componentToHex(matches[1]) + componentToHex(matches[2]) + componentToHex(matches[3]);
 }
 
 function setStickerFontProperties(textbox: PowerPoint.Shape) {
@@ -133,70 +186,7 @@ function setStickerFontProperties(textbox: PowerPoint.Shape) {
   textbox.lineFormat.weight = 1.25;
 }
 
-export async function addBackground(backgroundColor?: string) {
-  if (!backgroundColor) backgroundColor = "white";
-  await runPowerPoint((powerPointContext) => {
-    const selectedImage = powerPointContext.presentation.getSelectedShapes().getItemAt(0);
-    selectedImage.fill.setSolidColor(backgroundColor);
-  });
-}
-
-function addIconPreviewWith(icons: FetchIconResponse[]) {
-  for (let i = 0; i < icons.length; i += 5) {
-    const iconPreviewElement = document.getElementById("icon-previews");
-    const listElement = document.createElement("li");
-    const anchorElement = document.createElement("a");
-    iconPreviewElement.appendChild(listElement);
-    listElement.appendChild(anchorElement);
-
-    icons.slice(i, i + 5).forEach((icon) => {
-      const iconPreviewElement = document.createElement("img");
-      iconPreviewElement.id = icon.id;
-      iconPreviewElement.src = icon.url;
-      iconPreviewElement.width = 45;
-      iconPreviewElement.height = 45;
-      anchorElement.appendChild(iconPreviewElement);
-    });
-  }
-}
-
-async function insertSvgIconOn(event: any): Promise<void> {
-  const path = await getDownloadPathForIconWith(event.target.id);
-  const svgText = await downloadIconWith(path)
-      .then((response) => response.text());
-
-  Office.context.document.setSelectedDataAsync(
-      svgText,
-      { coercionType: Office.CoercionType.XmlSvg },
-      (asyncResult) => {
-        if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
-          showErrorPopup(errorMessage);
-        }
-      }
-  );
-}
-
-function addIconSearch() {
-  document.getElementById("icons").onclick = async () => {
-    document.querySelectorAll("#icon-previews li").forEach((li) => li.remove());
-
-    try {
-      const searchTerm = (<HTMLInputElement>document.getElementById("icon-search-input")).value;
-      const result = await fetchIcons(searchTerm);
-      addIconPreviewWith(result);
-    } catch (e) {
-      const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
-      showErrorPopup(errorMessage);
-    }
-  };
-}
-
-function insertIconOnClickOnPreview() {
-  document.getElementById("icon-previews").addEventListener("click", (event) => insertSvgIconOn(event), false);
-}
-
-function showErrorPopup(errorMessage: string) {
+export function showErrorPopup(errorMessage: string) {
   const popup = document.getElementById("errorPopup");
   const popupText = document.getElementById("errorPopupText");
   const closeButton = document.getElementById("closePopupButton");
@@ -207,17 +197,5 @@ function showErrorPopup(errorMessage: string) {
     closeButton.addEventListener("click", () => {
       popup.style.display = "none";
     });
-  }
-}
-
-export function initDropdownPlaceholder() {
-  const iconPreviewElement = document.getElementById("icon-previews");
-  for (let i = 0; i < 15; i++) {
-    const spanElement = document.createElement("span");
-    const anchorElement = document.createElement("a");
-    const listElement = document.createElement("li");
-    iconPreviewElement.appendChild(listElement);
-    listElement.appendChild(anchorElement);
-    anchorElement.appendChild(spanElement);
   }
 }
