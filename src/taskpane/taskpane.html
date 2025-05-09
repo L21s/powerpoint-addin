@@ -180,20 +180,15 @@
         <sl-button id="paint-bucket" slot="trigger" caret>
           <sl-icon slot="prefix"
                    src="../../assets/iconoir-regular-fill-color.svg"></sl-icon>
-          <sl-icon id="paint-bucket-color" slot="prefix" style="color: #ffffff"
+          <sl-icon id="paint-bucket-color" slot="prefix" data-color="#ffffff" style="color: #ffffff"
                    src="../../assets/iconoir-solid-fill-color.svg"></sl-icon>
         </sl-button>
         <sl-menu class="color-options">
-          <sl-menu-item class="fixed-color"
-                        style="background-color: #ffffff"></sl-menu-item>
-          <sl-menu-item class="fixed-color"
-                        style="background-color: #000000"></sl-menu-item>
-          <sl-menu-item class="fixed-color"
-                        style="background-color: #ff0000"></sl-menu-item>
-          <sl-menu-item class="fixed-color"
-                        style="background-color: #0048ff"></sl-menu-item>
-          <sl-menu-item class="fixed-color"
-                        style="background-color: #00ff00"></sl-menu-item>
+          <sl-menu-item class="fixed-color" style="background-color: #ffffff" data-color="#ffffff"></sl-menu-item>
+          <sl-menu-item class="fixed-color" style="background-color: #000000" data-color="#000000"></sl-menu-item>
+          <sl-menu-item class="fixed-color" style="background-color: #ff0000" data-color="#ff0000"></sl-menu-item>
+          <sl-menu-item class="fixed-color" style="background-color: #0048ff" data-color="#0048ff"></sl-menu-item>
+          <sl-menu-item class="fixed-color" style="background-color: #00ff00" data-color="#00ff00"></sl-menu-item>
           <sl-divider vertical></sl-divider>
           <div id="color-picker">
             <sl-icon name="palette"></sl-icon>

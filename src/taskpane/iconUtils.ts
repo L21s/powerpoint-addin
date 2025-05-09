@@ -6,7 +6,7 @@ function addColorToRecent(colorValue: string) {
   let recentColors = [];
 
   recentColorElements.forEach((button: HTMLElement) => {
-    recentColors.push(button.style.backgroundColor);
+    recentColors.push(button.getAttribute("data-color"));
   });
 
   if (!recentColors.includes(colorValue)) {
@@ -15,6 +15,7 @@ function addColorToRecent(colorValue: string) {
 
     for (let index = 0; index < recentColors.length; index++) {
       (recentColorElements[index] as HTMLElement).style.backgroundColor = recentColors[index];
+      (recentColorElements[index] as HTMLElement).setAttribute("data-color", recentColors[index]);
     }
   }
 }
@@ -23,17 +24,16 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
     const selectedShape: PowerPoint.Shape = await getSelectedShape();
-
-    const colorValue = document.getElementById("paint-bucket-color").style.color;
-
+    const colorValue = document.getElementById("paint-bucket-color").getAttribute("data-color");
     const background: PowerPoint.Shape = slide.shapes.addGeometricShape(
       ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
     );
+
     background.left = selectedShape.left;
     background.top = selectedShape.top;
     background.width = selectedShape.width;
     background.height = selectedShape.height;
-    background.fill.setSolidColor(colorValue ? RGBToHex(colorValue) : "lightgreen");
+    background.fill.setSolidColor(colorValue ? colorValue : "lightgreen");
 
     addColorToRecent(colorValue);
   });
@@ -53,20 +53,9 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
 }
 
 function chooseNewColor(color: string) {
-  document.getElementById("paint-bucket-color").style.color = color;
-}
-
-export function RGBToHex(rgb: string) {
-  return (
-    "#" +
-    rgb
-      .match(/\d+/g)
-      .map((colorVal) => {
-        const hexVal = Number(colorVal).toString(16);
-        return hexVal.length === 1 ? "0" + hexVal : hexVal;
-      })
-      .join("")
-  );
+  const paintBucketIcon =  document.getElementById("paint-bucket-color");
+  paintBucketIcon.style.color = color;
+  paintBucketIcon.setAttribute("data-color", color);
 }
 
 export function registerIconBackgroundTools() {
@@ -82,7 +71,7 @@ export function registerIconBackgroundTools() {
 
   document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
     button.onclick = () => {
-      chooseNewColor(button.style.backgroundColor);
+      chooseNewColor(button.getAttribute("data-color"));
     };
   });
 }
