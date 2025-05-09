@@ -7,9 +7,9 @@
 
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
-import { getDownloadPathForIconWith, downloadIconWith, fetchIcons } from "./iconDownloadUtils";
-import { FetchIconResponse } from "./types";
+import { addToIconPreview, debounce, fetchIcons, recentIcons } from "./iconDownloadUtils";
 import { loginWithDialog } from "../security/authService";
+import { registerIconBackgroundTools } from "./iconUtils";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {

@@ -1,5 +1,6 @@
 import { FetchIconResponse } from "./types";
 import { showErrorPopup } from "./taskpane";
+import { getAccessToken } from "../security/authService";
 
 const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
 export let recentIcons = [];
