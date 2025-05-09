@@ -1,7 +1,7 @@
 import { getSelectedShape } from "./powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "./types";
 
-function addColorToRecent(colorValue: string) {
+function addColorToRecentColors(colorValue: string) {
   const recentColorElements = document.querySelectorAll(".fixed-color");
   let recentColors = [];
 
@@ -35,7 +35,7 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.height = selectedShape.height;
     background.fill.setSolidColor(colorValue ? colorValue : "lightgreen");
 
-    addColorToRecent(colorValue);
+    addColorToRecentColors(colorValue);
   });
 
   /**

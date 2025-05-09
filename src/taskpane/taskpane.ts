@@ -76,14 +76,11 @@ function registerLogoImageInsert() {
   document.querySelectorAll(".logo-dropdown, .logo-dropdown-option").forEach((button: HTMLElement) => {
     button.onclick = async () => {
       const selectedImageSrc = button.getElementsByTagName("img")[0].src;
-
       const currentDropdownImage = document.getElementById(
-        // which dropdown image has to be changed?
         selectedImageSrc.includes("Text") ? "currentWithText" : "currentWithoutText"
       ) as HTMLImageElement;
 
       currentDropdownImage.src = selectedImageSrc;
-
       if (selectedImageSrc.includes("White")) {
         currentDropdownImage.classList.add("white-shadow");
       } else {
@@ -91,7 +88,8 @@ function registerLogoImageInsert() {
       }
 
       Office.context.document.setSelectedDataAsync(
-        await getBase64(selectedImageSrc),
+        // setSelectedDataAsync does not accept "data:image/png;base64," part of the base64 string -> remove it with split
+        (await getImageAsBase64(selectedImageSrc) as string).split(",")[1],
         { coercionType: Office.CoercionType.Image },
         (asyncResult) => {
           if (asyncResult.status === Office.AsyncResultStatus.Failed) {
@@ -103,7 +101,7 @@ function registerLogoImageInsert() {
   });
 }
 
-async function getBase64(imageSrc: string) {
+async function getImageAsBase64(imageSrc: string) {
   const response = await fetch(imageSrc);
   const blob = await response.blob();
 
@@ -111,7 +109,7 @@ async function getBase64(imageSrc: string) {
     const reader = new FileReader();
     reader.readAsDataURL(blob);
 
-    reader.onload = () => resolve((reader.result as string).split(",")[1]);
+    reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   }) as Promise<string>;
 }

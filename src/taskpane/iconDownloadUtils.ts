@@ -21,7 +21,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
   });
 }
 
-function addIconToRecent(icon: FetchIconResponse) {
+function addIconToRecentIcons(icon: FetchIconResponse) {
   if (!recentIcons.includes(icon)) {
     recentIcons.unshift({
       id: icon.id,
@@ -34,11 +34,8 @@ function addIconToRecent(icon: FetchIconResponse) {
 
 async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
   const button = e.target as HTMLButtonElement;
-
   button["loading"] = true;
-
-  addIconToRecent(icon);
-
+  addIconToRecentIcons(icon);
   const path = await getDownloadPathForIconWith(icon.id);
   const svgText = await downloadIconWith(path).then((response) => response.text());
 
