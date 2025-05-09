@@ -374,19 +374,12 @@ input[type="color"] {
     }
 }
 
-.sticky-note {
-    border-radius: 200px;
-    background-color: white;
-}
+sl-button.sticky-note {
+    border-radius: 4px;
 
-.sticky-cyan,
-sl-button.sticky-cyan::part(base) {
-    background-color: #00ffff;
-}
-
-.sticky-yellow,
-sl-button.sticky-yellow::part(base) {
-    background-color: yellow;
+    &::part(base) {
+        background: none;
+    }
 }
 
 /*Todo: to be refined */

@@ -136,7 +136,7 @@ function initRowsAndColumnsButtons() {
 
 function initStickerButtons() {
   document.querySelectorAll(".sticky-note").forEach((button) => {
-    const color = window.getComputedStyle(button as HTMLElement).backgroundColor;
+    const color = button.getAttribute("data-color");
     (button as HTMLElement).onclick = () => insertSticker(color);
   });
 }
