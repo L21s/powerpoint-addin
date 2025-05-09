@@ -77,7 +77,7 @@ body {
 #icon-previews {
     margin: 0;
     padding: 0;
-    gap: 4px;
+    gap: 8px;
     display: flex;
     flex-wrap: wrap;
 
@@ -86,8 +86,16 @@ body {
         position: relative;
 
         &::part(base) {
+            box-sizing: border-box;
             padding: 8px;
             border: none;
+            width: 68px;
+            aspect-ratio: 1 / 1;
+        }
+
+        &::part(prefix) {
+            width: 100%;
+            justify-content: center;
         }
 
         &::part(label) {
@@ -95,8 +103,11 @@ body {
         }
 
         > img {
-            width: 52px;
+            box-sizing: border-box;
             visibility: visible;
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
         }
     }
 
