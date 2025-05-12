@@ -66,11 +66,12 @@ function registerDrawerToggle() {
   });
 
   document.getElementById("close-drawer").onclick = () => {
-    drawer["open"] = false;
-    wrapper.style.overflow = "scroll";
-
     (document.getElementById("search-input") as HTMLInputElement).value = "";
     (document.getElementById("active-search") as HTMLInputElement).value = "";
+    processInputChanges();
+
+    drawer["open"] = false;
+    wrapper.style.overflow = "scroll";
   };
 }
 
