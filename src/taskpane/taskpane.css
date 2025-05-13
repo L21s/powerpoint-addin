@@ -3,18 +3,24 @@
  * See LICENSE in the project root for license information.
  */
 
+@font-face {
+    font-family: "Inter";
+    src: url("assets/Inter_variableFont.ttf");
+}
+
 html,
 body {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: white;
+    background-color: #ececec;
     overflow: hidden;
-    font-family: Inter;
+    font-family: "Inter", sans-serif;
 }
 
 #wrapper {
+    border-top: 1px solid var(--sl-color-neutral-300);
     position: relative;
     box-sizing: border-box;
     display: flex;
@@ -42,6 +48,8 @@ body {
         flex-direction: column;
         gap: 20px;
         overflow: hidden;
+        background-color: #ececec;
+        border-top: 1px solid var(--sl-color-neutral-200);
     }
 
     > .row {
@@ -161,10 +169,52 @@ section {
     }
 }
 
+sl-menu {
+    background-color: #ececec;
+
+    sl-menu-item.logo-dropdown-option::part(base):hover {
+        background-color: var(--sl-color-neutral-200);
+    }
+
+    sl-menu-item.logo-dropdown-option::part(label) {
+        display: inline-flex;
+        padding: 8px;
+    }
+}
+
 sl-button-group,
 sl-button:not(.sticky-note),
 sl-input, sl-radio-group, sl-radio-button {
     flex-grow: 1;
+
+    &::part(base):not(:hover, :active) {
+        background: none;
+    }
+}
+
+sl-radio-button::part(button) {
+    border: 1px solid #c3c3c3;
+}
+
+sl-button::part(base),
+sl-input::part(base) {
+    border: 1px solid #c3c3c3;
+}
+
+sl-button::part(base):hover,
+sl-input::part(base):hover {
+    border: 1px solid var(--sl-color-primary-300);
+}
+
+sl-button::part(base):hover {
+    background-color: rgba(104, 208, 255, 0.1);
+}
+sl-button::part(base):active {
+    background-color: rgba(104, 208, 255, 0.2);
+}
+
+sl-input::part(base) {
+    background: none;
 }
 
 sl-radio-group {
@@ -248,24 +298,23 @@ sl-button sl-icon {
 }
 
 sl-button.delete {
+    &::part(base) {
+        border: none;
+    }
+
     &::part(base):hover {
         color: var(--sl-color-danger-600);
-        background-color: var(--sl-color-danger-50);
+        background-color: rgba(244, 50, 48, 0.1);
     }
 
     &::part(base):active {
         color: var(--sl-color-danger-700);
-        background-color: var(--sl-color-danger-100);
+        background-color: rgba(244, 50, 48, 0.2);
     }
 }
 
 sl-button-group img {
     height: 20px;
-}
-
-sl-menu-item.logo-dropdown-option::part(label) {
-    display: inline-flex;
-    padding: 8px;
 }
 
 .white-shadow {
@@ -275,7 +324,7 @@ sl-menu-item.logo-dropdown-option::part(label) {
 
 h3 {
     text-transform: uppercase;
-    font-family: Inter;
+    font-family: "Inter", sans-serif;
     font-weight: 700;
     font-size: 12px;
     line-height: 1.4;
@@ -333,17 +382,22 @@ h3 {
     padding: 8px;
 
     > sl-menu-item {
-        border-radius: 50%;
+        border-radius: var(--sl-border-radius-circle);
         height: 32px;
         width: 32px;
 
         &::part(base) {
             height: 32px;
             width: 32px;
-            border-radius: 50%;
+            border-radius: var(--sl-border-radius-circle);
             border: 1px solid rgba(0, 0, 0, 0.1);
             display: inline-flex;
             background: none;
+        }
+
+        &::part(base):hover {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            transition: border 0.2s;
         }
     }
 
@@ -355,6 +409,9 @@ h3 {
 
 #color-picker {
     position: relative;
+    background: none;
+    height: 32px;
+    width: 32px;
 
     sl-icon {
         position: absolute;
@@ -368,10 +425,12 @@ h3 {
 
 /* color picker input */
 input[type="color"] {
-    margin: 0;
-    border: none;
     height: 32px;
     width: 32px;
+    margin: 0;
+    border: none;
+    background: none;
+    padding: 0;
 
     &::-webkit-color-swatch-wrapper {
         padding: 0;
@@ -380,8 +439,13 @@ input[type="color"] {
 
     &::-webkit-color-swatch {
         border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 50%;
+        border-radius: var(--sl-border-radius-circle);
         cursor: pointer;
+    }
+
+    &::-webkit-color-swatch:hover {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        transition: border 0.2s;
     }
 }
 
@@ -390,6 +454,11 @@ sl-button.sticky-note {
 
     &::part(base) {
         background: none;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    &::part(base):hover {
+        border: 1px solid var(--sl-color-primary-300);
     }
 }
 

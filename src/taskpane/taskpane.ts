@@ -71,6 +71,7 @@ function registerDrawerToggle() {
 
     (document.getElementById("search-input") as HTMLInputElement).value = "";
     (document.getElementById("active-search") as HTMLInputElement).value = "";
+    processInputChanges();
   };
 }
 
