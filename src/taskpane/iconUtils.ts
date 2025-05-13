@@ -1,5 +1,6 @@
-import { getSelectedShape } from "./powerPointUtil";
+import { getSelectedShapeWith } from "./powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "./types";
+import ShapeZOrder = PowerPoint.ShapeZOrder;
 
 function addColorToRecentColors(colorValue: string) {
   const recentColorElements = document.querySelectorAll(".fixed-color");
@@ -23,7 +24,7 @@ function addColorToRecentColors(colorValue: string) {
 async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
-    const selectedShape: PowerPoint.Shape = await getSelectedShape();
+    const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
     const colorValue = document.getElementById("paint-bucket-color").getAttribute("data-color");
     const background: PowerPoint.Shape = slide.shapes.addGeometricShape(
       ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
@@ -36,20 +37,12 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.fill.setSolidColor(colorValue ? colorValue : "lightgreen");
 
     addColorToRecentColors(colorValue);
-  });
 
-  /**
-   * Note: something like the code stated below should be used right here ... but sadly, the Powerpoint-Context still does not offer this.
-   * This code is supposed to stay as reminder that maybe in future days Microsoft may offer this.
-   * Better: Select Icon --> Bring to front.
-   */
-  /*await Excel.run(async (context) => {
-      const sheet = context.workbook.worksheets.getActiveWorksheet();
-      const shape = sheet.shapes.getItem("MyShape"); // use shape name or .getItemAt(0)
-      shape.setZOrder("SendBackward");
-      await context.sync();
+    background.setZOrder(ShapeZOrder.sendToBack);
+    await context.sync();
+    slide.shapes.addGroup([background, selectedShape]);
+    await context.sync();
   });
-   */
 }
 
 function chooseNewColor(color: string) {
