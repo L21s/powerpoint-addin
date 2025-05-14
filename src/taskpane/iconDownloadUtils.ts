@@ -1,12 +1,12 @@
-import { FetchIconResponse } from "./types";
+import { FetchIconResponse, EmployeeName } from "./types";
 import { showErrorPopup } from "./taskpane";
 import { getAccessToken } from "../security/authService";
 
 const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
-export let recentIcons = [];
+export let recentIcons: FetchIconResponse[] = [];
 
 export function addToIconPreview(icons: FetchIconResponse[]) {
-  const iconPreviewElement = document.getElementById("icon-previews");
+  const iconPreviewElement = document.getElementById("icons");
 
   icons.forEach((icon) => {
     const buttonElement = document.createElement("sl-button") as HTMLButtonElement;
@@ -17,6 +17,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
     iconElement.slot = "prefix";
 
     iconPreviewElement.appendChild(buttonElement);
+
     buttonElement.appendChild(iconElement);
     buttonElement.onclick = (e) => insertSvgIcon(e, icon);
   });
@@ -24,11 +25,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
 
 function addIconToRecentIcons(icon: FetchIconResponse) {
   if (!recentIcons.includes(icon)) {
-    recentIcons.unshift({
-      id: icon.id,
-      url: icon.url,
-    });
-
+    recentIcons.unshift(icon);
     if (recentIcons.length > 12) recentIcons.pop();
   }
 }
@@ -58,7 +55,6 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
   button["loading"] = false;
 }
 
-
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
   const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
   const requestOptions = {
@@ -82,7 +78,7 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
 }
 
 function showErrorMessageInDrawer() {
-  const iconPreviewElement = document.getElementById("icon-previews");
+  const iconPreviewElement = document.getElementById("preview");
   const spanElement = document.createElement("div");
   spanElement.innerText = "Error fetching icons";
   iconPreviewElement.appendChild(spanElement);

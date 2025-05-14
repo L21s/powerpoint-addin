@@ -8,6 +8,7 @@
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { addToIconPreview, debounce, fetchIcons, recentIcons } from "./iconDownloadUtils";
+import { addToTeamPreview, fetchEmployeeImages, recentNames } from "./employeeImageUtils";
 import { loginWithDialog } from "../security/authService";
 import { registerIconBackgroundTools } from "./iconUtils";
 
@@ -25,12 +26,20 @@ Office.onReady((info) => {
 
 const processInputChanges = debounce(async () => {
   const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
+  const activeDrawerTab = (<HTMLInputElement>document.getElementById("active-drawer")).value;
 
   try {
-    document.getElementById("icon-previews").replaceChildren();
-    let result = recentIcons;
-    if (searchTerm) result = await fetchIcons(searchTerm);
-    addToIconPreview(result);
+    if (activeDrawerTab === "icons") {
+      let result = recentIcons;
+      if (searchTerm) result = await fetchIcons(searchTerm);
+      document.getElementById(activeDrawerTab).replaceChildren();
+      addToIconPreview(result);
+    } else if (activeDrawerTab === "team") {
+      let result = recentNames;
+      if (searchTerm) result = await fetchEmployeeImages(searchTerm);
+      document.getElementById(activeDrawerTab).replaceChildren();
+      addToTeamPreview(result);
+    }
   } catch (e) {
     const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
     showErrorPopup(errorMessage);
@@ -39,7 +48,7 @@ const processInputChanges = debounce(async () => {
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
   document.getElementById("search-result-title").innerText = searchTerm
     ? 'Search results for "' + searchTerm + '"'
-    : "Recently used icons";
+    : "Recently used " + (activeDrawerTab === "team" ? "images" : "icons");
 });
 
 function registerSearch() {
@@ -62,6 +71,14 @@ function registerDrawerToggle() {
         top: 0,
         behavior: "smooth",
       });
+
+      const tabs = document.querySelector("sl-split-panel") as any;
+      if (searchButton.value === "icons") tabs.position = 100;
+      else tabs.position = 0;
+
+      document.getElementById("search-input").focus();
+      (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
+      processInputChanges();
     };
   });
 
@@ -70,7 +87,7 @@ function registerDrawerToggle() {
     wrapper.style.overflow = "scroll";
 
     (document.getElementById("search-input") as HTMLInputElement).value = "";
-    (document.getElementById("active-search") as HTMLInputElement).value = "";
+    (document.getElementById("active-drawer") as HTMLInputElement).value = "";
     processInputChanges();
   };
 }
