@@ -1,6 +1,6 @@
 import { FetchIconResponse } from "./types";
 import { showErrorPopup } from "./taskpane";
-import { getAccessToken } from "../security/authService";
+import { getRequestHeadersWithAuthorization } from "../security/authService";
 
 const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
 export let recentIcons = [];
@@ -124,11 +124,4 @@ export function debounce(func: Function) {
       func.apply(this, args);
     }, 500);
   };
-}
-
-async function getRequestHeadersWithAuthorization(): Promise<Headers> {
-  const token = await getAccessToken();
-  const requestHeaders = new Headers();
-  requestHeaders.append("Authorization", `Bearer ${token}`);
-  return requestHeaders;
 }
