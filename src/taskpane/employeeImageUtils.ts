@@ -1,12 +1,9 @@
 import { EmployeeName, ShapeType } from "./types";
 import { fetchEmployeeImage, fetchEmployeeNames } from "./employeeApiService";
-import { getSelectedShapeWith } from "./powerPointUtil";
-
-let allEmployeeNames: EmployeeName[] = [];
 
 export function addToTeamPreview(names: EmployeeName[]) {
   const teamPreviewElement = document.getElementById("team");
-  document.querySelectorAll("sl-skeleton").forEach((skeleton) => skeleton.remove());
+  document.querySelectorAll("sl-skeleton").forEach((skeletonItem) => skeletonItem.remove());
 
   names.forEach((name) => {
     const menuItemElement = document.createElement("sl-menu-item") as HTMLButtonElement;

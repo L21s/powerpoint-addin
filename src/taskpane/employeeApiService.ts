@@ -51,7 +51,6 @@ export async function fetchEmployeeImage(name: string): Promise<string> {
     if (newEtag) {
       sharedImageCash.set(`etag_${name}`, newEtag);
     }
-    console.log("fetchImage:", response);
     return response;
   } catch (e) {
     throw new Error("Error fetching employee image: " + e);

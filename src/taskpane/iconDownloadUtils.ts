@@ -1,4 +1,4 @@
-import { FetchIconResponse, EmployeeName } from "./types";
+import { FetchIconResponse } from "./types";
 import { showErrorPopup } from "./taskpane";
 import { getRequestHeadersWithAuthorization } from "../security/authService";
 
@@ -57,7 +57,6 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
 }
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
-  console.log(searchTerm);
   const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
   const requestOptions = {
     method: "GET",

@@ -11,7 +11,6 @@ import { addToIconPreview, debounce, fetchIcons, recentIcons, showMessageInDrawe
 import { addToTeamPreview, filterEmployeeNames } from "./employeeImageUtils";
 import { loginWithDialog } from "../security/authService";
 import { registerIconBackgroundTools } from "./iconUtils";
-import { EmployeeName, FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -27,15 +26,14 @@ Office.onReady((info) => {
 
 const processInputChanges = debounce(async (activeDrawerTab: string) => {
   const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
-  let result: FetchIconResponse[] | EmployeeName[] = [];
 
   try {
     if (activeDrawerTab === "icons") {
-      result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
-      addToIconPreview(result as FetchIconResponse[]);
+      let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
+      addToIconPreview(result);
     } else if (activeDrawerTab === "team") {
-      result = await filterEmployeeNames(searchTerm);
-      addToTeamPreview(result as EmployeeName[]);
+      let result = await filterEmployeeNames(searchTerm);
+      addToTeamPreview(result);
     }
   } catch (e) {
     showErrorPopup("Could not fetch any icons/images: " + e.message);
@@ -47,7 +45,7 @@ const processInputChanges = debounce(async (activeDrawerTab: string) => {
   else if (activeDrawerTab === "icons") searchResultTitle.innerText = "Recently used icons";
   else if (activeDrawerTab === "team") searchResultTitle.innerText = "All employees";
 
-  if (result.length === 0) {
+  if (document.getElementById(activeDrawerTab).children.length === 0) {
     if (activeDrawerTab === "team") showMessageInDrawer("No names fitting this search query");
     if (activeDrawerTab === "icons" && !searchTerm) showMessageInDrawer("No recent icons yet");
   }
@@ -68,9 +66,9 @@ function registerDrawerToggle() {
     refreshSearchResults();
 
     const searchInput = document.getElementById("search-input");
-    searchInput.focus();
     if (activeDrawerTab === "icons") searchInput.setAttribute("placeholder", "search icons...");
     if (activeDrawerTab === "team") searchInput.setAttribute("placeholder", "search names...");
+    searchInput.focus();
 
     drawer["open"] = true;
     wrapper.style.overflow = "hidden";
