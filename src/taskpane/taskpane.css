@@ -75,18 +75,25 @@ body {
 }
 
 sl-split-panel {
-  overflow: scroll;
   overflow-x: hidden;
-  height: 100%;
-  width: 100%;
   transition: all 0.25s;
 
   &::part(panel) {
     display: flex;
+    border: 1px solid red;
+  }
+
+  &::part(start) {
+    justify-content: end;
   }
 
   > div {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    gap: 12px;
+    border: 1px solid blue;
+    white-space: nowrap;
   }
 
   --divider-width: 0px;
@@ -96,15 +103,9 @@ sl-split-panel {
   display: flex;
   margin: 0;
   overflow: scroll;
-  height: 100%;
-  box-sizing: border-box;
 
   &#team {
     flex-direction: column;
-
-    sl-menu-item {
-      width: 100%;
-    }
   }
 
   &#icons {

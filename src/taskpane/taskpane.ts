@@ -8,7 +8,7 @@
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
 import { addToIconPreview, debounce, fetchIcons, recentIcons } from "./iconDownloadUtils";
-import { addToTeamPreview, fetchEmployeeImages, recentNames } from "./employeeImageUtils";
+import { addToTeamPreview, filterEmployeeNames } from "./employeeImageUtils";
 import { loginWithDialog } from "../security/authService";
 import { registerIconBackgroundTools } from "./iconUtils";
 
@@ -32,12 +32,9 @@ const processInputChanges = debounce(async () => {
     if (activeDrawerTab === "icons") {
       let result = recentIcons;
       if (searchTerm) result = await fetchIcons(searchTerm);
-      document.getElementById(activeDrawerTab).replaceChildren();
       addToIconPreview(result);
     } else if (activeDrawerTab === "team") {
-      let result = recentNames;
-      if (searchTerm) result = await fetchEmployeeImages(searchTerm);
-      document.getElementById(activeDrawerTab).replaceChildren();
+      let result = await filterEmployeeNames(searchTerm);
       addToTeamPreview(result);
     }
   } catch (e) {
@@ -46,15 +43,15 @@ const processInputChanges = debounce(async () => {
   }
 
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
-  document.getElementById("search-result-title").innerText = searchTerm
-    ? 'Search results for "' + searchTerm + '"'
-    : "Recently used " + (activeDrawerTab === "team" ? "images" : "icons");
+  const searchResultTitle = document.getElementById(activeDrawerTab + "-search-title");
+  if (searchTerm) searchResultTitle.innerText = 'Search results for "' + searchTerm + '"';
+  else if (activeDrawerTab === "icons") searchResultTitle.innerText = "Recently used icons";
+  else if (activeDrawerTab === "team") searchResultTitle.innerText = "All employees";
 });
 
 function registerSearch() {
   document.getElementById("search-input").addEventListener("sl-input", () => {
-    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
-    processInputChanges();
+    refreshSearchResults();
   });
 }
 
@@ -77,8 +74,7 @@ function registerDrawerToggle() {
       else tabs.position = 0;
 
       document.getElementById("search-input").focus();
-      (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
-      processInputChanges();
+      refreshSearchResults();
     };
   });
 
@@ -90,6 +86,13 @@ function registerDrawerToggle() {
     (document.getElementById("active-drawer") as HTMLInputElement).value = "";
     processInputChanges();
   };
+}
+
+function refreshSearchResults() {
+  (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
+  const activeDrawerTab = (<HTMLInputElement>document.getElementById("active-drawer")).value;
+  if (activeDrawerTab) document.getElementById(activeDrawerTab).replaceChildren();
+  processInputChanges();
 }
 
 function registerLogoImageInsert() {

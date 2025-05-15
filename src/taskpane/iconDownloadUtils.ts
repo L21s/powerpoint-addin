@@ -16,6 +16,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
     iconElement.src = icon.url;
     iconElement.slot = "prefix";
 
+    console.log(iconPreviewElement);
     iconPreviewElement.appendChild(buttonElement);
 
     buttonElement.appendChild(iconElement);
@@ -81,6 +82,7 @@ function showErrorMessageInDrawer() {
   const iconPreviewElement = document.getElementById("preview");
   const spanElement = document.createElement("div");
   spanElement.innerText = "Error fetching icons";
+  console.log(iconPreviewElement);
   iconPreviewElement.appendChild(spanElement);
 }
 

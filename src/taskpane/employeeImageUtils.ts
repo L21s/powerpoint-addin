@@ -1,88 +1,54 @@
-import { FetchIconResponse, EmployeeName } from "./types";
-import { showErrorPopup } from "./taskpane";
-import { getAccessToken } from "../security/authService";
+import { EmployeeName } from "./types";
+import { fetchEmployeeImage, fetchEmployeeNames } from "./employeeApiService";
 
-const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
-export let recentNames: EmployeeName[] = [
-  {
-    id: "nachname-vorname",
-    name: "Vorname Nachname",
-  },
-  {
-    id: "nachname-vorname",
-    name: "Vorname Nachname",
-  },
-];
+let allEmployeeNames: EmployeeName[] = [];
 
 export function addToTeamPreview(names: EmployeeName[]) {
   const teamPreviewElement = document.getElementById("team");
 
   names.forEach((name) => {
-    const buttonElement = document.createElement("sl-menu-item") as HTMLButtonElement;
-    buttonElement.id = name.id;
-    buttonElement.innerText = name.name;
+    const menuItemElement = document.createElement("sl-menu-item") as HTMLButtonElement;
+    menuItemElement.id = name.id;
+    menuItemElement.innerText = name.name;
 
-    teamPreviewElement.appendChild(buttonElement);
-    buttonElement.onclick = (e) => insertEmployeeImage(e, name);
+    teamPreviewElement.appendChild(menuItemElement);
+    menuItemElement.onclick = (e) => insertEmployeeImage(e, name.id);
   });
 }
 
-function addNameToRecentNames(name: EmployeeName) {
-  if (!recentNames.includes(name)) {
-    recentNames.unshift(name);
-    if (recentNames.length > 12) recentNames.pop();
-  }
-}
-
-async function insertEmployeeImage(e: MouseEvent, name: EmployeeName) {
+async function insertEmployeeImage(e: MouseEvent, name: string) {
   const button = e.target as HTMLButtonElement;
   button["loading"] = true;
-  addNameToRecentNames(name);
 
-  /*
-  const path = await getDownloadPathForIconWith(icon.id);
-  const svgText = await downloadIconWith(path).then((response) => response.text());
-
-  try {
-    Office.context.document.setSelectedDataAsync(
-      svgText,
-      { coercionType: Office.CoercionType.XmlSvg },
-      (asyncResult) => {
-        if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
-          showErrorPopup(errorMessage);
-        }
+  Office.context.document.setSelectedDataAsync(
+    // setSelectedDataAsync does not accept "data:image/png;base64," part of the base64 string -> remove it with split
+    await fetchEmployeeImage(name),
+    { coercionType: Office.CoercionType.Image },
+    (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error("Action failed. Error: " + asyncResult.error.message);
       }
-    );
-  } catch {
-    throw new Error("Error inserting SVG icon: " + e);
-  }
-  */
+    }
+  );
 
   button["loading"] = false;
 }
 
-export async function fetchEmployeeImages(searchTerm: string): Promise<Array<EmployeeName>> {
-  /*
-  const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
-  const requestOptions = {
-    method: "GET",
-    headers: await getRequestHeadersWithAuthorization(),
-  };
+async function getAllEmployeeNames(): Promise<Array<EmployeeName>> {
+  const employeeList = await fetchEmployeeNames();
+  return employeeList.map((employee) => ({
+    id: employee,
+    name:
+      employee.split("-")[1].charAt(0).toUpperCase() +
+      employee.split("-")[1].slice(1) +
+      " " +
+      employee.split("-")[0].charAt(0).toUpperCase() +
+      employee.split("-")[0].slice(1),
+  }));
+}
 
-  try {
-    const result = await fetch(url, requestOptions);
-    const response = await result.json();
-    return response.data
-      .filter((obj: any) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
-      .map((obj: any) => ({
-        id: obj.id.toString(),
-        url: obj.thumbnails[0].url,
-      }))
-      .slice(0, 50);
-  } catch (e) {
-    showErrorMessageInDrawer();
-  }
-  */
-  return recentNames;
+export async function filterEmployeeNames(searchTerm: string) {
+  const allNames = await getAllEmployeeNames();
+  const filteredNames = allNames.filter((name) => name.id.includes(searchTerm.toLowerCase()));
+  return searchTerm ? filteredNames : allNames;
 }
