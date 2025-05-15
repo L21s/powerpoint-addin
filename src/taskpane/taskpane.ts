@@ -7,10 +7,11 @@
 
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
-import { addToIconPreview, debounce, fetchIcons, recentIcons } from "./iconDownloadUtils";
+import { addToIconPreview, debounce, fetchIcons, recentIcons, showMessageInDrawer } from "./iconDownloadUtils";
 import { addToTeamPreview, filterEmployeeNames } from "./employeeImageUtils";
 import { loginWithDialog } from "../security/authService";
 import { registerIconBackgroundTools } from "./iconUtils";
+import { EmployeeName, FetchIconResponse } from "./types";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -24,22 +25,20 @@ Office.onReady((info) => {
   }
 });
 
-const processInputChanges = debounce(async () => {
+const processInputChanges = debounce(async (activeDrawerTab: string) => {
   const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
-  const activeDrawerTab = (<HTMLInputElement>document.getElementById("active-drawer")).value;
+  let result: FetchIconResponse[] | EmployeeName[] = [];
 
   try {
     if (activeDrawerTab === "icons") {
-      let result = recentIcons;
-      if (searchTerm) result = await fetchIcons(searchTerm);
-      addToIconPreview(result);
+      result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
+      addToIconPreview(result as FetchIconResponse[]);
     } else if (activeDrawerTab === "team") {
-      let result = await filterEmployeeNames(searchTerm);
-      addToTeamPreview(result);
+      result = await filterEmployeeNames(searchTerm);
+      addToTeamPreview(result as EmployeeName[]);
     }
   } catch (e) {
-    const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
-    showErrorPopup(errorMessage);
+    showErrorPopup("Could not fetch any icons/images: " + e.message);
   }
 
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
@@ -47,6 +46,11 @@ const processInputChanges = debounce(async () => {
   if (searchTerm) searchResultTitle.innerText = 'Search results for "' + searchTerm + '"';
   else if (activeDrawerTab === "icons") searchResultTitle.innerText = "Recently used icons";
   else if (activeDrawerTab === "team") searchResultTitle.innerText = "All employees";
+
+  if (result.length === 0) {
+    if (activeDrawerTab === "team") showMessageInDrawer("No names fitting this search query");
+    if (activeDrawerTab === "icons" && !searchTerm) showMessageInDrawer("No recent icons yet");
+  }
 });
 
 function registerSearch() {
@@ -58,24 +62,26 @@ function registerSearch() {
 function registerDrawerToggle() {
   const drawer = document.getElementById("search-drawer") as HTMLElement;
   const wrapper = document.getElementById("wrapper") as HTMLElement;
-  const searchButtons = document.querySelectorAll(".search-open");
 
-  searchButtons.forEach((searchButton: HTMLInputElement) => {
-    searchButton.onclick = () => {
-      drawer["open"] = true;
-      wrapper.style.overflow = "hidden";
-      wrapper.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+  document.getElementById("active-drawer").addEventListener("sl-change", (e) => {
+    const activeDrawerTab = (e.target as HTMLInputElement).value;
+    refreshSearchResults();
 
-      const tabs = document.querySelector("sl-split-panel") as any;
-      if (searchButton.value === "icons") tabs.position = 100;
-      else tabs.position = 0;
+    const searchInput = document.getElementById("search-input");
+    searchInput.focus();
+    if (activeDrawerTab === "icons") searchInput.setAttribute("placeholder", "search icons...");
+    if (activeDrawerTab === "team") searchInput.setAttribute("placeholder", "search names...");
 
-      document.getElementById("search-input").focus();
-      refreshSearchResults();
-    };
+    drawer["open"] = true;
+    wrapper.style.overflow = "hidden";
+    wrapper.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    const tabs = document.querySelector("sl-split-panel") as any;
+    if (activeDrawerTab === "icons") tabs.position = 100;
+    else tabs.position = 0;
   });
 
   document.getElementById("close-drawer").onclick = () => {
@@ -84,15 +90,25 @@ function registerDrawerToggle() {
 
     (document.getElementById("search-input") as HTMLInputElement).value = "";
     (document.getElementById("active-drawer") as HTMLInputElement).value = "";
-    processInputChanges();
   };
 }
 
 function refreshSearchResults() {
-  (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
   const activeDrawerTab = (<HTMLInputElement>document.getElementById("active-drawer")).value;
-  if (activeDrawerTab) document.getElementById(activeDrawerTab).replaceChildren();
-  processInputChanges();
+
+  if (activeDrawerTab) {
+    document.getElementById(activeDrawerTab).replaceChildren();
+    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
+
+    for (let i = 0; i < 12; i++) {
+      const skeleton = document.createElement("sl-skeleton");
+      skeleton.classList.add(activeDrawerTab);
+      skeleton.setAttribute("effect", "pulse");
+      document.getElementById(activeDrawerTab).appendChild(skeleton);
+    }
+
+    processInputChanges(activeDrawerTab);
+  }
 }
 
 function registerLogoImageInsert() {

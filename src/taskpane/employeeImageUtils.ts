@@ -1,10 +1,12 @@
-import { EmployeeName } from "./types";
+import { EmployeeName, ShapeType } from "./types";
 import { fetchEmployeeImage, fetchEmployeeNames } from "./employeeApiService";
+import { getSelectedShapeWith } from "./powerPointUtil";
 
 let allEmployeeNames: EmployeeName[] = [];
 
 export function addToTeamPreview(names: EmployeeName[]) {
   const teamPreviewElement = document.getElementById("team");
+  document.querySelectorAll("sl-skeleton").forEach((skeleton) => skeleton.remove());
 
   names.forEach((name) => {
     const menuItemElement = document.createElement("sl-menu-item") as HTMLButtonElement;
@@ -20,16 +22,16 @@ async function insertEmployeeImage(e: MouseEvent, name: string) {
   const button = e.target as HTMLButtonElement;
   button["loading"] = true;
 
-  Office.context.document.setSelectedDataAsync(
-    // setSelectedDataAsync does not accept "data:image/png;base64," part of the base64 string -> remove it with split
-    await fetchEmployeeImage(name),
-    { coercionType: Office.CoercionType.Image },
-    (asyncResult) => {
-      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-        console.error("Action failed. Error: " + asyncResult.error.message);
-      }
-    }
-  );
+  await PowerPoint.run(async (context) => {
+    const slide = context.presentation.getSelectedSlides().getItemAt(0);
+    const background = slide.shapes.addGeometricShape(ShapeType["Ellipse"]);
+
+    background.width = 100;
+    background.height = 100;
+    background.fill.setImage(await fetchEmployeeImage(name));
+
+    await context.sync();
+  });
 
   button["loading"] = false;
 }

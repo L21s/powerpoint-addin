@@ -80,7 +80,6 @@ sl-split-panel {
 
   &::part(panel) {
     display: flex;
-    border: 1px solid red;
   }
 
   &::part(start) {
@@ -90,13 +89,36 @@ sl-split-panel {
   > div {
     display: flex;
     flex-direction: column;
-    width: 100%;
     gap: 12px;
-    border: 1px solid blue;
-    white-space: nowrap;
+    min-width: 100vw;
   }
 
   --divider-width: 0px;
+}
+
+sl-skeleton {
+  --color: var(--sl-color-neutral-300);
+
+  &.icons::part(base) {
+    width: 68px;
+    aspect-ratio: 1 / 1;
+    --border-radius: 4px;
+  }
+
+  &.team::part(base) {
+    height: 20px;
+    padding: 0 20px;
+    margin-bottom: 12px;
+  }
+}
+
+.information {
+  opacity: 0.5;
+  margin-left: 4px;
+
+  &.team {
+    margin-left: 24px;
+  }
 }
 
 .preview {

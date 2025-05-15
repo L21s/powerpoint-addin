@@ -7,6 +7,7 @@ export let recentIcons: FetchIconResponse[] = [];
 
 export function addToIconPreview(icons: FetchIconResponse[]) {
   const iconPreviewElement = document.getElementById("icons");
+  document.querySelectorAll("sl-skeleton").forEach((skeleton) => skeleton.remove());
 
   icons.forEach((icon) => {
     const buttonElement = document.createElement("sl-button") as HTMLButtonElement;
@@ -16,7 +17,6 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
     iconElement.src = icon.url;
     iconElement.slot = "prefix";
 
-    console.log(iconPreviewElement);
     iconPreviewElement.appendChild(buttonElement);
 
     buttonElement.appendChild(iconElement);
@@ -57,6 +57,7 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
 }
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
+  console.log(searchTerm);
   const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
   const requestOptions = {
     method: "GET",
@@ -74,16 +75,19 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
       }))
       .slice(0, 50);
   } catch (e) {
-    showErrorMessageInDrawer();
+    showMessageInDrawer(e);
+    return [];
   }
 }
 
-function showErrorMessageInDrawer() {
-  const iconPreviewElement = document.getElementById("preview");
-  const spanElement = document.createElement("div");
-  spanElement.innerText = "Error fetching icons";
-  console.log(iconPreviewElement);
-  iconPreviewElement.appendChild(spanElement);
+export function showMessageInDrawer(message: string) {
+  const activeDrawerTab = (document.getElementById("active-drawer") as HTMLInputElement).value;
+  const iconPreviewElement = document.getElementById(activeDrawerTab);
+  const textElement = document.createElement("div");
+  textElement.classList.add("information", activeDrawerTab);
+  textElement.innerText = message;
+  iconPreviewElement.appendChild(textElement);
+  console.error(message);
 }
 
 export async function getDownloadPathForIconWith(id: string) {
