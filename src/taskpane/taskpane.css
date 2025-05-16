@@ -105,7 +105,7 @@ sl-skeleton {
     --border-radius: 4px;
   }
 
-  &.team::part(base) {
+  &.names::part(base) {
     height: 20px;
     padding: 0 20px;
     margin-bottom: 12px;
@@ -116,7 +116,7 @@ sl-skeleton {
   opacity: 0.5;
   margin-left: 4px;
 
-  &.team {
+  &.names {
     margin-left: 24px;
   }
 }
@@ -126,7 +126,7 @@ sl-skeleton {
   margin: 0;
   overflow: scroll;
 
-  &#team {
+  &#names {
     flex-direction: column;
   }
 
@@ -145,6 +145,10 @@ sl-skeleton {
         border: none;
         width: 68px;
         aspect-ratio: 1 / 1;
+      }
+
+      &::part(base):hover {
+        background-color: var(--sl-color-neutral-100);
       }
 
       &::part(prefix) {
@@ -218,10 +222,6 @@ section {
 
 sl-menu {
   background-color: #ececec;
-
-  sl-menu-item.logo-dropdown-option::part(base):hover {
-    background-color: var(--sl-color-neutral-200);
-  }
 
   sl-menu-item.logo-dropdown-option::part(label) {
     display: inline-flex;

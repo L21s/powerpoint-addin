@@ -18,7 +18,6 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
     iconElement.slot = "prefix";
 
     iconPreviewElement.appendChild(buttonElement);
-
     buttonElement.appendChild(iconElement);
     buttonElement.onclick = (e) => insertSvgIcon(e, icon);
   });
@@ -86,7 +85,6 @@ export function showMessageInDrawer(message: string) {
   textElement.classList.add("information", activeDrawerTab);
   textElement.innerText = message;
   iconPreviewElement.appendChild(textElement);
-  console.error(message);
 }
 
 export async function getDownloadPathForIconWith(id: string) {

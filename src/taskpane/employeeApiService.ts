@@ -1,7 +1,6 @@
 import { getRequestHeadersWithAuthorization } from "../security/authService";
 
-//const proxyBaseUrlEmployees = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/employees`;
-const proxyBaseUrlEmployeesDEV = `https://localhost:8443/employees`;
+const proxyBaseUrlEmployees = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/employees`;
 let employeeNames: string[] = [];
 let recentEtagNames: string = "";
 const sharedImageCash: Map<string, string> = new Map<string, string>();
@@ -18,7 +17,7 @@ async function getRequestOptions(etag?: string): Promise<RequestInit> {
 
 export async function fetchEmployeeNames() {
   try {
-    const result = await fetch(proxyBaseUrlEmployeesDEV + "/names", await getRequestOptions(recentEtagNames));
+    const result = await fetch(proxyBaseUrlEmployees + "/names", await getRequestOptions(recentEtagNames));
     if (result.status === 304) {
       console.log("Employee names unchanged. Skipping update.");
       return employeeNames;
@@ -38,7 +37,7 @@ export async function fetchEmployeeNames() {
 export async function fetchEmployeeImage(name: string): Promise<string> {
   try {
     const result = await fetch(
-      proxyBaseUrlEmployeesDEV + `/${name}`,
+      proxyBaseUrlEmployees + `/${name}`,
       await getRequestOptions(sharedImageCash.get(`etag_${name}`))
     );
     if (result.status === 304) {

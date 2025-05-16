@@ -1,8 +1,10 @@
 import { EmployeeName, ShapeType } from "./types";
 import { fetchEmployeeImage, fetchEmployeeNames } from "./employeeApiService";
 
+export let allCurrentNames: EmployeeName[] = [];
+
 export function addToTeamPreview(names: EmployeeName[]) {
-  const teamPreviewElement = document.getElementById("team");
+  const teamPreviewElement = document.getElementById("names");
   document.querySelectorAll("sl-skeleton").forEach((skeletonItem) => skeletonItem.remove());
 
   names.forEach((name) => {
@@ -26,6 +28,8 @@ async function insertEmployeeImage(e: MouseEvent, name: string) {
     background.width = 100;
     background.height = 100;
     background.fill.setImage(await fetchEmployeeImage(name));
+    background.lineFormat.weight = 2;
+    background.lineFormat.color = "#5237fc";
 
     await context.sync();
   });
@@ -33,9 +37,9 @@ async function insertEmployeeImage(e: MouseEvent, name: string) {
   button["loading"] = false;
 }
 
-async function getAllEmployeeNames(): Promise<Array<EmployeeName>> {
+export async function getAllEmployeeNames() {
   const employeeList = await fetchEmployeeNames();
-  return employeeList.map((employee) => ({
+  allCurrentNames = employeeList.map((employee) => ({
     id: employee,
     name:
       employee.split("-")[1].charAt(0).toUpperCase() +
@@ -46,8 +50,6 @@ async function getAllEmployeeNames(): Promise<Array<EmployeeName>> {
   }));
 }
 
-export async function filterEmployeeNames(searchTerm: string) {
-  const allNames = await getAllEmployeeNames();
-  const filteredNames = allNames.filter((name) => name.id.includes(searchTerm.toLowerCase()));
-  return searchTerm ? filteredNames : allNames;
+export function filterEmployeeNames(searchTerm: string) {
+  return allCurrentNames.filter((name) => name.id.includes(searchTerm.toLowerCase()));
 }
