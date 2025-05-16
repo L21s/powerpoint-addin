@@ -35,6 +35,7 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.width = selectedShape.width;
     background.height = selectedShape.height;
     background.fill.setSolidColor(colorValue ? colorValue : "lightgreen");
+    background.lineFormat.visible = false;
 
     addColorToRecentColors(colorValue);
 
@@ -46,7 +47,7 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
 }
 
 function chooseNewColor(color: string) {
-  const paintBucketIcon =  document.getElementById("paint-bucket-color");
+  const paintBucketIcon = document.getElementById("paint-bucket-color");
   paintBucketIcon.style.color = color;
   paintBucketIcon.setAttribute("data-color", color);
 }
