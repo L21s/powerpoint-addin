@@ -21,13 +21,10 @@
   </head>
 
   <body>
-    <!-- still part of the old version -->
-    <div id="errorPopup" class="ms-MessageBar ms-MessageBar--error" style="display: none">
-      <div id="errorPopupText" class="ms-MessageBar-text"></div>
-      <button id="closePopupButton" class="ms-Button ms-Button--icon ms-Button--iconOnly">
-        <span class="ms-Icon ms-Icon--Cancel" aria-hidden="true"></span>
-      </button>
-    </div>
+    <sl-alert variant="danger" closable>
+      <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
+      <span></span>
+    </sl-alert>
 
     <div id="wrapper">
       <sl-drawer id="search-drawer" placement="bottom">

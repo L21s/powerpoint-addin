@@ -43,7 +43,8 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
       { coercionType: Office.CoercionType.XmlSvg },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
+          const errorMessage = `Insert SVG failed: ${asyncResult.error.message}`;
+          console.error(errorMessage);
           showErrorPopup(errorMessage);
         }
       }

@@ -12,6 +12,7 @@ import { addToTeamPreview, allCurrentNames, filterEmployeeNames, getAllEmployeeN
 import { loginWithDialog } from "../security/authService";
 import { registerIconBackgroundTools } from "./iconUtils";
 
+const popup = document.querySelector("sl-alert") as any;
 let lastSearchQuery = "";
 
 Office.onReady((info) => {
@@ -28,40 +29,33 @@ Office.onReady((info) => {
 
 const processInputChanges = debounce(async (activeDrawerTab: string) => {
   const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
+  const searchResultTitle = document.getElementById(activeDrawerTab + "-search-title");
 
   try {
-    if (activeDrawerTab === "icons") {
-      let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
-      addToIconPreview(result);
-    } else if (activeDrawerTab === "names") {
-      let result = searchTerm ? filterEmployeeNames(searchTerm) : allCurrentNames;
-      addToTeamPreview(result);
+    switch (activeDrawerTab) {
+      case "icons": {
+        let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
+        addToIconPreview(result);
+        searchResultTitle.innerText = searchTerm ? 'Search results for "' + searchTerm + '"' : "Recently used icons";
+        if (document.getElementById(activeDrawerTab).children.length === 0) {
+          showMessageInDrawer("No recent icons yet");
+        }
+        break;
+      }
+      case "names": {
+        let result = searchTerm ? filterEmployeeNames(searchTerm) : allCurrentNames;
+        addToTeamPreview(result);
+        searchResultTitle.innerText = searchTerm ? 'Search results for "' + searchTerm + '"' : "All employees";
+        if (document.getElementById(activeDrawerTab).children.length === 0) {
+          showMessageInDrawer("No names fitting this search query");
+        }
+        break;
+      }
     }
   } catch (e) {
     showMessageInDrawer("Could not fetch any " + activeDrawerTab + ": " + e.message);
   }
-
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
-  const searchResultTitle = document.getElementById(activeDrawerTab + "-search-title");
-  if (searchTerm) {
-    searchResultTitle.innerText = 'Search results for "' + searchTerm + '"';
-  } else {
-    switch (activeDrawerTab) {
-      case "icons": {
-        searchResultTitle.innerText = "Recently used icons";
-        break;
-      }
-      case "names": {
-        searchResultTitle.innerText = "All employees";
-        break;
-      }
-    }
-  }
-
-  if (document.getElementById(activeDrawerTab).children.length === 0) {
-    if (activeDrawerTab === "names") showMessageInDrawer("No names fitting this search query");
-    if (activeDrawerTab === "icons" && !searchTerm) showMessageInDrawer("No recent icons yet");
-  }
 });
 
 function registerSearch() {
@@ -95,13 +89,17 @@ function registerDrawerToggle() {
     lastSearchQuery = currentSearchQuery;
 
     const tabs = document.querySelector("sl-split-panel") as any;
-    if (activeDrawerTab === "icons") {
-      tabs.position = 100;
-    } else {
-      tabs.position = 0;
+    switch (activeDrawerTab) {
+      case "icons": {
+        tabs.position = 100;
+        break;
+      }
+      case "names": {
+        tabs.position = 0;
+        await getAllEmployeeNames();
+        break;
+      }
     }
-
-    if (activeDrawerTab === "names") await getAllEmployeeNames();
     processInputChanges(activeDrawerTab);
   });
 
@@ -144,12 +142,13 @@ function registerLogoImageInsert() {
       }
 
       Office.context.document.setSelectedDataAsync(
-        // setSelectedDataAsync does not accept "data:image/png;base64," part of the base64 string -> remove it with split
         ((await getImageAsBase64(selectedImageSrc)) as string).split(",")[1],
         { coercionType: Office.CoercionType.Image },
         (asyncResult) => {
           if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-            console.error("Action failed. Error: " + asyncResult.error.message);
+            const errorMessage = "Action failed. Error: " + asyncResult.error.message;
+            console.error(errorMessage);
+            showErrorPopup(errorMessage);
           }
         }
       );
@@ -241,15 +240,6 @@ function setStickerFontProperties(textbox: PowerPoint.Shape) {
 }
 
 export function showErrorPopup(errorMessage: string) {
-  const popup = document.getElementById("errorPopup");
-  const popupText = document.getElementById("errorPopupText");
-  const closeButton = document.getElementById("closePopupButton");
-
-  if (popup && popupText && closeButton) {
-    popupText.textContent = errorMessage;
-    popup.style.display = "flex";
-    closeButton.addEventListener("click", () => {
-      popup.style.display = "none";
-    });
-  }
+  popup.querySelector("span").innerHTML = errorMessage;
+  popup.toast();
 }
