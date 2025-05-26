@@ -43,3 +43,10 @@ export function setInitials() {
     const initials = msalApp.getActiveAccount().name;
     localStorage.setItem("initials", initials);
 }
+
+export async function getRequestHeadersWithAuthorization(): Promise<Headers> {
+    const token = await getAccessToken();
+    const requestHeaders =  new Headers();
+    requestHeaders.append("Authorization", `Bearer ${token}`);
+    return requestHeaders;
+}

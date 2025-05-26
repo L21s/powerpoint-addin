@@ -1,12 +1,13 @@
 import { FetchIconResponse } from "./types";
 import { showErrorPopup } from "./taskpane";
-import { getAccessToken } from "../security/authService";
+import { getRequestHeadersWithAuthorization } from "../security/authService";
 
 const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
-export let recentIcons = [];
+export let recentIcons: FetchIconResponse[] = [];
 
 export function addToIconPreview(icons: FetchIconResponse[]) {
-  const iconPreviewElement = document.getElementById("icon-previews");
+  const iconPreviewElement = document.getElementById("icons");
+  document.querySelectorAll("sl-skeleton").forEach((skeleton) => skeleton.remove());
 
   icons.forEach((icon) => {
     const buttonElement = document.createElement("sl-button") as HTMLButtonElement;
@@ -24,11 +25,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
 
 function addIconToRecentIcons(icon: FetchIconResponse) {
   if (!recentIcons.includes(icon)) {
-    recentIcons.unshift({
-      id: icon.id,
-      url: icon.url,
-    });
-
+    recentIcons.unshift(icon);
     if (recentIcons.length > 12) recentIcons.pop();
   }
 }
@@ -46,7 +43,7 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
       { coercionType: Office.CoercionType.XmlSvg },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          const errorMessage = `Insert SVG failed. Code: ${asyncResult.error.code}. Message: ${asyncResult.error.message}`;
+          const errorMessage = `Insert SVG failed: ${asyncResult.error.message}`;
           showErrorPopup(errorMessage);
         }
       }
@@ -57,7 +54,6 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
 
   button["loading"] = false;
 }
-
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
   const url = `${proxyBaseUrl}/icons?term=${searchTerm}`;
@@ -77,15 +73,18 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
       }))
       .slice(0, 50);
   } catch (e) {
-    showErrorMessageInDrawer();
+    showMessageInDrawer(e);
+    return [];
   }
 }
 
-function showErrorMessageInDrawer() {
-  const iconPreviewElement = document.getElementById("icon-previews");
-  const spanElement = document.createElement("div");
-  spanElement.innerText = "Error fetching icons";
-  iconPreviewElement.appendChild(spanElement);
+export function showMessageInDrawer(message: string) {
+  const activeDrawerTab = (document.getElementById("active-drawer") as HTMLInputElement).value;
+  const iconPreviewElement = document.getElementById(activeDrawerTab);
+  const textElement = document.createElement("div");
+  textElement.classList.add("information", activeDrawerTab);
+  textElement.innerText = message;
+  iconPreviewElement.appendChild(textElement);
 }
 
 export async function getDownloadPathForIconWith(id: string) {
@@ -124,11 +123,4 @@ export function debounce(func: Function) {
       func.apply(this, args);
     }, 500);
   };
-}
-
-async function getRequestHeadersWithAuthorization(): Promise<Headers> {
-  const token = await getAccessToken();
-  const requestHeaders = new Headers();
-  requestHeaders.append("Authorization", `Bearer ${token}`);
-  return requestHeaders;
 }

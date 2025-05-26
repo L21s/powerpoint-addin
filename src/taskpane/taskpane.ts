@@ -7,9 +7,13 @@
 
 import { runPowerPoint } from "./powerPointUtil";
 import { columnLineName, rowLineName, createColumns, createRows } from "./rowsColumns";
-import { addToIconPreview, debounce, fetchIcons, recentIcons } from "./iconDownloadUtils";
+import { addToIconPreview, debounce, fetchIcons, recentIcons, showMessageInDrawer } from "./iconDownloadUtils";
+import { addToTeamPreview, allCurrentNames, filterEmployeeNames, getAllEmployeeNames } from "./employeeImageUtils";
 import { loginWithDialog } from "../security/authService";
 import { registerIconBackgroundTools } from "./iconUtils";
+
+const popup = document.querySelector("sl-alert") as any;
+let lastSearchQuery = "";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -23,46 +27,80 @@ Office.onReady((info) => {
   }
 });
 
-const processInputChanges = debounce(async () => {
+const processInputChanges = debounce(async (activeDrawerTab: string) => {
   const searchTerm = (<HTMLInputElement>document.getElementById("search-input")).value;
+  const searchResultTitle = document.getElementById(activeDrawerTab + "-search-title");
 
   try {
-    document.getElementById("icon-previews").replaceChildren();
-    let result = recentIcons;
-    if (searchTerm) result = await fetchIcons(searchTerm);
-    addToIconPreview(result);
+    switch (activeDrawerTab) {
+      case "icons": {
+        let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
+        addToIconPreview(result);
+        searchResultTitle.innerText = searchTerm ? 'Search results for "' + searchTerm + '"' : "Recently used icons";
+        if (document.getElementById(activeDrawerTab).children.length === 0) {
+          showMessageInDrawer("No recent icons yet");
+        }
+        break;
+      }
+      case "names": {
+        let result = searchTerm ? filterEmployeeNames(searchTerm) : allCurrentNames;
+        addToTeamPreview(result);
+        searchResultTitle.innerText = searchTerm ? 'Search results for "' + searchTerm + '"' : "All employees";
+        if (document.getElementById(activeDrawerTab).children.length === 0) {
+          showMessageInDrawer("No names fitting this search query");
+        }
+        break;
+      }
+    }
   } catch (e) {
-    const errorMessage = `Error executing icon search. Code: ${e.code}. Message: ${e.message}`;
-    showErrorPopup(errorMessage);
+    showMessageInDrawer("Could not fetch any " + activeDrawerTab + ": " + e.message);
   }
-
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
-  document.getElementById("search-result-title").innerText = searchTerm
-    ? 'Search results for "' + searchTerm + '"'
-    : "Recently used icons";
 });
 
 function registerSearch() {
   document.getElementById("search-input").addEventListener("sl-input", () => {
-    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
-    processInputChanges();
+    const activeDrawerTab = (document.getElementById("active-drawer") as HTMLInputElement).value;
+    refreshSearchResults(activeDrawerTab);
+    processInputChanges(activeDrawerTab);
   });
 }
 
 function registerDrawerToggle() {
   const drawer = document.getElementById("search-drawer") as HTMLElement;
   const wrapper = document.getElementById("wrapper") as HTMLElement;
-  const searchButtons = document.querySelectorAll(".search-open");
 
-  searchButtons.forEach((searchButton: HTMLInputElement) => {
-    searchButton.onclick = () => {
-      drawer["open"] = true;
-      wrapper.style.overflow = "hidden";
-      wrapper.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    };
+  document.getElementById("active-drawer").addEventListener("sl-change", async (e) => {
+    const activeDrawerTab = (e.target as HTMLInputElement).value;
+    refreshSearchResults(activeDrawerTab);
+
+    drawer["open"] = true;
+    wrapper.style.overflow = "hidden";
+    wrapper.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    const searchInput = document.getElementById("search-input") as HTMLInputElement;
+    const currentSearchQuery = searchInput.value;
+    searchInput.setAttribute("placeholder", "search " + activeDrawerTab + "...");
+    searchInput.focus();
+    searchInput.value = lastSearchQuery;
+    lastSearchQuery = currentSearchQuery;
+
+    const tabs = document.querySelector("sl-split-panel") as any;
+    switch (activeDrawerTab) {
+      case "icons": {
+        tabs.position = 100;
+        break;
+      }
+      case "names": {
+        tabs.position = 0;
+        await getAllEmployeeNames();
+        break;
+      }
+    }
+    processInputChanges(activeDrawerTab);
   });
 
   document.getElementById("close-drawer").onclick = () => {
@@ -70,9 +108,22 @@ function registerDrawerToggle() {
     wrapper.style.overflow = "scroll";
 
     (document.getElementById("search-input") as HTMLInputElement).value = "";
-    (document.getElementById("active-search") as HTMLInputElement).value = "";
-    processInputChanges();
+    (document.getElementById("active-drawer") as HTMLInputElement).value = "";
   };
+}
+
+function refreshSearchResults(activeDrawerTab: string) {
+  if (activeDrawerTab) {
+    document.getElementById(activeDrawerTab).replaceChildren();
+    (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
+
+    for (let i = 0; i < 12; i++) {
+      const skeleton = document.createElement("sl-skeleton");
+      skeleton.classList.add(activeDrawerTab);
+      skeleton.setAttribute("effect", "pulse");
+      document.getElementById(activeDrawerTab).appendChild(skeleton);
+    }
+  }
 }
 
 function registerLogoImageInsert() {
@@ -91,12 +142,12 @@ function registerLogoImageInsert() {
       }
 
       Office.context.document.setSelectedDataAsync(
-        // setSelectedDataAsync does not accept "data:image/png;base64," part of the base64 string -> remove it with split
         ((await getImageAsBase64(selectedImageSrc)) as string).split(",")[1],
         { coercionType: Office.CoercionType.Image },
         (asyncResult) => {
           if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-            console.error("Action failed. Error: " + asyncResult.error.message);
+            const errorMessage = "Action failed. Error: " + asyncResult.error.message;
+            showErrorPopup(errorMessage);
           }
         }
       );
@@ -188,15 +239,6 @@ function setStickerFontProperties(textbox: PowerPoint.Shape) {
 }
 
 export function showErrorPopup(errorMessage: string) {
-  const popup = document.getElementById("errorPopup");
-  const popupText = document.getElementById("errorPopupText");
-  const closeButton = document.getElementById("closePopupButton");
-
-  if (popup && popupText && closeButton) {
-    popupText.textContent = errorMessage;
-    popup.style.display = "flex";
-    closeButton.addEventListener("click", () => {
-      popup.style.display = "none";
-    });
-  }
+  popup.querySelector("span").innerHTML = errorMessage;
+  popup.toast();
 }
