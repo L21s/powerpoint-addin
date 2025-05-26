@@ -147,7 +147,6 @@ function registerLogoImageInsert() {
         (asyncResult) => {
           if (asyncResult.status === Office.AsyncResultStatus.Failed) {
             const errorMessage = "Action failed. Error: " + asyncResult.error.message;
-            console.error(errorMessage);
             showErrorPopup(errorMessage);
           }
         }
