@@ -24,7 +24,7 @@ function addColorToRecentColors(colorValue: string) {
 async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
-    const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
+    let selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
     const colorValue = document.getElementById("paint-bucket-color").getAttribute("data-color");
     const background: PowerPoint.Shape = slide.shapes.addGeometricShape(
       ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
@@ -36,13 +36,41 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.height = selectedShape.height;
     background.fill.setSolidColor(colorValue ? colorValue : "lightgreen");
     background.lineFormat.visible = false;
+    background.setZOrder(ShapeZOrder.sendToBack);
 
     addColorToRecentColors(colorValue);
 
-    background.setZOrder(ShapeZOrder.sendToBack);
-    await context.sync();
+    async function regroupItems(selectedGroup: PowerPoint.Shape) {
+      selectedGroup.group.load("shapes");
+      await context.sync();
+
+      const groupItems = selectedGroup.group.shapes.items;
+      const imageItem = groupItems[groupItems.length - 1];
+      groupItems[0].delete();
+      return imageItem;
+    }
+
+    try {
+      selectedShape.load("parentGroup");
+      await context.sync();
+      selectedShape = await regroupItems(selectedShape.parentGroup);
+    } catch {
+      if (selectedShape.type === "Group") selectedShape = await regroupItems(selectedShape);
+    }
+
     slide.shapes.addGroup([background, selectedShape]);
     await context.sync();
+  });
+}
+
+function deleteBackground() {
+  await PowerPoint.run(async (context) => {
+    const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
+    if (selectedShape.type === "Group") {
+      selectedShape.group.load("shapes");
+      await context.sync();
+      selectedShape.group.shapes.items[0].delete();
+    }
   });
 }
 

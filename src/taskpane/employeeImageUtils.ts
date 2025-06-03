@@ -39,15 +39,17 @@ async function insertEmployeeImage(e: MouseEvent, name: string) {
 
 export async function getAllEmployeeNames() {
   const employeeList = await fetchEmployeeNames();
-  allCurrentNames = employeeList.map((employee) => ({
-    id: employee,
-    name:
-      employee.split("-")[1].charAt(0).toUpperCase() +
-      employee.split("-")[1].slice(1) +
-      " " +
-      employee.split("-")[0].charAt(0).toUpperCase() +
-      employee.split("-")[0].slice(1),
-  }));
+  allCurrentNames = employeeList
+    .map((employee) => ({
+      id: employee,
+      name:
+        employee.split("-")[1].charAt(0).toUpperCase() +
+        employee.split("-")[1].slice(1) +
+        " " +
+        employee.split("-")[0].charAt(0).toUpperCase() +
+        employee.split("-")[0].slice(1),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export function filterEmployeeNames(searchTerm: string) {
