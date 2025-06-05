@@ -40,7 +40,8 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
 
     addColorToRecentColors(colorValue);
 
-    async function regroupItems(selectedGroup: PowerPoint.Shape) {
+    /*
+    async function removeBackground(selectedGroup: PowerPoint.Shape) {
       selectedGroup.group.load("shapes");
       await context.sync();
 
@@ -49,28 +50,23 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
       groupItems[0].delete();
       return imageItem;
     }
+    */
 
+    let testShape: PowerPoint.Shape;
     try {
       selectedShape.load("parentGroup");
       await context.sync();
-      selectedShape = await regroupItems(selectedShape.parentGroup);
+      testShape = selectedShape.parentGroup;
     } catch {
-      if (selectedShape.type === "Group") selectedShape = await regroupItems(selectedShape);
+      testShape = selectedShape;
     }
+
+    testShape.load("type");
+    await context.sync();
+    if (testShape.type === "Group") selectedShape = await removeBackground(testShape);
 
     slide.shapes.addGroup([background, selectedShape]);
     await context.sync();
-  });
-}
-
-function deleteBackground() {
-  await PowerPoint.run(async (context) => {
-    const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
-    if (selectedShape.type === "Group") {
-      selectedShape.group.load("shapes");
-      await context.sync();
-      selectedShape.group.shapes.items[0].delete();
-    }
   });
 }
 

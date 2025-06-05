@@ -386,26 +386,20 @@ h3 {
 #paint-bucket {
   sl-icon {
     font-size: 24px;
-    color: rgba(0, 0, 0, 0.25);
 
     &:not(#paint-bucket-color) {
       z-index: 1;
       position: absolute;
+      color: rgba(0, 0, 0, 0.25);
     }
   }
 
-  &::part(base) {
+  sl-button::part(base) {
     border: none;
-    padding-right: 0;
   }
 
-  &::part(caret) {
-    padding-left: 2px;
-    padding-right: 12px;
-  }
-
-  &::part(label) {
-    display: none;
+  sl-dropdown {
+    border-left: 1px solid var(--sl-color-neutral-300);
   }
 }
 
@@ -465,8 +459,8 @@ h3 {
   width: 32px;
 
   sl-icon {
-    position: absolute;
     height: 16px;
+    width: 16px;
     top: 8px;
     left: 8px;
     color: rgba(0, 0, 0, 0.2);

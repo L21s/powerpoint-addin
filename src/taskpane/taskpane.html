@@ -171,31 +171,59 @@
             </sl-button-group>
           </div>
 
-          <sl-dropdown placement="bottom-end" hoist>
-            <sl-button id="paint-bucket" slot="trigger" caret>
-              <sl-icon slot="prefix" src="assets/iconoir-regular-fill-color.svg"></sl-icon>
-              <sl-icon
-                id="paint-bucket-color"
-                slot="prefix"
-                data-color="#ffffff"
-                style="color: #ffffff"
-                src="assets/iconoir-solid-fill-color.svg"
-              ></sl-icon>
+          <div style="display: flex; flex-direction: column; align-items: flex-start">
+            <sl-button-group id="paint-bucket">
+              <sl-button>
+                <sl-icon slot="prefix" src="assets/iconoir-regular-fill-color.svg"></sl-icon>
+                <sl-icon
+                  id="paint-bucket-color"
+                  slot="prefix"
+                  data-color="#ffffff"
+                  style="color: #ffffff"
+                  src="assets/iconoir-solid-fill-color.svg"
+                ></sl-icon>
+              </sl-button>
+              <sl-dropdown placement="bottom-end" hoist>
+                <sl-button slot="trigger" caret></sl-button>
+                <sl-menu class="color-options">
+                  <sl-menu-item
+                    class="fixed-color"
+                    style="background-color: #ffffff"
+                    data-color="#ffffff"
+                  ></sl-menu-item>
+                  <sl-menu-item
+                    class="fixed-color"
+                    style="background-color: #000000"
+                    data-color="#000000"
+                  ></sl-menu-item>
+                  <sl-menu-item
+                    class="fixed-color"
+                    style="background-color: #ff0000"
+                    data-color="#ff0000"
+                  ></sl-menu-item>
+                  <sl-menu-item
+                    class="fixed-color"
+                    style="background-color: #0048ff"
+                    data-color="#0048ff"
+                  ></sl-menu-item>
+                  <sl-menu-item
+                    class="fixed-color"
+                    style="background-color: #00ff00"
+                    data-color="#00ff00"
+                  ></sl-menu-item>
+                  <sl-divider vertical></sl-divider>
+                  <div id="color-picker">
+                    <sl-icon name="palette"></sl-icon>
+                    <label for="background-color-picker"></label>
+                    <input id="background-color-picker" type="color" value="#ffffff" />
+                  </div>
+                </sl-menu>
+              </sl-dropdown>
+            </sl-button-group>
+            <sl-button id="delete-background" class="delete" variant="danger" outline>
+              <sl-icon slot="prefix" src="assets/feather-icons-trash-2.svg"></sl-icon>
             </sl-button>
-            <sl-menu class="color-options">
-              <sl-menu-item class="fixed-color" style="background-color: #ffffff" data-color="#ffffff"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #000000" data-color="#000000"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #ff0000" data-color="#ff0000"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #0048ff" data-color="#0048ff"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #00ff00" data-color="#00ff00"></sl-menu-item>
-              <sl-divider vertical></sl-divider>
-              <div id="color-picker">
-                <sl-icon name="palette"></sl-icon>
-                <label for="background-color-picker"></label>
-                <input id="background-color-picker" type="color" value="#ffffff" />
-              </div>
-            </sl-menu>
-          </sl-dropdown>
+          </div>
         </div>
       </section>
 
