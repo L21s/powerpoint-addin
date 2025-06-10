@@ -39,35 +39,33 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.setZOrder(ShapeZOrder.sendToBack);
 
     addColorToRecentColors(colorValue);
-
-    /*
-    async function removeBackground(selectedGroup: PowerPoint.Shape) {
-      selectedGroup.group.load("shapes");
-      await context.sync();
-
-      const groupItems = selectedGroup.group.shapes.items;
-      const imageItem = groupItems[groupItems.length - 1];
-      groupItems[0].delete();
-      return imageItem;
-    }
-    */
-
-    let testShape: PowerPoint.Shape;
-    try {
-      selectedShape.load("parentGroup");
-      await context.sync();
-      testShape = selectedShape.parentGroup;
-    } catch {
-      testShape = selectedShape;
-    }
-
-    testShape.load("type");
-    await context.sync();
-    if (testShape.type === "Group") selectedShape = await removeBackground(testShape);
-
-    slide.shapes.addGroup([background, selectedShape]);
+    const iconElement = await removeBackground(context);
+    slide.shapes.addGroup([background, iconElement]);
     await context.sync();
   });
+}
+
+export async function removeBackground(context: PowerPoint.RequestContext) {
+  let selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
+
+  try {
+    selectedShape.load("parentGroup");
+    await context.sync();
+    selectedShape = selectedShape.parentGroup;
+  } catch {}
+
+  selectedShape.load("type");
+  await context.sync();
+
+  if (selectedShape.type === "Group") {
+    selectedShape.group.load("shapes");
+    await context.sync();
+
+    const groupItems = selectedShape.group.shapes.items;
+    selectedShape = groupItems[groupItems.length - 1];
+    groupItems[0].delete();
+  }
+  return selectedShape;
 }
 
 function chooseNewColor(color: string) {
@@ -92,4 +90,11 @@ export function registerIconBackgroundTools() {
       chooseNewColor(button.getAttribute("data-color"));
     };
   });
+
+  document.getElementById("delete-background").onclick = async () => {
+    await PowerPoint.run(async (context) => {
+      await removeBackground(context);
+      await context.sync();
+    });
+  };
 }
