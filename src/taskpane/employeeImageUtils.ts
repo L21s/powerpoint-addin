@@ -1,5 +1,6 @@
 import { EmployeeName, ShapeType } from "./types";
 import { fetchEmployeeImage, fetchEmployeeNames } from "./employeeApiService";
+import {resetSearchInputAndDrawer} from "./taskpane";
 
 export let allCurrentNames: EmployeeName[] = [];
 
@@ -35,6 +36,7 @@ async function insertEmployeeImage(e: MouseEvent, name: string) {
   });
 
   button["loading"] = false;
+  resetSearchInputAndDrawer();
 }
 
 export async function getAllEmployeeNames() {

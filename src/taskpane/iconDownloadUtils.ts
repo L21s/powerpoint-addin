@@ -1,5 +1,5 @@
 import { FetchIconResponse } from "./types";
-import { showErrorPopup } from "./taskpane";
+import {resetSearchInputAndDrawer, showErrorPopup} from "./taskpane";
 import { getRequestHeadersWithAuthorization } from "../security/authService";
 
 const proxyBaseUrl = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app`;
@@ -53,6 +53,7 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
   }
 
   button["loading"] = false;
+  resetSearchInputAndDrawer();
 }
 
 export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
