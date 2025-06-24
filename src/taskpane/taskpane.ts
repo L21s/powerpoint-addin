@@ -246,3 +246,10 @@ export function showErrorPopup(errorMessage: string) {
   popup.querySelector("span").innerHTML = errorMessage;
   popup.toast();
 }
+
+export function resetSearchInputAndDrawer() {
+  const drawer = document.getElementById("search-drawer") as HTMLElement;
+  drawer["open"] = false;
+  (document.getElementById("search-input") as HTMLInputElement).value = "";
+  (document.getElementById("active-drawer") as HTMLInputElement).value = "";
+}
