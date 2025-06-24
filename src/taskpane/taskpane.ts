@@ -224,6 +224,10 @@ export async function insertSticker(color: string) {
     });
     textBox.name = "Square";
     textBox.fill.setSolidColor(color);
+    textBox.textFrame.bottomMargin = 7.087; // 0.25 cm in pt
+    textBox.textFrame.topMargin = 7.087;
+    textBox.textFrame.leftMargin = 4.2525; // 0.15 cm in pt
+    textBox.textFrame.rightMargin = 4.2525;
     setStickerFontProperties(textBox);
   });
 }
