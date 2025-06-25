@@ -1,6 +1,24 @@
 import { getSelectedShapeWith } from "./powerPointUtil";
-import { ShapeType, ShapeTypeKey } from "./types";
+import { ShapeType, ShapeTypeKey } from "../types";
 import ShapeZOrder = PowerPoint.ShapeZOrder;
+
+export function registerIconBackgroundTools() {
+  document.querySelectorAll(".shape-option").forEach((button: HTMLElement) => {
+    button.onclick = () => {
+      addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
+    };
+  });
+
+  document.getElementById("background-color-picker").addEventListener("change", async (e) => {
+    chooseNewColor((e.target as HTMLInputElement).value);
+  });
+
+  document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
+    button.onclick = () => {
+      chooseNewColor(button.getAttribute("data-color"));
+    };
+  });
+}
 
 function addColorToRecentColors(colorValue: string) {
   const recentColorElements = document.querySelectorAll(".fixed-color");
@@ -50,22 +68,4 @@ function chooseNewColor(color: string) {
   const paintBucketIcon = document.getElementById("paint-bucket-color");
   paintBucketIcon.style.color = color;
   paintBucketIcon.setAttribute("data-color", color);
-}
-
-export function registerIconBackgroundTools() {
-  document.querySelectorAll(".shape-option").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
-    };
-  });
-
-  document.getElementById("background-color-picker").addEventListener("change", async (e) => {
-    chooseNewColor((e.target as HTMLInputElement).value);
-  });
-
-  document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      chooseNewColor(button.getAttribute("data-color"));
-    };
-  });
 }

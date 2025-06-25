@@ -1,6 +1,6 @@
-import { EmployeeName, ShapeType } from "./types";
-import { fetchEmployeeImage, fetchEmployeeNames } from "./employeeApiService";
-import {resetSearchInputAndDrawer} from "./taskpane";
+import {EmployeeName, ShapeType} from "../types";
+import {resetSearchInputAndDrawer} from "../ui/searchDrawer";
+import {fetchEmployeeImage, fetchEmployeeNames} from "../../services/employeeApiService";
 
 export let allCurrentNames: EmployeeName[] = [];
 
