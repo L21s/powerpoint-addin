@@ -1,8 +1,8 @@
 import {getRequestHeadersWithAuthorization} from "./authService";
 import {FetchIconResponse} from "../taskpane/types";
 
-//const proxyBaseUrlIcons = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/icons`;
-const proxyBaseUrlIcons = `https://localhost:8443/icons`;
+const proxyBaseUrlIcons = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/icons`;
+//const proxyBaseUrlIcons = `https://localhost:8443/icons`;
 
 export async function downloadIconWith(url: string) {
   const requestOptions = {
