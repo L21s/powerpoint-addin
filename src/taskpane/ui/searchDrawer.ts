@@ -1,21 +1,21 @@
-import { recentIcons, addToIconPreview } from "../utils/iconDownloadUtils";
-import { filterEmployeeNames, allCurrentNames, addToTeamPreview, getAllEmployeeNames } from "../utils/employeeImageUtils";
-import {fetchIcons} from "../../services/iconApiService";
+import { fetchIconsAndAddToPreview } from "./iconsPreview";
+import {fetchEmployeesAddToPreview, getAllEmployeeNames} from "./employeesPreview";
 
+let lastSearchQuery = "";
+const debouncedProcessInputChanges = debounce(processInputChanges);
 const searchInput = document.getElementById("search-input") as HTMLInputElement;
 const drawer = document.getElementById("search-drawer") as HTMLElement;
 const activeDrawer = document.getElementById("active-drawer") as HTMLInputElement;
 const wrapper = document.getElementById("wrapper") as HTMLElement;
-const skeleton = document.createElement("sl-skeleton");
 
-export function registerSearch() {
+export function registerSearchInput() {
   searchInput?.addEventListener("sl-input", () => {
     refreshSearchResults(activeDrawer.value);
-    processInputChanges(activeDrawer.value);
+    debouncedProcessInputChanges(activeDrawer.value);
   });
 }
 
-export function registerDrawerToggle() {
+export function registerDrawer() {
   activeDrawer.addEventListener("sl-change", async (e) => {
     const activeDrawerTab = (e.target as HTMLInputElement).value;
     refreshSearchResults(activeDrawerTab);
@@ -45,7 +45,7 @@ export function registerDrawerToggle() {
         break;
       }
     }
-    processInputChanges(activeDrawerTab);
+    debouncedProcessInputChanges(activeDrawerTab);
   });
 
   document.getElementById("close-drawer").onclick = () => {
@@ -69,6 +69,7 @@ function refreshSearchResults(activeDrawerTab: string) {
     (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
 
     for (let i = 0; i < 12; i++) {
+      const skeleton = document.createElement("sl-skeleton");
       skeleton.classList.add(activeDrawerTab);
       skeleton.setAttribute("effect", "pulse");
       document.getElementById(activeDrawerTab).appendChild(skeleton);
@@ -76,17 +77,14 @@ function refreshSearchResults(activeDrawerTab: string) {
   }
 }
 
-let lastSearchQuery = "";
-
-const processInputChanges = debounce(async (activeDrawerTab: string) => {
+async function processInputChanges(activeDrawerTab: string) {
   const searchTerm = searchInput.value;
   const searchResultTitle = document.getElementById(activeDrawerTab + "-search-title");
 
   try {
     switch (activeDrawerTab) {
       case "icons": {
-        let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
-        addToIconPreview(result);
+        await fetchIconsAndAddToPreview(searchTerm);
         searchResultTitle.innerText = searchTerm ? 'Search results for "' + searchTerm + '"' : "Recently used icons";
         if (document.getElementById(activeDrawerTab).children.length === 0) {
           showMessageInDrawer("No recent icons yet");
@@ -94,8 +92,7 @@ const processInputChanges = debounce(async (activeDrawerTab: string) => {
         break;
       }
       case "names": {
-        let result = searchTerm ? filterEmployeeNames(searchTerm) : allCurrentNames;
-        addToTeamPreview(result);
+        await fetchEmployeesAddToPreview(searchTerm);
         searchResultTitle.innerText = searchTerm ? 'Search results for "' + searchTerm + '"' : "All employees";
         if (document.getElementById(activeDrawerTab).children.length === 0) {
           showMessageInDrawer("No names fitting this search query");
@@ -107,7 +104,8 @@ const processInputChanges = debounce(async (activeDrawerTab: string) => {
     showMessageInDrawer("Could not fetch any " + activeDrawerTab + ": " + e.message);
   }
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
-});
+}
+
 
 function debounce(func: Function) {
   let timer: NodeJS.Timeout;

@@ -1,7 +1,7 @@
 import {getRequestHeadersWithAuthorization} from "./authService";
 
-const proxyBaseUrlEmployees = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/employees`;
-//const proxyBaseUrlEmployees = `https://localhost:8443/employees`;
+//const proxyBaseUrlEmployees = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/employees`;
+const proxyBaseUrlEmployees = `https://localhost:8443/employees`;
 
 let employeeNames: string[] = [];
 let recentEtagNames: string = "";

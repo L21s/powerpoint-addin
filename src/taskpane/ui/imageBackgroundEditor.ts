@@ -1,30 +1,30 @@
-import { getSelectedShapeWith } from "./powerPointUtil";
+import { getSelectedShapeWith } from "../utils/powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "../types";
 import ShapeZOrder = PowerPoint.ShapeZOrder;
 
-export function registerIconBackgroundTools() {
-  document.querySelectorAll(".shape-option").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
-    };
+const shapeOptions = document.querySelectorAll(".shape-option");
+const backgroundColorPicker = document.getElementById("background-color-picker");
+const fixedColors = document.querySelectorAll(".fixed-color");
+const paintBucketColor = document.getElementById("paint-bucket-color");
+
+export function registerImageBackgroundEditor() {
+  shapeOptions.forEach((button: HTMLElement) => {
+    button.onclick = () => addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
   });
 
-  document.getElementById("background-color-picker").addEventListener("change", async (e) => {
+  backgroundColorPicker.addEventListener("change", async (e) => {
     chooseNewColor((e.target as HTMLInputElement).value);
   });
 
-  document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      chooseNewColor(button.getAttribute("data-color"));
-    };
+  fixedColors.forEach((button: HTMLElement) => {
+    button.onclick = () => chooseNewColor(button.getAttribute("data-color"));
   });
 }
 
 function addColorToRecentColors(colorValue: string) {
-  const recentColorElements = document.querySelectorAll(".fixed-color");
   let recentColors = [];
 
-  recentColorElements.forEach((button: HTMLElement) => {
+  fixedColors.forEach((button: HTMLElement) => {
     recentColors.push(button.getAttribute("data-color"));
   });
 
@@ -33,8 +33,8 @@ function addColorToRecentColors(colorValue: string) {
     recentColors.pop();
 
     for (let index = 0; index < recentColors.length; index++) {
-      (recentColorElements[index] as HTMLElement).style.backgroundColor = recentColors[index];
-      (recentColorElements[index] as HTMLElement).setAttribute("data-color", recentColors[index]);
+      (fixedColors[index] as HTMLElement).style.backgroundColor = recentColors[index];
+      (fixedColors[index] as HTMLElement).setAttribute("data-color", recentColors[index]);
     }
   }
 }
@@ -43,7 +43,7 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
     const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
-    const colorValue = document.getElementById("paint-bucket-color").getAttribute("data-color");
+    const colorValue = paintBucketColor.getAttribute("data-color");
     const background: PowerPoint.Shape = slide.shapes.addGeometricShape(
       ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
     );
@@ -65,7 +65,6 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
 }
 
 function chooseNewColor(color: string) {
-  const paintBucketIcon = document.getElementById("paint-bucket-color");
-  paintBucketIcon.style.color = color;
-  paintBucketIcon.setAttribute("data-color", color);
+  paintBucketColor.style.color = color;
+  paintBucketColor.setAttribute("data-color", color);
 }

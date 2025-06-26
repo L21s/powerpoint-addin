@@ -1,9 +1,9 @@
 import { loginWithDialog } from "../security/authClient";
-import {registerDrawerToggle, registerSearch} from "./ui/searchDrawer";
-import {registerIconBackgroundTools} from "./utils/iconUtils";
-import {registerLogoImageInsert} from "./ui/logoDropdown";
+import {registerDrawer, registerSearchInput} from "./ui/searchDrawer";
+import {registerLogoDropdownOptions} from "./ui/logoDropdown";
 import {initRowsAndColumnsButtons} from "./ui/rowsColumns";
 import {initStickerButtons} from "./ui/stickers";
+import {registerImageBackgroundEditor} from "./ui/imageBackgroundEditor";
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
@@ -15,8 +15,8 @@ Office.onReady((info) => {
 function initializeUI() {
   initStickerButtons()
   initRowsAndColumnsButtons()
-  registerDrawerToggle()
-  registerSearch()
-  registerIconBackgroundTools()
-  registerLogoImageInsert()
+  registerDrawer()
+  registerSearchInput()
+  registerImageBackgroundEditor()
+  registerLogoDropdownOptions()
 }

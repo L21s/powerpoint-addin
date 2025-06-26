@@ -1,12 +1,18 @@
 import { FetchIconResponse } from "../types";
-import {resetSearchInputAndDrawer} from "../ui/searchDrawer";
-import {showErrorPopup} from "../ui/errorPopup";
-import {downloadIconWith, getDownloadPathForIconWith} from "../../services/iconApiService";
+import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../../services/iconApiService";
+import {showErrorPopup} from "./errorPopup";
+import {resetSearchInputAndDrawer} from "./searchDrawer";
 
 export let recentIcons: FetchIconResponse[] = [];
 
-export function addToIconPreview(icons: FetchIconResponse[]) {
-  const iconPreviewElement = document.getElementById("icons");
+const iconsPreview = document.getElementById("icons");
+
+export async function fetchIconsAndAddToPreview(searchTerm: string) {
+  let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
+  addToIconPreview(result);
+}
+
+function addToIconPreview(icons: FetchIconResponse[]) {
   document.querySelectorAll("sl-skeleton").forEach((skeleton) => skeleton.remove());
 
   icons.forEach((icon) => {
@@ -17,7 +23,7 @@ export function addToIconPreview(icons: FetchIconResponse[]) {
     iconElement.src = icon.url;
     iconElement.slot = "prefix";
 
-    iconPreviewElement.appendChild(buttonElement);
+    iconsPreview.appendChild(buttonElement);
     buttonElement.appendChild(iconElement);
     buttonElement.onclick = (e) => insertSvgIcon(e, icon);
   });
