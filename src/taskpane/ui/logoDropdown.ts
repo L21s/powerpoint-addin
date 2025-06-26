@@ -3,7 +3,7 @@ import {showErrorPopup} from "./errorPopup";
 
 const logoDropdownOptions = document.querySelectorAll(".logo-dropdown, .logo-dropdown-option");
 
-export function registerLogoDropdownOptions() {
+export function initializeLogoDropdown() {
   logoDropdownOptions.forEach((button: HTMLElement) => {
     button.onclick = async () => handleLogoImageInsert(button)
   });

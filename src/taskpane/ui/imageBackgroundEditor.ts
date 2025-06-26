@@ -7,7 +7,7 @@ const backgroundColorPicker = document.getElementById("background-color-picker")
 const fixedColors = document.querySelectorAll(".fixed-color");
 const paintBucketColor = document.getElementById("paint-bucket-color");
 
-export function registerImageBackgroundEditor() {
+export function initializeImageBackgroundEditor() {
   shapeOptions.forEach((button: HTMLElement) => {
     button.onclick = () => addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
   });

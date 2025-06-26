@@ -17,7 +17,7 @@ const CONTENT_MARGIN = { top: 126, bottom: 60, right: 54, left: 58 };
 const CONTENT_HEIGHT = SLIDE_HEIGHT - CONTENT_MARGIN.top - CONTENT_MARGIN.bottom;
 const CONTENT_WIDTH = SLIDE_WIDTH - CONTENT_MARGIN.right - CONTENT_MARGIN.left;
 
-export function initRowsAndColumnsButtons() {
+export function initializeRowsColumns() {
   createRowsElement.onclick = () => createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
   deleteRowsElement.onclick = () => deleteShapesByName(rowLineName);
   rowButtons.forEach((button) => {

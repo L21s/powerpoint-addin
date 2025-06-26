@@ -8,14 +8,18 @@ const drawer = document.getElementById("search-drawer") as HTMLElement;
 const activeDrawer = document.getElementById("active-drawer") as HTMLInputElement;
 const wrapper = document.getElementById("wrapper") as HTMLElement;
 
-export function registerSearchInput() {
-  searchInput?.addEventListener("sl-input", () => {
-    refreshSearchResults(activeDrawer.value);
-    debouncedProcessInputChanges(activeDrawer.value);
-  });
+export function resetSearchInputAndDrawer() {
+  drawer["open"] = false;
+  searchInput.value = "";
+  activeDrawer.value = "";
 }
 
-export function registerDrawer() {
+export function initializeSearchDrawer(){
+  initializeDrawer()
+  initializeSearchInput()
+}
+
+function initializeDrawer() {
   activeDrawer.addEventListener("sl-change", async (e) => {
     const activeDrawerTab = (e.target as HTMLInputElement).value;
     refreshSearchResults(activeDrawerTab);
@@ -57,10 +61,11 @@ export function registerDrawer() {
   };
 }
 
-export function resetSearchInputAndDrawer() {
-  drawer["open"] = false;
-  searchInput.value = "";
-  activeDrawer.value = "";
+function initializeSearchInput() {
+  searchInput.addEventListener("sl-input", () => {
+    refreshSearchResults(activeDrawer.value);
+    debouncedProcessInputChanges(activeDrawer.value);
+  });
 }
 
 function refreshSearchResults(activeDrawerTab: string) {

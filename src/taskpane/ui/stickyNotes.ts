@@ -1,7 +1,9 @@
 import { runPowerPoint } from "../utils/powerPointUtil";
 
-export function initStickerButtons() {
-  document.querySelectorAll(".sticky-note").forEach((button) => {
+const stickyNotes = document.querySelectorAll(".sticky-note");
+
+export function initializeStickyNotes() {
+  stickyNotes.forEach((button) => {
     const color = button.getAttribute("data-color");
     (button as HTMLElement).onclick = () => insertSticker(color);
   });
