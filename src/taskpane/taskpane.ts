@@ -8,11 +8,11 @@ import {initializeImageBackgroundEditor} from "./ui/imageBackgroundEditor";
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     loginWithDialog();
-    registerEventHandler();
+    initializeUI();
   }
 });
 
-function registerEventHandler() {
+function initializeUI() {
   initializeStickyNotes()
   initializeRowsColumns()
   initializeSearchDrawer()
