@@ -383,7 +383,7 @@ h3 {
   opacity: 0.6;
 }
 
-#paint-bucket {
+sl-button-group:has(#paint-bucket) {
   sl-icon {
     font-size: 24px;
 

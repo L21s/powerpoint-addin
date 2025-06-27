@@ -1,4 +1,4 @@
-import { getSelectedShapeWith } from "./powerPointUtil";
+import { getSelectedShapeWith, getParentGroupWith } from "./powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "./types";
 import ShapeZOrder = PowerPoint.ShapeZOrder;
 
@@ -24,12 +24,11 @@ function addColorToRecentColors(colorValue: string) {
 async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
-    let selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
+    const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
     const colorValue = document.getElementById("paint-bucket-color").getAttribute("data-color");
-    const background: PowerPoint.Shape = slide.shapes.addGeometricShape(
-      ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
-    );
+    const background: PowerPoint.Shape = slide.shapes.addGeometricShape(ShapeType[shapeSelectValue]);
 
+    background.name = shapeSelectValue;
     background.left = selectedShape.left;
     background.top = selectedShape.top;
     background.width = selectedShape.width;
@@ -39,62 +38,70 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.setZOrder(ShapeZOrder.sendToBack);
 
     addColorToRecentColors(colorValue);
-    const iconElement = await removeBackground(context);
-    slide.shapes.addGroup([background, iconElement]);
+    const iconGroup = await getGroupElements(context);
+    if (iconGroup.background) iconGroup.background.delete();
+    slide.shapes.addGroup([background, iconGroup.icon]);
     await context.sync();
   });
 }
 
-export async function removeBackground(context: PowerPoint.RequestContext) {
-  let selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
-
-  try {
-    selectedShape.load("parentGroup");
-    await context.sync();
-    selectedShape = selectedShape.parentGroup;
-  } catch {}
-
-  selectedShape.load("type");
-  await context.sync();
+async function getGroupElements(context: PowerPoint.RequestContext) {
+  const selectedShape: PowerPoint.Shape = await getParentGroupWith(context);
 
   if (selectedShape.type === "Group") {
     selectedShape.group.load("shapes");
     await context.sync();
 
     const groupItems = selectedShape.group.shapes.items;
-    selectedShape = groupItems[groupItems.length - 1];
-    groupItems[0].delete();
+    return { icon: groupItems[groupItems.length - 1], background: groupItems[0] };
+  } else {
+    return { icon: selectedShape, background: null };
   }
-  return selectedShape;
 }
 
-function chooseNewColor(color: string) {
+async function chooseNewColor(color: string) {
   const paintBucketIcon = document.getElementById("paint-bucket-color");
   paintBucketIcon.style.color = color;
   paintBucketIcon.setAttribute("data-color", color);
+
+  await PowerPoint.run(async (context) => {
+    let oldBackgroundShape: ShapeTypeKey = "Rectangle";
+    const iconGroup = await getGroupElements(context);
+
+    if (iconGroup.background) {
+      iconGroup.background.load("name");
+      await context.sync();
+      oldBackgroundShape = iconGroup.background.name.split(" ")[0] as ShapeTypeKey;
+    }
+    await addColoredBackground(oldBackgroundShape);
+  });
 }
 
 export function registerIconBackgroundTools() {
   document.querySelectorAll(".shape-option").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
+    button.onclick = async () => {
+      await addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
     };
   });
 
   document.getElementById("background-color-picker").addEventListener("change", async (e) => {
-    chooseNewColor((e.target as HTMLInputElement).value);
+    await chooseNewColor((e.target as HTMLInputElement).value);
   });
 
   document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
-    button.onclick = () => {
-      chooseNewColor(button.getAttribute("data-color"));
+    button.onclick = async () => {
+      await chooseNewColor(button.getAttribute("data-color"));
     };
   });
 
+  document.getElementById("paint-bucket").onclick = async (e) => {
+    await chooseNewColor(document.getElementById("paint-bucket-color").style.color);
+  };
+
   document.getElementById("delete-background").onclick = async () => {
     await PowerPoint.run(async (context) => {
-      await removeBackground(context);
-      await context.sync();
+      const iconGroup = await getGroupElements(context);
+      if (iconGroup.background) iconGroup.background.delete();
     });
   };
 }
