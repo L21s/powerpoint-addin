@@ -6,9 +6,9 @@ import {
     deleteRowsElement,
     rowButtons,
 } from "../taskpane";
-import {columnLineName, createColumns, createRows, deleteShapesByName, rowLineName} from "../listeners/rowsColumns";
+import {columnLineName, createColumns, createRows, deleteShapesByName, rowLineName} from "../actions/rowsColumns";
 
-export function initializeRowsColumns() {
+export function initializeRowsColumnsListener() {
     createRowsElement.onclick = () => createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
     deleteRowsElement.onclick = () => deleteShapesByName(rowLineName);
     rowButtons.forEach((button) => {

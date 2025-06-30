@@ -1,7 +1,7 @@
 import {activeDrawer, searchInput} from "../taskpane";
-import {closeDrawer, handleDrawerChange, handleSearchInput} from "../listeners/searchDrawer";
+import {closeDrawer, handleDrawerChange, handleSearchInput} from "../actions/searchDrawer";
 
-export function initializeSearchDrawer(){
+export function initializeSearchDrawerListener(){
     initializeDrawer()
     initializeSearchInput()
 }

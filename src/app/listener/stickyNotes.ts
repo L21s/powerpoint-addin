@@ -1,7 +1,7 @@
 import {stickyNotes} from "../taskpane";
-import {insertSticker} from "../listeners/stickyNotes";
+import {insertSticker} from "../actions/stickyNotes";
 
-export function initializeStickyNotes() {
+export function initializeStickyNotesListener() {
     stickyNotes.forEach((button) => {
         const color = button.getAttribute("data-color");
         (button as HTMLElement).onclick = () => insertSticker(color);

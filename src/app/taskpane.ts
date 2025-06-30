@@ -1,9 +1,9 @@
 import { loginWithDialog } from "../security/authClient";
-import {initializeStickyNotes} from "./init/stickyNotes";
-import {initializeRowsColumns} from "./init/rowsColumns";
-import {initializeSearchDrawer} from "./init/searchDrawer";
-import {initializeImageBackgroundEditor} from "./init/imageBackgroundEditor";
-import {initializeLogoDropdown} from "./init/logos";
+import {initializeStickyNotesListener} from "./listener/stickyNotes";
+import {initializeRowsColumnsListener} from "./listener/rowsColumns";
+import {initializeSearchDrawerListener} from "./listener/searchDrawer";
+import {initializeImageBackgroundEditorListener} from "./listener/imageBackgroundEditor";
+import {initializeLogoDropdownListener} from "./listener/logos";
 
 // sticky notes
 export const stickyNotes = document.querySelectorAll(".sticky-note");
@@ -22,6 +22,12 @@ export const drawer = document.getElementById("search-drawer") as HTMLElement;
 export const activeDrawer = document.getElementById("active-drawer") as HTMLInputElement;
 export const wrapper = document.getElementById("wrapper") as HTMLElement;
 
+// icons preview
+export const iconsPreview = document.getElementById("icons");
+
+//employees preview
+export const employeesPreview = document.getElementById("names");
+
 // image background editor
 export const fixedColors = document.querySelectorAll(".fixed-color");
 export const paintBucketColor = document.getElementById("paint-bucket-color");
@@ -31,26 +37,20 @@ export const backgroundColorPicker = document.getElementById("background-color-p
 // logo dropdown
 export const logoDropdownOptions = document.querySelectorAll(".logo-dropdown, .logo-dropdown-option");
 
-// icons preview
-export const iconsPreview = document.getElementById("icons");
-
-//employees preview
-export const employeesPreview = document.getElementById("names");
-
 // popup
 export const popup = document.querySelector("sl-alert") as any;
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
     loginWithDialog();
-    initializeTaskPane();
+    initializeTaskPaneListener();
   }
 });
 
-export function initializeTaskPane() {
-  initializeStickyNotes()
-  initializeRowsColumns()
-  initializeSearchDrawer()
-  initializeImageBackgroundEditor()
-  initializeLogoDropdown()
+export function initializeTaskPaneListener() {
+  initializeStickyNotesListener()
+  initializeRowsColumnsListener()
+  initializeSearchDrawerListener()
+  initializeImageBackgroundEditorListener()
+  initializeLogoDropdownListener()
 }

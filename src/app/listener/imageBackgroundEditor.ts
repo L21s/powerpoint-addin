@@ -1,8 +1,8 @@
 import {backgroundColorPicker, fixedColors, shapeOptions} from "../taskpane";
-import {addColoredBackground, chooseNewColor} from "../listeners/imageBackgroundEditor";
+import {addColoredBackground, chooseNewColor} from "../actions/imageBackgroundEditor";
 import {ShapeTypeKey} from "../shared/types";
 
-export function initializeImageBackgroundEditor() {
+export function initializeImageBackgroundEditorListener() {
     shapeOptions.forEach((button: HTMLElement) => {
         button.onclick = () => addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
     });
