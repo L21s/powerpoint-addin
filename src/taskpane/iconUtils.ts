@@ -86,6 +86,7 @@ export function registerIconBackgroundTools() {
 
   document.getElementById("background-color-picker").addEventListener("change", async (e) => {
     await chooseNewColor((e.target as HTMLInputElement).value);
+    (e.target as HTMLInputElement).closest("sl-dropdown")["open"] = false;
   });
 
   document.querySelectorAll(".fixed-color").forEach((button: HTMLElement) => {
@@ -94,8 +95,8 @@ export function registerIconBackgroundTools() {
     };
   });
 
-  document.getElementById("paint-bucket").onclick = async (e) => {
-    await chooseNewColor(document.getElementById("paint-bucket-color").style.color);
+  document.getElementById("paint-bucket").onclick = async () => {
+    await chooseNewColor(document.getElementById("paint-bucket-color").getAttribute("data-color"));
   };
 
   document.getElementById("delete-background").onclick = async () => {
