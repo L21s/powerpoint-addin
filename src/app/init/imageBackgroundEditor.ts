@@ -1,6 +1,6 @@
 import {backgroundColorPicker, fixedColors, shapeOptions} from "../taskpane";
 import {addColoredBackground, chooseNewColor} from "../listeners/imageBackgroundEditor";
-import {ShapeTypeKey} from "../types";
+import {ShapeTypeKey} from "../shared/types";
 
 export function initializeImageBackgroundEditor() {
     shapeOptions.forEach((button: HTMLElement) => {

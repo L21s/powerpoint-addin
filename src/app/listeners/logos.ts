@@ -1,5 +1,5 @@
-import { getImageAsBase64 } from "../utils/imageUtils";
 import {showErrorPopup} from "./errorPopup";
+import {getImageAsBase64} from "../shared/utils/imageUtils";
 
 export async function handleLogoImageInsert(button: HTMLElement) {
   const selectedImageSrc = button.getElementsByTagName("img")[0].src;

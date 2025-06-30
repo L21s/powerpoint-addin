@@ -1,7 +1,7 @@
-import { getSelectedShapeWith } from "../utils/powerPointUtil";
-import { ShapeType, ShapeTypeKey } from "../types";
 import ShapeZOrder = PowerPoint.ShapeZOrder;
 import {fixedColors, paintBucketColor} from "../taskpane";
+import {ShapeType, ShapeTypeKey} from "../shared/types";
+import {getSelectedShapeWith} from "../shared/utils/powerPointUtil";
 
 export async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
@@ -9,7 +9,7 @@ export async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
     const colorValue = paintBucketColor.getAttribute("data-color");
     const background: PowerPoint.Shape = slide.shapes.addGeometricShape(
-      ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
+        ShapeType[shapeSelectValue ? shapeSelectValue : "Rectangle"]
     );
 
     background.left = selectedShape.left;

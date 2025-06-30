@@ -1,4 +1,4 @@
-import { runPowerPoint } from "../utils/powerPointUtil";
+import {runPowerPoint} from "../shared/utils/powerPointUtil";
 
 export async function insertSticker(color: string) {
   await runPowerPoint((powerPointContext) => {

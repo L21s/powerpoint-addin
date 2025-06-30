@@ -1,5 +1,5 @@
 import {getRequestHeadersWithAuthorization} from "./authService";
-import {FetchIconResponse} from "../taskpane/types";
+import {FetchIconResponse} from "../shared/types";
 
 const proxyBaseUrlIcons = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/icons`;
 //const proxyBaseUrlIcons = `https://localhost:8443/icons`;

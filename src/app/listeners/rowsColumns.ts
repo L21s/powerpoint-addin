@@ -1,5 +1,5 @@
-import {runPowerPoint} from "../utils/powerPointUtil";
 import Shape = PowerPoint.Shape;
+import {runPowerPoint} from "../shared/utils/powerPointUtil";
 
 export const rowLineName = "RowLine";
 export const columnLineName = "ColumnLine";

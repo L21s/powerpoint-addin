@@ -1,5 +1,5 @@
-import {getMsalApp} from "../security/authClient";
-import {scopes} from "../security/authConfig";
+import {getMsalApp} from "../../security/authClient";
+import {scopes} from "../../security/authConfig";
 
 export async function getRequestHeadersWithAuthorization(): Promise<Headers> {
     const token = await getAccessToken();

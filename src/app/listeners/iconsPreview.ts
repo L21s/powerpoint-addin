@@ -1,8 +1,8 @@
-import { FetchIconResponse } from "../types";
-import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../../services/iconApiService";
 import {showErrorPopup} from "./errorPopup";
 import {resetSearchInputAndDrawer} from "./searchDrawer";
 import {iconsPreview} from "../taskpane";
+import {FetchIconResponse} from "../shared/types";
+import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../services/iconApiService";
 
 export let recentIcons: FetchIconResponse[] = [];
 
