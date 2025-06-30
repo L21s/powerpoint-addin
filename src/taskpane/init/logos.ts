@@ -1,5 +1,5 @@
 import {logoDropdownOptions} from "../taskpane";
-import {handleLogoImageInsert} from "../listeners/logoDropdown";
+import {handleLogoImageInsert} from "../listeners/logos";
 
 export function initializeLogoDropdown() {
     logoDropdownOptions.forEach((button: HTMLElement) => {
