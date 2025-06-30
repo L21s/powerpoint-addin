@@ -1,9 +1,9 @@
 import {EmployeeName, ShapeType} from "../types";
 import {fetchEmployeeImage, fetchEmployeeNames} from "../../services/employeeApiService";
 import {resetSearchInputAndDrawer} from "./searchDrawer";
+import {employeesPreview} from "../taskpane";
 
 let allCurrentNames: EmployeeName[] = [];
-const employeesPreview = document.getElementById("names");
 
 export async function getAllEmployeeNames() {
   const employeeList = await fetchEmployeeNames();
@@ -24,7 +24,6 @@ export async function fetchEmployeesAddToPreview(searchTerm: string){
 }
 
 function addToEmployeesPreview(names: EmployeeName[]) {
-  const teamPreviewElement = employeesPreview;
   document.querySelectorAll("sl-skeleton").forEach((skeletonItem) => skeletonItem.remove());
 
   names.forEach((name) => {
@@ -32,7 +31,7 @@ function addToEmployeesPreview(names: EmployeeName[]) {
     menuItem.id = name.id;
     menuItem.innerText = name.name;
 
-    teamPreviewElement.appendChild(menuItem);
+    employeesPreview.appendChild(menuItem);
     menuItem.onclick = (e) => insertEmployeeImage(e, name.id);
   });
 }

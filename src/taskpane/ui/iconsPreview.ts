@@ -2,10 +2,9 @@ import { FetchIconResponse } from "../types";
 import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../../services/iconApiService";
 import {showErrorPopup} from "./errorPopup";
 import {resetSearchInputAndDrawer} from "./searchDrawer";
+import {iconsPreview} from "../taskpane";
 
 export let recentIcons: FetchIconResponse[] = [];
-
-const iconsPreview = document.getElementById("icons");
 
 export async function fetchIconsAndAddToPreview(searchTerm: string) {
   let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;

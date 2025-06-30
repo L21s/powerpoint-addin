@@ -1,14 +1,5 @@
 import { runPowerPoint } from "../utils/powerPointUtil";
 
-const stickyNotes = document.querySelectorAll(".sticky-note");
-
-export function initializeStickyNotes() {
-  stickyNotes.forEach((button) => {
-    const color = button.getAttribute("data-color");
-    (button as HTMLElement).onclick = () => insertSticker(color);
-  });
-}
-
 export async function insertSticker(color: string) {
   await runPowerPoint((powerPointContext) => {
     const today = new Date();

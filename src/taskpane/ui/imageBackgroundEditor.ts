@@ -1,45 +1,9 @@
 import { getSelectedShapeWith } from "../utils/powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "../types";
 import ShapeZOrder = PowerPoint.ShapeZOrder;
+import {fixedColors, paintBucketColor} from "../taskpane";
 
-const shapeOptions = document.querySelectorAll(".shape-option");
-const backgroundColorPicker = document.getElementById("background-color-picker");
-const fixedColors = document.querySelectorAll(".fixed-color");
-const paintBucketColor = document.getElementById("paint-bucket-color");
-
-export function initializeImageBackgroundEditor() {
-  shapeOptions.forEach((button: HTMLElement) => {
-    button.onclick = () => addColoredBackground(button.getAttribute("data-value") as ShapeTypeKey);
-  });
-
-  backgroundColorPicker.addEventListener("change", async (e) => {
-    chooseNewColor((e.target as HTMLInputElement).value);
-  });
-
-  fixedColors.forEach((button: HTMLElement) => {
-    button.onclick = () => chooseNewColor(button.getAttribute("data-color"));
-  });
-}
-
-function addColorToRecentColors(colorValue: string) {
-  let recentColors = [];
-
-  fixedColors.forEach((button: HTMLElement) => {
-    recentColors.push(button.getAttribute("data-color"));
-  });
-
-  if (!recentColors.includes(colorValue)) {
-    recentColors.unshift(colorValue);
-    recentColors.pop();
-
-    for (let index = 0; index < recentColors.length; index++) {
-      (fixedColors[index] as HTMLElement).style.backgroundColor = recentColors[index];
-      (fixedColors[index] as HTMLElement).setAttribute("data-color", recentColors[index]);
-    }
-  }
-}
-
-async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
+export async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
     const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
@@ -64,7 +28,25 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   });
 }
 
-function chooseNewColor(color: string) {
+export function chooseNewColor(color: string) {
   paintBucketColor.style.color = color;
   paintBucketColor.setAttribute("data-color", color);
+}
+
+function addColorToRecentColors(colorValue: string) {
+  let recentColors = [];
+
+  fixedColors.forEach((button: HTMLElement) => {
+    recentColors.push(button.getAttribute("data-color"));
+  });
+
+  if (!recentColors.includes(colorValue)) {
+    recentColors.unshift(colorValue);
+    recentColors.pop();
+
+    for (let index = 0; index < recentColors.length; index++) {
+      (fixedColors[index] as HTMLElement).style.backgroundColor = recentColors[index];
+      (fixedColors[index] as HTMLElement).setAttribute("data-color", recentColors[index]);
+    }
+  }
 }

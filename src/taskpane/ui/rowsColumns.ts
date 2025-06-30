@@ -1,15 +1,9 @@
 import {runPowerPoint} from "../utils/powerPointUtil";
 import Shape = PowerPoint.Shape;
 
-const createRowsElement = document.getElementById("create-rows");
-const deleteRowsElement = document.getElementById("delete-rows");
-const rowButtons = document.querySelectorAll(".row-button");
-const createColumnsElement = document.getElementById("create-columns");
-const deleteColumnsElement = document.getElementById("delete-columns");
-const colButtons = document.querySelectorAll(".column-button");
+export const rowLineName = "RowLine";
+export const columnLineName = "ColumnLine";
 
-const rowLineName = "RowLine";
-const columnLineName = "ColumnLine";
 const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
 const SLIDE_MARGIN = 8;
@@ -17,22 +11,7 @@ const CONTENT_MARGIN = { top: 126, bottom: 60, right: 54, left: 58 };
 const CONTENT_HEIGHT = SLIDE_HEIGHT - CONTENT_MARGIN.top - CONTENT_MARGIN.bottom;
 const CONTENT_WIDTH = SLIDE_WIDTH - CONTENT_MARGIN.right - CONTENT_MARGIN.left;
 
-export function initializeRowsColumns() {
-  createRowsElement.onclick = () => createRows(+(<HTMLInputElement>document.getElementById("number-of-rows")).value);
-  deleteRowsElement.onclick = () => deleteShapesByName(rowLineName);
-  rowButtons.forEach((button) => {
-    (button as HTMLElement).onclick = () => createRows(Number(button.getAttribute("data-value")));
-  });
-
-  createColumnsElement.onclick = () =>
-      createColumns(+(<HTMLInputElement>document.getElementById("number-of-columns")).value);
-  deleteColumnsElement.onclick = () => deleteShapesByName(columnLineName);
-  colButtons.forEach((button) => {
-    (button as HTMLElement).onclick = () => createColumns(Number(button.getAttribute("data-value")));
-  });
-}
-
-async function deleteShapesByName(name: string) {
+export async function deleteShapesByName(name: string) {
   await PowerPoint.run(async context => {
     const slide = context.presentation.getSelectedSlides().getItemAt(0);
     slide.load("shapes");
@@ -61,7 +40,7 @@ async function getSingleSelectedShapeOrNull(context: PowerPoint.RequestContext) 
   return selectedShape.load();
 }
 
-async function createRows(numberOfRows: number) {
+export async function createRows(numberOfRows: number) {
   await runPowerPoint(async (powerPointContext) => {
     const singleSelectedShapeOrNull = await getSingleSelectedShapeOrNull(powerPointContext);
     if (singleSelectedShapeOrNull) {
@@ -72,7 +51,7 @@ async function createRows(numberOfRows: number) {
   });
 }
 
-async function createColumns(numberOfRows: number) {
+export async function createColumns(numberOfRows: number) {
   await runPowerPoint(async (powerPointContext) => {
     const singleSelectedShapeOrNull = await getSingleSelectedShapeOrNull(powerPointContext);
     if (singleSelectedShapeOrNull) {
