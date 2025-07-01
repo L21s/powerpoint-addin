@@ -19,11 +19,17 @@ const msalApp = new PublicClientApplication(msalConfig);
 msalApp.initialize();
 
 export async function loginWithDialog() {
-    msalApp.loginPopup(loginRequest).then(loginResponse => {
+    try {
+        const loginResponse = await msalApp.loginPopup(loginRequest);
         msalApp.setActiveAccount(loginResponse.account);
         setInitials();
-    })
+        return loginResponse.account;
+    } catch (error) {
+        console.error("Login failed:", error);
+        return null;
+    }
 }
+
 
 export function getMsalApp() {
     return msalApp;
