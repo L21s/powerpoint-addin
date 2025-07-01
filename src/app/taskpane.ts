@@ -2,7 +2,7 @@ import { loginWithDialog } from "../security/authClient";
 import {initializeStickyNotesListener} from "./listener/stickyNotes";
 import {initializeRowsColumnsListener} from "./listener/rowsColumns";
 import {initializeSearchDrawerListener} from "./listener/searchDrawer";
-import {initializeImageBackgroundEditorListener} from "./listener/imageBackgroundEditor";
+import {initializeImageBackgroundEditorListener} from "./listener/backgroundFills";
 import {initializeLogoDropdownListener} from "./listener/logos";
 
 // sticky notes

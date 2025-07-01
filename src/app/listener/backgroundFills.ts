@@ -1,5 +1,5 @@
 import {backgroundColorPicker, fixedColors, shapeOptions} from "../taskpane";
-import {addColoredBackground, chooseNewColor} from "../actions/imageBackgroundEditor";
+import {addColoredBackground, chooseNewColor} from "../actions/backgroundFills";
 import {ShapeTypeKey} from "../shared/types";
 
 export function initializeImageBackgroundEditorListener() {
