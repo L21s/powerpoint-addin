@@ -18,24 +18,15 @@ const loginRequest = { scopes: [scopes] };
 const msalApp = new PublicClientApplication(msalConfig);
 msalApp.initialize();
 
-export async function loginWithDialog() {
-    try {
-        const loginResponse = await msalApp.loginPopup(loginRequest);
-        msalApp.setActiveAccount(loginResponse.account);
-        setInitials();
-        return loginResponse.account;
-    } catch (error) {
-        console.error("Login failed:", error);
-        return null;
-    }
-}
-
-
 export function getMsalApp() {
     return msalApp;
 }
 
-function setInitials() {
+export function getLoginRequest() {
+    return loginRequest;
+}
+
+export function setInitials() {
     const name = msalApp.getActiveAccount()?.name ?? "N/A";
     localStorage.setItem("initials", name);
 }

@@ -1,6 +1,6 @@
 import {activeDrawer, searchInput} from "../taskpane";
 import {closeDrawer, handleDrawerChange, handleSearchInput} from "../actions/searchDrawer";
-import {getMsalApp, loginWithDialog} from "../../security/authClient";
+import {getActiveAccount, loginWithDialog} from "../services/authService";
 
 export function initializeSearchDrawerListener(){
     initializeDrawer()
@@ -9,7 +9,7 @@ export function initializeSearchDrawerListener(){
 
 function initializeDrawer() {
     activeDrawer.addEventListener("sl-change", async (e) => {
-        let activeAccount = getMsalApp().getActiveAccount();
+        let activeAccount = getActiveAccount();
 
         if (!activeAccount) {
             activeAccount = await loginWithDialog();
