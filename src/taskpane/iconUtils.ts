@@ -1,4 +1,4 @@
-import { getSelectedShapeWith, getParentGroupWith } from "./powerPointUtil";
+import { getSelectedShapeWith } from "./powerPointUtil";
 import { ShapeType, ShapeTypeKey } from "./types";
 import ShapeZOrder = PowerPoint.ShapeZOrder;
 
@@ -38,21 +38,30 @@ async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     background.setZOrder(ShapeZOrder.sendToBack);
 
     addColorToRecentColors(colorValue);
-    const iconGroup = await getGroupElements(context);
+    const iconGroup = await getIconGroupWith(context);
     if (iconGroup.background) iconGroup.background.delete();
     slide.shapes.addGroup([background, iconGroup.icon]);
     await context.sync();
   });
 }
 
-async function getGroupElements(context: PowerPoint.RequestContext) {
-  const selectedShape: PowerPoint.Shape = await getParentGroupWith(context);
+async function getIconGroupWith(context: PowerPoint.RequestContext) {
+  const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
+  let selectedGroup: PowerPoint.Shape;
 
-  if (selectedShape.type === "Group") {
-    selectedShape.group.load("shapes");
+  try {
+    selectedShape.load("parentGroup");
+    await context.sync();
+    selectedGroup = selectedShape.parentGroup;
+  } catch {
+    selectedGroup = selectedShape;
+  }
+
+  if (selectedGroup.type === "Group") {
+    selectedGroup.group.load("shapes");
     await context.sync();
 
-    const groupItems = selectedShape.group.shapes.items;
+    const groupItems = selectedGroup.group.shapes.items;
     return { icon: groupItems[groupItems.length - 1], background: groupItems[0] };
   } else {
     return { icon: selectedShape, background: null };
@@ -66,7 +75,7 @@ async function chooseNewColor(color: string) {
 
   await PowerPoint.run(async (context) => {
     let oldBackgroundShape: ShapeTypeKey = "Rectangle";
-    const iconGroup = await getGroupElements(context);
+    const iconGroup = await getIconGroupWith(context);
 
     if (iconGroup.background) {
       iconGroup.background.load("name");
@@ -101,7 +110,7 @@ export function registerIconBackgroundTools() {
 
   document.getElementById("delete-background").onclick = async () => {
     await PowerPoint.run(async (context) => {
-      const iconGroup = await getGroupElements(context);
+      const iconGroup = await getIconGroupWith(context);
       if (iconGroup.background) iconGroup.background.delete();
     });
   };

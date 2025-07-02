@@ -11,16 +11,3 @@ export async function getSelectedShapeWith(context: PowerPoint.RequestContext): 
   await context.sync();
   return selectedShape;
 }
-
-export async function getParentGroupWith(context: PowerPoint.RequestContext) {
-  const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
-
-  try {
-    selectedShape.load("parentGroup");
-    await context.sync();
-    return selectedShape.parentGroup;
-  } catch {
-    console.debug("selected shape has no parent group");
-    return selectedShape;
-  }
-}
