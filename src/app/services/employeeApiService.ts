@@ -1,7 +1,8 @@
-import { getRequestHeadersWithAuthorization } from "../security/authService";
+import {getRequestHeadersWithAuthorization} from "./authService";
 
 const proxyBaseUrlEmployees = `https://powerpoint-addin-ktor-pq9vk.ondigitalocean.app/employees`;
-//const proxyBaseUrlEmployeesDEV = `https://localhost:8443/employees`;
+//const proxyBaseUrlEmployees = `https://localhost:8443/employees`;
+
 let employeeNames: string[] = [];
 let recentEtagNames: string = "";
 const sharedImageCash: Map<string, string> = new Map<string, string>();

@@ -1,8 +1,9 @@
 import Shape = PowerPoint.Shape;
-import { runPowerPoint } from "./powerPointUtil";
+import {runPowerPoint} from "../shared/utils/powerPointUtil";
 
 export const rowLineName = "RowLine";
 export const columnLineName = "ColumnLine";
+
 const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
 const SLIDE_MARGIN = 8;
@@ -10,7 +11,23 @@ const CONTENT_MARGIN = { top: 126, bottom: 60, right: 54, left: 58 };
 const CONTENT_HEIGHT = SLIDE_HEIGHT - CONTENT_MARGIN.top - CONTENT_MARGIN.bottom;
 const CONTENT_WIDTH = SLIDE_WIDTH - CONTENT_MARGIN.right - CONTENT_MARGIN.left;
 
-export async function getSingleSelectedShapeOrNull(context: PowerPoint.RequestContext) {
+export async function deleteShapesByName(name: string) {
+  await PowerPoint.run(async context => {
+    const slide = context.presentation.getSelectedSlides().getItemAt(0);
+    slide.load("shapes");
+    await context.sync();
+
+    slide.shapes.items.forEach(shape => {
+      if (shape.name === name) {
+        shape.delete();
+      }
+    });
+
+    await context.sync();
+  });
+}
+
+async function getSingleSelectedShapeOrNull(context: PowerPoint.RequestContext) {
   let selectedShapes = context.presentation.getSelectedShapes();
   let clientResult = selectedShapes.getCount();
   await context.sync();
@@ -45,7 +62,7 @@ export async function createColumns(numberOfRows: number) {
   });
 }
 
-export async function createRowsForSlide(numberOfRows: number, powerPointContext: PowerPoint.RequestContext) {
+async function createRowsForSlide(numberOfRows: number, powerPointContext: PowerPoint.RequestContext) {
   const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
 
   const lineDistance = CONTENT_HEIGHT / numberOfRows;
@@ -55,7 +72,7 @@ export async function createRowsForSlide(numberOfRows: number, powerPointContext
   await powerPointContext.sync();
 }
 
-export async function createColumnsForSlide(numberOfColumns: number, powerPointContext: PowerPoint.RequestContext) {
+async function createColumnsForSlide(numberOfColumns: number, powerPointContext: PowerPoint.RequestContext) {
   const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
 
   const lineDistance = CONTENT_WIDTH / numberOfColumns;
@@ -66,7 +83,7 @@ export async function createColumnsForSlide(numberOfColumns: number, powerPointC
   await powerPointContext.sync();
 }
 
-export async function createRowsForObject(numberOfColumns: number, selectedShape: Shape, powerPointContext: PowerPoint.RequestContext) {
+async function createRowsForObject(numberOfColumns: number, selectedShape: Shape, powerPointContext: PowerPoint.RequestContext) {
   await powerPointContext.sync();
   const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
 
@@ -81,7 +98,7 @@ export async function createRowsForObject(numberOfColumns: number, selectedShape
   await powerPointContext.sync();
 }
 
-export async function createColumnsForObject(numberOfColumns: number, selectedShape: Shape, powerPointContext: PowerPoint.RequestContext) {
+async function createColumnsForObject(numberOfColumns: number, selectedShape: Shape, powerPointContext: PowerPoint.RequestContext) {
   await powerPointContext.sync();
   const shapes = powerPointContext.presentation.getSelectedSlides().getItemAt(0).shapes;
 
@@ -95,15 +112,15 @@ export async function createColumnsForObject(numberOfColumns: number, selectedSh
   await powerPointContext.sync();
 }
 
-export async function renderRows(
-  shapes: PowerPoint.ShapeCollection,
-  numberOfRows: number, initialTop: number,
-  lineDistance: number, lineWidth: number, left: number) {
+async function renderRows(
+    shapes: PowerPoint.ShapeCollection,
+    numberOfRows: number, initialTop: number,
+    lineDistance: number, lineWidth: number, left: number) {
   let top = initialTop;
   for (let _i = 0; _i <= numberOfRows; _i++) {
     const line = shapes.addLine(
-      PowerPoint.ConnectorType.straight,
-      { height: 0.5, left: left, top: top, width: lineWidth }
+        PowerPoint.ConnectorType.straight,
+        { height: 0.5, left: left, top: top, width: lineWidth }
     );
     line.name = rowLineName;
     line.lineFormat.color = "#000000";
@@ -112,15 +129,15 @@ export async function renderRows(
   }
 }
 
-export async function renderColumns(
-  shapes: PowerPoint.ShapeCollection,
-  numberOfColumns: number, initialLeft: number,
-  lineDistance: number, lineHeight: number, top: number) {
+async function renderColumns(
+    shapes: PowerPoint.ShapeCollection,
+    numberOfColumns: number, initialLeft: number,
+    lineDistance: number, lineHeight: number, top: number) {
   let left = initialLeft;
   for (let _i = 0; _i <= numberOfColumns; _i++) {
     const line = shapes.addLine(
-      PowerPoint.ConnectorType.straight,
-      { height: lineHeight, left: left, top: top, width: 0.5 }
+        PowerPoint.ConnectorType.straight,
+        {height: lineHeight, left: left, top: top, width: 0.5}
     );
     line.name = columnLineName;
     line.lineFormat.color = "#000000";
