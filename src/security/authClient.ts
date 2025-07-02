@@ -18,18 +18,15 @@ const loginRequest = { scopes: [scopes] };
 const msalApp = new PublicClientApplication(msalConfig);
 msalApp.initialize();
 
-export async function loginWithDialog() {
-    msalApp.loginPopup(loginRequest).then(loginResponse => {
-        msalApp.setActiveAccount(loginResponse.account);
-        setInitials();
-    })
-}
-
 export function getMsalApp() {
     return msalApp;
 }
 
-function setInitials() {
+export function getLoginRequest() {
+    return loginRequest;
+}
+
+export function setInitials() {
     const name = msalApp.getActiveAccount()?.name ?? "N/A";
     localStorage.setItem("initials", name);
 }

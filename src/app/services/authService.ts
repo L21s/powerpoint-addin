@@ -1,4 +1,4 @@
-import {getMsalApp} from "../../security/authClient";
+import {getLoginRequest, getMsalApp, setInitials} from "../../security/authClient";
 import {scopes} from "../../security/authConfig";
 
 export async function getRequestHeadersWithAuthorization(): Promise<Headers> {
@@ -9,7 +9,7 @@ export async function getRequestHeadersWithAuthorization(): Promise<Headers> {
 
 }
 
-async function getAccessToken(): Promise<string> {
+export async function getAccessToken(): Promise<string> {
     const msalApp = getMsalApp();
     const activeAccount = msalApp.getActiveAccount();
     const tokenRequest = {
@@ -17,5 +17,23 @@ async function getAccessToken(): Promise<string> {
         account: activeAccount,
     };
     return  (await msalApp.acquireTokenSilent(tokenRequest)).accessToken;
+}
 
+export function getActiveAccount() {
+    return getMsalApp().getActiveAccount();
+}
+
+export async function loginWithDialog() {
+    try {
+        const msalApp = getMsalApp();
+        const loginRequest = getLoginRequest();
+
+        const loginResponse = await msalApp.loginPopup(loginRequest);
+        msalApp.setActiveAccount(loginResponse.account);
+        setInitials();
+        return loginResponse.account;
+    } catch (error) {
+        console.error("Login failed:", error);
+        return null;
+    }
 }

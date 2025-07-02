@@ -1,4 +1,3 @@
-import { loginWithDialog } from "../security/authClient";
 import {initializeStickyNotesListener} from "./listener/stickyNotes";
 import {initializeRowsColumnsListener} from "./listener/rowsColumns";
 import {initializeSearchDrawerListener} from "./listener/searchDrawer";
@@ -42,7 +41,6 @@ export const popup = document.querySelector("sl-alert") as any;
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.PowerPoint) {
-    loginWithDialog();
     initializeTaskPaneListener();
   }
 });
