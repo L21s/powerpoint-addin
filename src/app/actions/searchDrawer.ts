@@ -44,13 +44,9 @@ export function handleSearchInput() {
   debouncedProcessInputChanges(activeDrawer.value);
 }
 
-//TODO: zusammenführen mit resetSearchInputDrawer?
 export function closeDrawer() {
-  drawer["open"] = false;
+  resetSearchInputAndDrawer();
   wrapper.style.overflow = "scroll";
-
-  searchInput.value = "";
-  activeDrawer.value = ""
 }
 
 export function resetSearchInputAndDrawer() {

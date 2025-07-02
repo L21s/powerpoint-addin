@@ -45,7 +45,7 @@ Office.onReady((info) => {
   }
 });
 
-export function initializeTaskPaneListener() {
+function initializeTaskPaneListener() {
   initializeStickyNotesListener()
   initializeRowsColumnsListener()
   initializeSearchDrawerListener()
