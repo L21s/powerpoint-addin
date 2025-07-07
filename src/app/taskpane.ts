@@ -3,6 +3,7 @@ import {initializeRowsColumnsListener} from "./listener/rowsColumns";
 import {initializeSearchDrawerListener} from "./listener/searchDrawer";
 import {initializeImageBackgroundEditorListener} from "./listener/backgroundFills";
 import {initializeLogoDropdownListener} from "./listener/logos";
+import {initializeBannerListener} from "./listener/banner";
 
 // sticky notes
 export const stickyNotes = document.querySelectorAll(".sticky-note");
@@ -36,6 +37,14 @@ export const backgroundColorPicker = document.getElementById("background-color-p
 // logo dropdown
 export const logoDropdownOptions = document.querySelectorAll(".logo-dropdown, .logo-dropdown-option");
 
+// banner
+export const addBannerButton = document.getElementById("add-banner") as HTMLButtonElement;
+export const removeBannerButton = document.getElementById("remove-banner") as HTMLButtonElement;
+export const bannerTextInput = document.getElementById("banner-text") as HTMLInputElement;
+export const bannerTextColorInput = document.getElementById("banner-text-color") as HTMLInputElement;
+export const bannerBackgroundColorInput = document.getElementById("banner-background-color") as HTMLInputElement;
+export const bannerPositionSelect = document.getElementById("banner-position") as HTMLSelectElement;
+
 // popup
 export const popup = document.querySelector("sl-alert") as any;
 
@@ -51,4 +60,5 @@ function initializeTaskPaneListener() {
   initializeSearchDrawerListener()
   initializeImageBackgroundEditorListener()
   initializeLogoDropdownListener()
+  initializeBannerListener();
 }
