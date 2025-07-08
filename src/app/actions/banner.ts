@@ -1,4 +1,4 @@
-const BANNER_SHAPE_NAME = "CustomBanner";
+const BANNER_SHAPE_NAME = "Banner";
 const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
 
