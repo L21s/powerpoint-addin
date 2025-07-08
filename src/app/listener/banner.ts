@@ -7,15 +7,19 @@ import {
     bannerPositionSelect,
 } from "../taskpane";
 import {addBanner, checkBannerExists, removeBanner} from "../actions/banner";
+import {BannerPosition} from "../shared/enums";
+import {BannerOptions} from "../shared/types";
 
 export function initializeBannerListener() {
     addBannerButton.addEventListener("click", async () => {
-        const text = bannerTextInput.value;
-        const textColor = bannerTextColorInput.value;
-        const backgroundColor = bannerBackgroundColorInput.value;
-        const position = bannerPositionSelect.value as "Top" | "Left" | "Right";
+        const bannerOptions: BannerOptions = {
+            text: bannerTextInput.value,
+            textColor: bannerTextColorInput.value,
+            backgroundColor: bannerBackgroundColorInput.value,
+            position: bannerPositionSelect.value as BannerPosition
+        }
 
-        await addBanner({ text, textColor, backgroundColor, position });
+        await addBanner(bannerOptions);
         toggleBannerButtons(true);
     });
 
