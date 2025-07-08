@@ -25,16 +25,16 @@ export const wrapper = document.getElementById("wrapper") as HTMLElement;
 // icons preview
 export const iconsPreview = document.getElementById("icons");
 
-//employees preview
+// employees preview
 export const employeesPreview = document.getElementById("names");
 
-// image background editor
+// background fills
 export const fixedColors = document.querySelectorAll(".fixed-color");
 export const paintBucketColor = document.getElementById("paint-bucket-color");
 export const shapeOptions = document.querySelectorAll(".shape-option");
 export const backgroundColorPicker = document.getElementById("background-color-picker");
 
-// logo dropdown
+// logos
 export const logoDropdownOptions = document.querySelectorAll(".logo-dropdown, .logo-dropdown-option");
 
 // banner
@@ -60,5 +60,5 @@ function initializeTaskPaneListener() {
   initializeSearchDrawerListener()
   initializeImageBackgroundEditorListener()
   initializeLogoDropdownListener()
-  initializeBannerListener();
+  initializeBannerListener()
 }
