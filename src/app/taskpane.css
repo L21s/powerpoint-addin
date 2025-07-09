@@ -522,3 +522,15 @@ sl-button.sticky-note {
 sl-alert::part(base) {
   background-color: #ececec;
 }
+
+.banner-input-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.banner-input-row sl-input {
+  flex: 1;
+  min-width: 0;
+}
