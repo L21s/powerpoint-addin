@@ -6,7 +6,7 @@ export type FetchIconResponse = {
   url: string;
 };
 
-export type EmployeeName = {
+export type Employee = {
   id: string;
   name: string;
 };
