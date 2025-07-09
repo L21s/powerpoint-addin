@@ -4,6 +4,7 @@ import {
   SLIDE_WIDTH,
 } from "../shared/consts";
 import {BannerOptions} from "../shared/types";
+import {addBannerButton, removeBannerButton} from "../taskpane";
 
 const BANNER_SHAPE_NAME = "Banner";
 const TOP_BANNER_WIDTH_PADDING = 15;
@@ -48,6 +49,11 @@ export async function checkBannerExists(): Promise<boolean> {
 
     return false;
   });
+}
+
+export function toggleBannerButtons(bannerExists: boolean) {
+  addBannerButton.style.display = bannerExists ? "none" : "inline-block";
+  removeBannerButton.style.display = bannerExists ? "inline-block" : "none";
 }
 
 async function getSlides(context: PowerPoint.RequestContext): Promise<PowerPoint.Slide[]> {
