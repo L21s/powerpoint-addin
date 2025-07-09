@@ -1,13 +1,15 @@
 import {resetSearchInputAndDrawer} from "./searchDrawer";
 import {employeesPreview} from "../taskpane";
-import {EmployeeName, ShapeType} from "../shared/types";
+import {Employee} from "../shared/types";
 import {fetchEmployeeImage, fetchEmployeeNames} from "../services/employeeApiService";
+import {ShapeType} from "../shared/consts";
 
-let allCurrentNames: EmployeeName[] = [];
+let employees: Employee[] = [];
 
 export async function getAllEmployeeNames() {
-  const employeeList = await fetchEmployeeNames();
-  allCurrentNames = employeeList.map((employee) => ({
+  const employeeNames = await fetchEmployeeNames();
+
+  employees = employeeNames.map((employee) => ({
     id: employee,
     name:
         employee.split("-")[1].charAt(0).toUpperCase() +
@@ -19,11 +21,12 @@ export async function getAllEmployeeNames() {
 }
 
 export async function fetchEmployeesAddToPreview(searchTerm: string){
-  let result = searchTerm ? filterEmployeeNames(searchTerm) : allCurrentNames;
+  let result = searchTerm ? filterEmployeeNames(searchTerm) : employees;
+  result.sort((a, b) => a.name.localeCompare(b.name));
   addToEmployeesPreview(result);
 }
 
-function addToEmployeesPreview(names: EmployeeName[]) {
+function addToEmployeesPreview(names: Employee[]) {
   document.querySelectorAll("sl-skeleton").forEach((skeletonItem) => skeletonItem.remove());
 
   names.forEach((name) => {
@@ -58,5 +61,5 @@ async function insertEmployeeImage(e: MouseEvent, name: string) {
 }
 
 function filterEmployeeNames(searchTerm: string) {
-  return allCurrentNames.filter((name) => name.id.includes(searchTerm.toLowerCase()));
+  return employees.filter((employee) => employee.name.toLowerCase().includes(searchTerm.toLowerCase()));
 }

@@ -1,7 +1,8 @@
 import ShapeZOrder = PowerPoint.ShapeZOrder;
 import {fixedColors, paintBucketColor} from "../taskpane";
-import {ShapeType, ShapeTypeKey} from "../shared/types";
+import {ShapeTypeKey} from "../shared/types";
 import {getSelectedShapeWith} from "../shared/utils/powerPointUtil";
+import {ShapeType} from "../shared/consts";
 
 export async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
   await PowerPoint.run(async (context) => {

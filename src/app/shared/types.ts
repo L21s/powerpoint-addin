@@ -1,21 +1,21 @@
+import {ShapeType} from "./consts";
+import {BannerPosition} from "./enums";
+
 export type FetchIconResponse = {
   id: string;
   url: string;
 };
 
-export type EmployeeName = {
+export type Employee = {
   id: string;
   name: string;
 };
 
-export const ShapeType = {
-  Rectangle: PowerPoint.GeometricShapeType.rectangle,
-  Ellipse: PowerPoint.GeometricShapeType.ellipse,
-  Diamond: PowerPoint.GeometricShapeType.diamond,
-  Triangle: PowerPoint.GeometricShapeType.triangle,
-  Pentagon: PowerPoint.GeometricShapeType.pentagon,
-  Hexagon: PowerPoint.GeometricShapeType.hexagon,
-} as const;
+export type BannerOptions = {
+  text: string;
+  textColor: string;
+  backgroundColor: string;
+  position: BannerPosition;
+};
 
 export type ShapeTypeKey = keyof typeof ShapeType; // "Rectangle" | "Ellipse" | ...
-export type ShapeTypeValue = (typeof ShapeType)[ShapeTypeKey]; // PowerPoint.GeometricShapeType
