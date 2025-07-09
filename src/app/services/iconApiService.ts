@@ -43,12 +43,12 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
     const result = await fetch(url, requestOptions);
     const response = await result.json();
     return response.data
-        .filter((obj: any) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
-        .map((obj: any) => ({
-          id: obj.id.toString(),
-          url: obj.thumbnails[0].url,
-        }))
-        .slice(0, 50);
+      .filter((obj: any) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
+      .map((obj: any) => ({
+        id: obj.id.toString(),
+        url: obj.thumbnails[0].url,
+      }))
+      .slice(0, 50);
   } catch (e) {
     throw new Error("Error fetching icons: " + e);
   }
