@@ -22,6 +22,7 @@ export async function getAllEmployeeNames() {
 
 export async function fetchEmployeesAddToPreview(searchTerm: string){
   let result = searchTerm ? filterEmployeeNames(searchTerm) : employees;
+  result.sort((a, b) => a.name.localeCompare(b.name));
   addToEmployeesPreview(result);
 }
 
