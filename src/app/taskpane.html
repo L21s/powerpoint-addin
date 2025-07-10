@@ -4,19 +4,19 @@
 <!DOCTYPE html>
 <html lang="">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>L21s Add-in</title>
 
     <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1.1/hosted/office.js"></script>
 
     <!-- Template styles -->
-    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+    <link href="taskpane.css" rel="stylesheet" type="text/css"/>
 
     <!--Import shoelace.style-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css"/>
     <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace.js"></script>
   </head>
 
@@ -93,22 +93,22 @@
         <div class="row">
           <sl-button-group>
             <sl-button class="logo-dropdown">
-              <img slot="prefix" id="currentWithText" alt="" src="../../assets/logoTextBlack.png" />
+              <img slot="prefix" id="currentWithText" alt="" src="../../assets/logoTextBlack.png"/>
             </sl-button>
             <sl-dropdown placement="bottom-end">
               <sl-button slot="trigger" caret></sl-button>
               <sl-menu>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoTextBlack.png" />
+                  <img alt="" src="../../assets/logoTextBlack.png"/>
                 </sl-menu-item>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoTextWhite.png" class="white-shadow" />
+                  <img alt="" src="../../assets/logoTextWhite.png" class="white-shadow"/>
                 </sl-menu-item>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoTextPink.png" />
+                  <img alt="" src="../../assets/logoTextPink.png"/>
                 </sl-menu-item>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoTextBlue.png" />
+                  <img alt="" src="../../assets/logoTextBlue.png"/>
                 </sl-menu-item>
               </sl-menu>
             </sl-dropdown>
@@ -116,22 +116,22 @@
 
           <sl-button-group>
             <sl-button class="logo-dropdown">
-              <img slot="prefix" id="currentWithoutText" alt="" src="../../assets/logoBlack.png" />
+              <img slot="prefix" id="currentWithoutText" alt="" src="../../assets/logoBlack.png"/>
             </sl-button>
             <sl-dropdown placement="bottom-end">
               <sl-button slot="trigger" caret></sl-button>
               <sl-menu>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoBlack.png" />
+                  <img alt="" src="../../assets/logoBlack.png"/>
                 </sl-menu-item>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoWhite.png" class="white-shadow" />
+                  <img alt="" src="../../assets/logoWhite.png" class="white-shadow"/>
                 </sl-menu-item>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoPink.png" />
+                  <img alt="" src="../../assets/logoPink.png"/>
                 </sl-menu-item>
                 <sl-menu-item class="logo-dropdown-option">
-                  <img alt="" src="../../assets/logoBlue.png" />
+                  <img alt="" src="../../assets/logoBlue.png"/>
                 </sl-menu-item>
               </sl-menu>
             </sl-dropdown>
@@ -171,31 +171,33 @@
             </sl-button-group>
           </div>
 
-          <sl-dropdown placement="bottom-end" hoist>
-            <sl-button id="paint-bucket" slot="trigger" caret>
-              <sl-icon slot="prefix" src="assets/iconoir-regular-fill-color.svg"></sl-icon>
-              <sl-icon
-                id="paint-bucket-color"
-                slot="prefix"
-                data-color="#ffffff"
-                style="color: #ffffff"
-                src="assets/iconoir-solid-fill-color.svg"
-              ></sl-icon>
+          <div style="display: flex; flex-direction: column; align-items: flex-start">
+            <sl-button-group>
+              <sl-button id="paint-bucket">
+                <sl-icon slot="prefix" src="assets/iconoir-regular-fill-color.svg"></sl-icon>
+                <sl-icon id="paint-bucket-color" slot="prefix" data-color="#ffffff" style="color: #ffffff" src="assets/iconoir-solid-fill-color.svg"></sl-icon>
+              </sl-button>
+              <sl-dropdown placement="bottom-end" hoist>
+                <sl-button slot="trigger" caret></sl-button>
+                <sl-menu class="color-options">
+                  <sl-menu-item class="fixed-color" style="background-color: #ffffff" data-color="#ffffff"></sl-menu-item>
+                  <sl-menu-item class="fixed-color" style="background-color: #000000" data-color="#000000"></sl-menu-item>
+                  <sl-menu-item class="fixed-color" style="background-color: #ff0000" data-color="#ff0000"></sl-menu-item>
+                  <sl-menu-item class="fixed-color" style="background-color: #0048ff" data-color="#0048ff"></sl-menu-item>
+                  <sl-menu-item class="fixed-color" style="background-color: #00ff00" data-color="#00ff00"></sl-menu-item>
+                  <sl-divider vertical></sl-divider>
+                  <div id="color-picker">
+                    <sl-icon name="palette"></sl-icon>
+                    <label for="background-color-picker"></label>
+                    <input id="background-color-picker" type="color" value="#ffffff"/>
+                  </div>
+                </sl-menu>
+              </sl-dropdown>
+            </sl-button-group>
+            <sl-button id="delete-background" class="delete" variant="danger" outline>
+              <sl-icon slot="prefix" src="assets/feather-icons-trash-2.svg"></sl-icon>
             </sl-button>
-            <sl-menu class="color-options">
-              <sl-menu-item class="fixed-color" style="background-color: #ffffff" data-color="#ffffff"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #000000" data-color="#000000"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #ff0000" data-color="#ff0000"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #0048ff" data-color="#0048ff"></sl-menu-item>
-              <sl-menu-item class="fixed-color" style="background-color: #00ff00" data-color="#00ff00"></sl-menu-item>
-              <sl-divider vertical></sl-divider>
-              <div id="color-picker">
-                <sl-icon name="palette"></sl-icon>
-                <label for="background-color-picker"></label>
-                <input id="background-color-picker" type="color" value="#ffffff" />
-              </div>
-            </sl-menu>
-          </sl-dropdown>
+          </div>
         </div>
       </section>
 
@@ -280,11 +282,11 @@
 
             <div class="row">
               <sl-tooltip content="Textfarbe">
-                <input id="banner-text-color" type="color" value="#ffffff" />
+                <input id="banner-text-color" type="color" value="#ffffff"/>
               </sl-tooltip>
 
               <sl-tooltip content="Hintergrundfarbe">
-                <input id="banner-background-color" type="color" value="#ff0000" />
+                <input id="banner-background-color" type="color" value="#ff0000"/>
               </sl-tooltip>
             </div>
           </div>
@@ -293,9 +295,10 @@
             Hinzufügen
           </sl-button>
           <sl-button id="remove-banner" class="delete" variant="danger" outline>
-            <sl-icon slot="prefix" src="assets/feather-icons-trash-2.svg"></sl-icon> Delete
+            <sl-icon slot="prefix" src="assets/feather-icons-trash-2.svg"></sl-icon>
+            Delete
           </sl-button>
-          </div>
+        </div>
       </section>
     </div>
   </body>
