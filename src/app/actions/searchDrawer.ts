@@ -3,7 +3,6 @@ import {fetchEmployeesAddToPreview, getAllEmployeeNames} from "./employeesPrevie
 import {activeDrawer, drawer, searchInput, wrapper} from "../taskpane";
 
 let lastSearchQuery = "";
-const debouncedProcessInputChanges = debounce(processInputChanges);
 
 export async function handleDrawerChange(e: Event) {
   const activeDrawerTab = e.target as HTMLInputElement;
@@ -36,12 +35,12 @@ export async function handleDrawerChange(e: Event) {
     }
   }
 
-  debouncedProcessInputChanges(activeDrawerTab.value);
+  await processInputChanges(activeDrawerTab.value);
 }
 
-export function handleSearchInput() {
+export async function handleSearchInput() {
   refreshSearchResults(activeDrawer.value);
-  debouncedProcessInputChanges(activeDrawer.value);
+  await processInputChanges(activeDrawer.value);
 }
 
 export function closeDrawer() {
@@ -58,6 +57,7 @@ export function resetSearchInputAndDrawer() {
 function refreshSearchResults(activeDrawerTab: string) {
   if (activeDrawerTab) {
     document.getElementById(activeDrawerTab).replaceChildren();
+
     (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "block";
 
     for (let i = 0; i < 12; i++) {
@@ -76,7 +76,7 @@ async function processInputChanges(activeDrawerTab: string) {
     switch (activeDrawerTab) {
       case "icons": {
         await fetchIconsAndAddToPreview(searchInput.value);
-        searchResultTitle.innerText = searchInput ? 'Search results for "' + searchInput.value + '"' : "Recently used icons";
+        searchResultTitle.innerText = searchInput.value ? 'Search results for "' + searchInput.value + '"' : "Recently used icons";
         if (document.getElementById(activeDrawerTab).children.length === 0) {
           showMessageInDrawer("No recent icons yet");
         }
@@ -84,7 +84,7 @@ async function processInputChanges(activeDrawerTab: string) {
       }
       case "names": {
         await fetchEmployeesAddToPreview(searchInput.value);
-        searchResultTitle.innerText = searchInput ? 'Search results for "' + searchInput.value + '"' : "All employees";
+        searchResultTitle.innerText = searchInput.value ? 'Search results for "' + searchInput.value + '"' : "All employees";
         if (document.getElementById(activeDrawerTab).children.length === 0) {
           showMessageInDrawer("No names fitting this search query");
         }
@@ -95,17 +95,6 @@ async function processInputChanges(activeDrawerTab: string) {
     showMessageInDrawer("Could not fetch any " + activeDrawerTab + ": " + e.message);
   }
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
-}
-
-
-function debounce(func: Function) {
-  let timer: NodeJS.Timeout;
-  return (...args: any[]) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(this, args);
-    }, 500);
-  };
 }
 
 function showMessageInDrawer(message: string) {
