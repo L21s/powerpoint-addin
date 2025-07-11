@@ -6,12 +6,11 @@ import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../servi
 
 export let recentIcons: FetchIconResponse[] = [];
 
-export async function fetchIconsAndAddToPreview(searchTerm: string) {
-  let result = searchTerm ? await fetchIcons(searchTerm) : recentIcons;
-  addToIconPreview(result);
+export async function fetchIconsForPreview(searchTerm: string): Promise<FetchIconResponse[]> {
+  return searchTerm ? await fetchIcons(searchTerm) : recentIcons;
 }
 
-function addToIconPreview(icons: FetchIconResponse[]) {
+export function addToPreview(icons: FetchIconResponse[]) {
   document.querySelectorAll("sl-skeleton").forEach((skeleton) => skeleton.remove());
 
   icons.forEach((icon) => {

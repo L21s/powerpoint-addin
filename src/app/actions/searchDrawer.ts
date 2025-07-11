@@ -1,8 +1,9 @@
-import { fetchIconsAndAddToPreview } from "./iconsPreview";
-import {fetchEmployeesAddToPreview, getAllEmployeeNames} from "./employeesPreview";
+import {addToPreview, fetchIconsForPreview} from "./iconsPreview";
+import {filterEmployeesAndAddToPreview, fetchAllEmployeeNames} from "./employeesPreview";
 import {activeDrawer, drawer, searchInput, wrapper} from "../taskpane";
 
 let lastSearchQuery = "";
+let latestIconSearchRequestId = 0;
 
 export async function handleDrawerChange(e: Event) {
   const activeDrawerTab = e.target as HTMLInputElement;
@@ -30,7 +31,7 @@ export async function handleDrawerChange(e: Event) {
     }
     case "names": {
       tabs.position = 0;
-      await getAllEmployeeNames();
+      await fetchAllEmployeeNames();
       break;
     }
   }
@@ -40,7 +41,17 @@ export async function handleDrawerChange(e: Event) {
 
 export async function handleSearchInput() {
   refreshSearchResults(activeDrawer.value);
-  await processInputChanges(activeDrawer.value);
+
+  switch (activeDrawer.value) {
+    case "icons": {
+      await processInputChanges(activeDrawer.value);
+      break;
+    }
+    case "names": {
+      await processInputChanges(activeDrawer.value);
+      break;
+    }
+  }
 }
 
 export function closeDrawer() {
@@ -71,29 +82,33 @@ function refreshSearchResults(activeDrawerTab: string) {
 
 async function processInputChanges(activeDrawerTab: string) {
   const searchResultTitle = document.getElementById(activeDrawerTab + "-search-title");
+  const searchInputValue = searchInput.value;
 
   try {
     switch (activeDrawerTab) {
-      case "icons": {
-        await fetchIconsAndAddToPreview(searchInput.value);
-        searchResultTitle.innerText = searchInput.value ? 'Search results for "' + searchInput.value + '"' : "Recently used icons";
-        if (document.getElementById(activeDrawerTab).children.length === 0) {
-          showMessageInDrawer("No recent icons yet");
-        }
+      case "icons":
+        const currentRequestId = ++latestIconSearchRequestId;
+        const icons = await fetchIconsForPreview(searchInputValue);
+
+        if (currentRequestId !== latestIconSearchRequestId) return;
+
+        addToPreview(icons);
         break;
-      }
-      case "names": {
-        await fetchEmployeesAddToPreview(searchInput.value);
-        searchResultTitle.innerText = searchInput.value ? 'Search results for "' + searchInput.value + '"' : "All employees";
-        if (document.getElementById(activeDrawerTab).children.length === 0) {
-          showMessageInDrawer("No names fitting this search query");
-        }
+      case "names":
+        filterEmployeesAndAddToPreview(searchInputValue);
         break;
-      }
+    }
+
+    searchResultTitle.innerText = searchInputValue ? `Search results for "${searchInputValue}"` :
+        (activeDrawerTab === "icons" ? "Recently used icons" : "All employees");
+
+    if (document.getElementById(activeDrawerTab).children.length === 0) {
+      showMessageInDrawer(activeDrawerTab === "icons" ? "No recent icons yet" : "No names fitting this search query");
     }
   } catch (e) {
     showMessageInDrawer("Could not fetch any " + activeDrawerTab + ": " + e.message);
   }
+
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
 }
 
