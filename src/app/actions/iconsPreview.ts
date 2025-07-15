@@ -4,13 +4,14 @@ import {iconsPreview} from "../taskpane";
 import {FetchIconResponse} from "../shared/types";
 import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../services/iconApiService";
 
-export let recentIcons: FetchIconResponse[] = [];
+const RECENT_ICONS_KEY = "recentIcons";
+const MAX_NUMBER_OF_RECENT_ICONS = 30;
 
 export async function fetchIconsForPreview(
     searchTerm: string,
     abortSignal: AbortSignal
 ): Promise<FetchIconResponse[]> {
-  return searchTerm ? await fetchIcons(searchTerm, abortSignal) : recentIcons;
+  return searchTerm ? await fetchIcons(searchTerm, abortSignal) : getRecentIcons();
 }
 
 export function addToPreview(icons: FetchIconResponse[]) {
@@ -30,21 +31,16 @@ export function addToPreview(icons: FetchIconResponse[]) {
   });
 }
 
-function addIconToRecentIcons(icon: FetchIconResponse) {
-  if (!recentIcons.includes(icon)) {
-    recentIcons.unshift(icon);
-    if (recentIcons.length > 12) recentIcons.pop();
-  }
-}
-
 async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
   const button = e.target as HTMLButtonElement;
   button["loading"] = true;
+
   addIconToRecentIcons(icon);
-  const path = await getDownloadPathForIconWith(icon.id);
-  const svgText = await downloadIconWith(path).then((response) => response.text());
 
   try {
+    const path = await getDownloadPathForIconWith(icon.id);
+    const svgText = await downloadIconWith(path).then((response) => response.text());
+
     Office.context.document.setSelectedDataAsync(
       svgText,
       { coercionType: Office.CoercionType.XmlSvg },
@@ -61,4 +57,23 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
 
   button["loading"] = false;
   resetSearchInputAndDrawer();
+}
+
+function getRecentIcons(): FetchIconResponse[] {
+  const json = localStorage.getItem(RECENT_ICONS_KEY);
+  return json ? (JSON.parse(json) as FetchIconResponse[]) : [];
+}
+
+function setRecentIcons(icons: FetchIconResponse[]): void {
+  localStorage.setItem(RECENT_ICONS_KEY, JSON.stringify(icons));
+}
+
+function addIconToRecentIcons(icon: FetchIconResponse): void {
+  const recent = getRecentIcons();
+  const alreadyExists = recent.some((i) => i.id === icon.id);
+
+  if (!alreadyExists) {
+    const updated = [icon, ...recent].slice(0, MAX_NUMBER_OF_RECENT_ICONS);
+    setRecentIcons(updated);
+  }
 }
