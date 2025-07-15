@@ -4,14 +4,14 @@ import {iconsPreview} from "../taskpane";
 import {FetchIconResponse} from "../shared/types";
 import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../services/iconApiService";
 
-const RECENT_ICONS_KEY = "recentIcons";
+const RECENT_ICONS_STORAGE_KEY = "recentIcons";
 const MAX_NUMBER_OF_RECENT_ICONS = 30;
 
 export async function fetchIconsForPreview(
     searchTerm: string,
     abortSignal: AbortSignal
 ): Promise<FetchIconResponse[]> {
-  return searchTerm ? await fetchIcons(searchTerm, abortSignal) : getRecentIcons();
+  return searchTerm ? await fetchIcons(searchTerm, abortSignal) : loadRecentIconsFromLocalStorage();
 }
 
 export function addToPreview(icons: FetchIconResponse[]) {
@@ -59,21 +59,21 @@ async function insertSvgIcon(e: MouseEvent, icon: FetchIconResponse) {
   resetSearchInputAndDrawer();
 }
 
-function getRecentIcons(): FetchIconResponse[] {
-  const json = localStorage.getItem(RECENT_ICONS_KEY);
-  return json ? (JSON.parse(json) as FetchIconResponse[]) : [];
+function loadRecentIconsFromLocalStorage(): FetchIconResponse[] {
+  const json = localStorage.getItem(RECENT_ICONS_STORAGE_KEY);
+  return json ? JSON.parse(json) : [];
 }
 
-function setRecentIcons(icons: FetchIconResponse[]): void {
-  localStorage.setItem(RECENT_ICONS_KEY, JSON.stringify(icons));
+function saveRecentIconsToLocalStorage(icons: FetchIconResponse[]): void {
+  localStorage.setItem(RECENT_ICONS_STORAGE_KEY, JSON.stringify(icons));
 }
 
 function addIconToRecentIcons(icon: FetchIconResponse): void {
-  const recent = getRecentIcons();
+  const recent = loadRecentIconsFromLocalStorage();
   const alreadyExists = recent.some((i) => i.id === icon.id);
 
   if (!alreadyExists) {
     const updated = [icon, ...recent].slice(0, MAX_NUMBER_OF_RECENT_ICONS);
-    setRecentIcons(updated);
+    saveRecentIconsToLocalStorage(updated);
   }
 }
