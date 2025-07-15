@@ -6,8 +6,11 @@ import {downloadIconWith, fetchIcons, getDownloadPathForIconWith} from "../servi
 
 export let recentIcons: FetchIconResponse[] = [];
 
-export async function fetchIconsForPreview(searchTerm: string): Promise<FetchIconResponse[]> {
-  return searchTerm ? await fetchIcons(searchTerm) : recentIcons;
+export async function fetchIconsForPreview(
+    searchTerm: string,
+    abortSignal: AbortSignal
+): Promise<FetchIconResponse[]> {
+  return searchTerm ? await fetchIcons(searchTerm, abortSignal) : recentIcons;
 }
 
 export function addToPreview(icons: FetchIconResponse[]) {

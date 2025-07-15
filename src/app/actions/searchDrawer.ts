@@ -3,7 +3,7 @@ import {filterEmployeesAndAddToPreview, fetchAllEmployeeNames} from "./employees
 import {activeDrawer, drawer, searchInput, wrapper} from "../taskpane";
 
 let lastSearchQuery = "";
-let latestIconSearchRequestId = 0;
+let iconSearchAbortController = new AbortController();
 
 export async function handleDrawerChange(e: Event) {
   const activeDrawerTab = e.target as HTMLInputElement;
@@ -87,30 +87,42 @@ async function processInputChanges(activeDrawerTab: string) {
   try {
     switch (activeDrawerTab) {
       case "icons":
-        const currentRequestId = ++latestIconSearchRequestId;
-        const icons = await fetchIconsForPreview(searchInputValue);
+        iconSearchAbortController.abort();
 
-        if (currentRequestId !== latestIconSearchRequestId) return;
+        iconSearchAbortController = new AbortController();
+        const signal = iconSearchAbortController.signal;
+
+        const icons = await fetchIconsForPreview(searchInputValue, signal);
 
         addToPreview(icons);
         break;
+
       case "names":
         filterEmployeesAndAddToPreview(searchInputValue);
         break;
     }
 
-    searchResultTitle.innerText = searchInputValue ? `Search results for "${searchInputValue}"` :
-        (activeDrawerTab === "icons" ? "Recently used icons" : "All employees");
+    searchResultTitle.innerText = searchInputValue
+        ? `Search results for "${searchInputValue}"`
+        : (activeDrawerTab === "icons" ? "Recently used icons" : "All employees");
 
     if (document.getElementById(activeDrawerTab).children.length === 0) {
-      showMessageInDrawer(activeDrawerTab === "icons" ? "No recent icons yet" : "No names fitting this search query");
+      showMessageInDrawer(activeDrawerTab === "icons"
+          ? "No recent icons yet"
+          : "No names fitting this search query");
     }
+
   } catch (e) {
+    if (e.name === "AbortError") {
+      return;
+    }
+
     showMessageInDrawer("Could not fetch any " + activeDrawerTab + ": " + e.message);
   }
 
   (document.querySelector("#search-input > sl-spinner:first-of-type") as HTMLElement).style.display = "none";
 }
+
 
 function showMessageInDrawer(message: string) {
   const iconPreviewElement = document.getElementById(activeDrawer.value);
