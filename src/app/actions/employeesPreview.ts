@@ -6,7 +6,11 @@ import {ShapeType} from "../shared/consts";
 
 let employees: Employee[] = [];
 
-export async function getAllEmployeeNames() {
+export async function fetchAllEmployeeNames() {
+  if(employees.length) {
+    return;
+  }
+
   const employeeNames = await fetchEmployeeNames();
 
   employees = employeeNames.map((employee) => ({
@@ -17,16 +21,15 @@ export async function getAllEmployeeNames() {
         " " +
         employee.split("-")[0].charAt(0).toUpperCase() +
         employee.split("-")[0].slice(1),
-  }));
+  })).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function fetchEmployeesAddToPreview(searchTerm: string){
+export function filterEmployeesAndAddToPreview(searchTerm: string){
   let result = searchTerm ? filterEmployeeNames(searchTerm) : employees;
-  result.sort((a, b) => a.name.localeCompare(b.name));
-  addToEmployeesPreview(result);
+  addToPreview(result);
 }
 
-function addToEmployeesPreview(names: Employee[]) {
+function addToPreview(names: Employee[]) {
   document.querySelectorAll("sl-skeleton").forEach((skeletonItem) => skeletonItem.remove());
 
   names.forEach((name) => {

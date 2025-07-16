@@ -26,7 +26,7 @@ function initializeDrawer() {
 }
 
 function initializeSearchInput() {
-    searchInput.addEventListener("sl-input", () => {
-        handleSearchInput()
+    searchInput.addEventListener("sl-input", async () => {
+        await handleSearchInput()
     });
 }

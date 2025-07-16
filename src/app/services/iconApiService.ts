@@ -32,16 +32,21 @@ export async function getDownloadPathForIconWith(id: string) {
   }
 }
 
-export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconResponse>> {
-  const url = `${proxyBaseUrlIcons}?term=${searchTerm}`;
+export async function fetchIcons(
+    searchTerm: string,
+    abortSignal: AbortSignal
+): Promise<FetchIconResponse[]> {
+  const url = `${proxyBaseUrlIcons}?term=${encodeURIComponent(searchTerm)}`;
   const requestOptions = {
     method: "GET",
     headers: await getRequestHeadersWithAuthorization(),
+    signal: abortSignal,
   };
 
   try {
     const result = await fetch(url, requestOptions);
     const response = await result.json();
+
     return response.data
         .filter((obj: any) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
         .map((obj: any) => ({
@@ -50,6 +55,9 @@ export async function fetchIcons(searchTerm: string): Promise<Array<FetchIconRes
         }))
         .slice(0, 50);
   } catch (e) {
-    throw new Error("Error fetching icons: " + e);
+    if (e.name === "AbortError") {
+      throw e;
+    }
+    throw new Error("Error fetching icons: " + e.message);
   }
 }
