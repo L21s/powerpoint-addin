@@ -13,7 +13,7 @@ export function initializeImageBackgroundEditorListener() {
   });
 
   fixedColors.forEach((button: HTMLElement) => {
-    button.onclick = () => chooseNewColor(button.getAttribute("data-color"));
+    button.onclick = async () => await chooseNewColor(button.getAttribute("data-color"));
   });
 
   paintBucket.onclick = async () => {
