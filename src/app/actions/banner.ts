@@ -69,7 +69,7 @@ function setBannerText(shape: PowerPoint.Shape, options: BannerOptions) {
   const { text, textColor, position } = options;
   const range = shape.textFrame.textRange;
 
-  range.text = position === BannerPosition.Top ? text : toVerticalText(text);
+  range.text = (position === BannerPosition.Top || position === BannerPosition.Bottom) ? text : toVerticalText(text);
   range.font.color = textColor;
   range.paragraphFormat.horizontalAlignment = "Center";
 }
@@ -90,6 +90,11 @@ function positionBannerShape(shape: PowerPoint.Shape, position: BannerPosition) 
     case BannerPosition.Top:
       shape.left = (SLIDE_WIDTH - shape.width) / 2;
       shape.top = 0;
+      shape.width += TOP_BANNER_WIDTH_PADDING;
+      break;
+    case BannerPosition.Bottom:
+      shape.left = (SLIDE_WIDTH - shape.width) / 2;
+      shape.top = SLIDE_HEIGHT - shape.height;
       shape.width += TOP_BANNER_WIDTH_PADDING;
       break;
     case BannerPosition.Left:

@@ -1,5 +1,6 @@
 export enum BannerPosition {
   Top = "Top",
   Left = "Left",
-  Right = "Right"
+  Right = "Right",
+  Bottom = "Bottom"
 }
