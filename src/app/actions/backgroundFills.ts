@@ -21,8 +21,7 @@ async function initializeNewBackground(context: PowerPoint.RequestContext, shape
   return background;
 }
 
-// wohin damit? macht das so als function wirkich Sinn?
-async function updateOrCreateIconGroupWith(context: PowerPoint.RequestContext, background: PowerPoint.Shape) {
+async function updateOrCreateIconGroup(context: PowerPoint.RequestContext, background: PowerPoint.Shape) {
   const slide = context.presentation.getSelectedSlides().getItemAt(0);
   const iconGroup = await getIconGroupWith(context);
 
@@ -37,7 +36,7 @@ export async function addColoredBackground(shapeSelectValue: ShapeTypeKey) {
     const background = await initializeNewBackground(context, shapeSelectValue, colorValue);
 
     addColorToRecentColors(colorValue);
-    await updateOrCreateIconGroupWith(context, background);
+    await updateOrCreateIconGroup(context, background);
   });
 }
 
@@ -46,34 +45,42 @@ export async function chooseNewColor(color: string) {
   paintBucketColor.setAttribute("data-color", color);
 
   await PowerPoint.run(async (context) => {
-    let oldBackgroundShape: ShapeTypeKey = "Rectangle";
-    const iconGroup = await getIconGroupWith(context);
-
-    if (iconGroup.background) {
-      iconGroup.background.load("name");
-      await context.sync();
-      console.log(iconGroup.background.name);
-      oldBackgroundShape = iconGroup.background.name.split(" ")[0] as ShapeTypeKey;
-    }
-    await addColoredBackground(oldBackgroundShape);
+    const shapeType = await getPreviousBackgroundShapeType(context);
+    await addColoredBackground(shapeType);
   });
+}
+
+async function getPreviousBackgroundShapeType(context: PowerPoint.RequestContext) {
+  const iconGroup = await getIconGroupWith(context);
+
+  if (iconGroup.background) {
+    iconGroup.background.load("name");
+    await context.sync();
+    console.log(iconGroup.background.name);
+    return iconGroup.background.name.split(" ")[0] as ShapeTypeKey;
+  }
+  return "Rectangle" as ShapeTypeKey;
 }
 
 export async function getIconGroupWith(context: PowerPoint.RequestContext) {
   const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
-  const group = await getGroupFromSelectedShape(context, selectedShape);
+  const group = await getGroupFromShape(context, selectedShape);
 
   if (group) {
-    group.group.load("shapes");
-    await context.sync();
-
-    const groupItems = group.group.shapes.items;
-    return {icon: groupItems[groupItems.length - 1], background: groupItems[0]};
+    return await extractGroupItems(context, group);
   }
   return {icon: selectedShape, background: null};
 }
 
-async function getGroupFromSelectedShape(context: PowerPoint.RequestContext, shape: PowerPoint.Shape): Promise<PowerPoint.Shape | null> {
+async function extractGroupItems(context: PowerPoint.RequestContext, group: PowerPoint.Shape) {
+  group.group.load("shapes");
+  await context.sync();
+
+  const groupItems = group.group.shapes.items;
+  return {icon: groupItems[groupItems.length - 1], background: groupItems[0]};
+}
+
+async function getGroupFromShape(context: PowerPoint.RequestContext, shape: PowerPoint.Shape): Promise<PowerPoint.Shape | null> {
   try {
     shape.load("parentGroup");
     await context.sync();
