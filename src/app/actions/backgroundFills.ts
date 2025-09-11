@@ -6,8 +6,8 @@ import {FALLBACK_COLOR, ShapeType} from "../shared/consts";
 
 async function initializeNewBackground(context: PowerPoint.RequestContext, shapeSelectValue: ShapeTypeKey, colorValue: string) {
   const slide = context.presentation.getSelectedSlides().getItemAt(0);
-  const background: PowerPoint.Shape = slide.shapes.addGeometricShape(ShapeType[shapeSelectValue]);
   const selectedShape: PowerPoint.Shape = await getSelectedShapeWith(context);
+  const background: PowerPoint.Shape = slide.shapes.addGeometricShape(ShapeType[shapeSelectValue]);
 
   background.name = shapeSelectValue;
   background.left = selectedShape.left;
@@ -56,8 +56,7 @@ async function getPreviousBackgroundShapeType(context: PowerPoint.RequestContext
   if (iconGroup.background) {
     iconGroup.background.load("name");
     await context.sync();
-    console.log(iconGroup.background.name);
-    return iconGroup.background.name.split(" ")[0] as ShapeTypeKey;
+    return iconGroup.background.name as ShapeTypeKey;
   }
   return "Rectangle" as ShapeTypeKey;
 }
