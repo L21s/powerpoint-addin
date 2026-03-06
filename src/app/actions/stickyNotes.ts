@@ -1,5 +1,6 @@
 import {runPowerPoint} from "../shared/utils/powerPointUtil";
 import ShapeCollection = PowerPoint.ShapeCollection;
+import {getActiveAccount, loginWithDialog} from "../services/authService";
 
 export async function insertSticker(color: string) {
   await runPowerPoint((powerPointContext) => {
@@ -8,9 +9,20 @@ export async function insertSticker(color: string) {
   });
 }
 
-function createTextBox(shapes: ShapeCollection, color: string) {
+async function createTextBox(shapes: ShapeCollection, color: string) {
+  let initials = localStorage.getItem("initials");
+
+  if (!initials) {
+    let activeAccount = getActiveAccount();
+
+    if (!activeAccount) {
+      await loginWithDialog();
+    }
+    initials = localStorage.getItem("initials") ?? "";
+  }
+
   const today = new Date();
-  const textBox = shapes.addTextBox(localStorage.getItem("initials") + ", " + today.toDateString() + "\n", {
+  const textBox = shapes.addTextBox(initials + ", " + today.toDateString() + "\n", {
     height: 50,
     left: 50,
     top: 50,
