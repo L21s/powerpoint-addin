@@ -50,13 +50,7 @@ export const bannerPositionSelect = document.getElementById("banner-position") a
 // popup
 export const popup = document.querySelector("sl-alert") as any;
 
-Office.onReady((info) => {
-  if (info.host === Office.HostType.PowerPoint) {
-    initializeTaskPaneListener();
-  }
-});
-
-function initializeTaskPaneListener() {
+export function initializeTaskPaneListener() {
   initializeStickyNotesListener()
   initializeRowsColumnsListener()
   initializeSearchDrawerListener()
