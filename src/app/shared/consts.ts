@@ -10,3 +10,5 @@ export const ShapeType = {
 export const SLIDE_WIDTH = 960;
 export const SLIDE_HEIGHT = 540;
 export const SLIDE_MARGIN = 8;
+
+export const FALLBACK_COLOR = "lightgreen";

@@ -48,12 +48,12 @@ export async function fetchIcons(
     const response = await result.json();
 
     return response.data
-        .filter((obj: any) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
-        .map((obj: any) => ({
-          id: obj.id.toString(),
-          url: obj.thumbnails[0].url,
-        }))
-        .slice(0, 50);
+      .filter((obj: any) => obj.author.name === "Smashicons" && obj.family.name === "Basic Miscellany Lineal")
+      .map((obj: any) => ({
+        id: obj.id.toString(),
+        url: obj.thumbnails[0].url,
+      }))
+      .slice(0, 50);
   } catch (e) {
     if (e.name === "AbortError") {
       throw e;

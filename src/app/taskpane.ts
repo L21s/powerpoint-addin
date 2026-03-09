@@ -30,9 +30,11 @@ export const employeesPreview = document.getElementById("names");
 
 // background fills
 export const fixedColors = document.querySelectorAll(".fixed-color");
+export const paintBucket = document.getElementById("paint-bucket");
 export const paintBucketColor = document.getElementById("paint-bucket-color");
 export const shapeOptions = document.querySelectorAll(".shape-option");
 export const backgroundColorPicker = document.getElementById("background-color-picker");
+export const deleteBackground = document.getElementById("delete-background");
 
 // logos
 export const logoDropdownOptions = document.querySelectorAll(".logo-dropdown, .logo-dropdown-option");

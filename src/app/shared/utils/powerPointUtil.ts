@@ -6,9 +6,8 @@ export async function runPowerPoint(updateFunction: (context: PowerPoint.Request
 }
 
 export async function getSelectedShapeWith(context: PowerPoint.RequestContext): Promise<PowerPoint.Shape> {
-
   const selectedShape = context.presentation.getSelectedShapes().getItemAt(0);
-  selectedShape.load(["left", "top", "width", "height"]);
+  selectedShape.load(["left", "top", "width", "height", "type"]);
   await context.sync();
   return selectedShape;
 }
