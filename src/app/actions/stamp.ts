@@ -76,7 +76,12 @@ export function getSavedStampOptions(): StampOptions | null {
 }
 
 function isStampPosition(value: unknown): value is StampPosition {
-  return value === StampPosition.Top || value === StampPosition.Left || value === StampPosition.Right;
+  return (
+    value === StampPosition.Top ||
+    value === StampPosition.Bottom ||
+    value === StampPosition.Left ||
+    value === StampPosition.Right
+  );
 }
 
 export function startStampSync() {
@@ -154,7 +159,7 @@ async function addStampToSlide(
   // vertical text-orientation setting on `TextFrame`, so vertical stamps
   // stack each character on its own line — the same workaround the
   // existing Banner feature uses for its Left/Right positions.
-  range.text = options.position === StampPosition.Top ? options.text : toVerticalText(options.text);
+  range.text = isVerticalPosition(options.position) ? toVerticalText(options.text) : options.text;
   range.font.color = STAMP_TEXT_COLOR;
   range.font.bold = true;
   range.font.size = STAMP_FONT_SIZE;
@@ -168,6 +173,10 @@ async function addStampToSlide(
 
 function toVerticalText(text: string): string {
   return text.split("").join("\n");
+}
+
+function isVerticalPosition(position: StampPosition): boolean {
+  return position === StampPosition.Left || position === StampPosition.Right;
 }
 
 async function removeStampFromSlide(slide: PowerPoint.Slide, context: PowerPoint.RequestContext) {
@@ -218,6 +227,11 @@ function positionStampShape(shape: PowerPoint.Shape, position: StampPosition) {
       shape.width += STAMP_HORIZONTAL_PADDING;
       shape.left = (SLIDE_WIDTH - shape.width) / 2;
       shape.top = 0;
+      break;
+    case StampPosition.Bottom:
+      shape.width += STAMP_HORIZONTAL_PADDING;
+      shape.left = (SLIDE_WIDTH - shape.width) / 2;
+      shape.top = SLIDE_HEIGHT - shape.height;
       break;
     case StampPosition.Left:
       shape.height += STAMP_VERTICAL_PADDING;
