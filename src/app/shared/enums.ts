@@ -1,6 +1,6 @@
-export enum BannerPosition {
+export enum StampPosition {
   Top = "Top",
+  Bottom = "Bottom",
   Left = "Left",
-  Right = "Right",
-  Bottom = "Bottom"
+  Right = "Right"
 }
