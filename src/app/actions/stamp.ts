@@ -14,6 +14,10 @@ export const DEFAULT_STAMP_TEXT_COLOR = "#ffffff";
 export const DEFAULT_STAMP_POSITION = StampPosition.Top;
 
 let syncHandlerAttached = false;
+// Cached parsed copy of the persisted options. `undefined` means "not yet
+// loaded from document settings"; `null` means "no stamp configured". This
+// avoids re-parsing the settings JSON on every selection-changed event.
+let cachedOptions: StampOptions | null | undefined;
 
 /**
  * Stamps every slide in the presentation. Called when the user clicks
@@ -61,16 +65,31 @@ export async function removeStamp() {
 }
 
 export function getSavedStampOptions(): StampOptions | null {
+  if (cachedOptions === undefined) {
+    cachedOptions = readStampOptionsFromSettings();
+  }
+  return cachedOptions;
+}
+
+function readStampOptionsFromSettings(): StampOptions | null {
   const raw = Office.context.document.settings.get(STAMP_SETTINGS_KEY);
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw as string) as Partial<StampOptions>;
-    if (typeof parsed?.text !== "string" || typeof parsed?.backgroundColor !== "string") {
+    if (
+      typeof parsed?.text !== "string" ||
+      typeof parsed?.textColor !== "string" ||
+      typeof parsed?.backgroundColor !== "string" ||
+      !isStampPosition(parsed.position)
+    ) {
       return null;
     }
-    const textColor = typeof parsed.textColor === "string" ? parsed.textColor : DEFAULT_STAMP_TEXT_COLOR;
-    const position = isStampPosition(parsed.position) ? parsed.position : DEFAULT_STAMP_POSITION;
-    return {text: parsed.text, textColor, backgroundColor: parsed.backgroundColor, position};
+    return {
+      text: parsed.text,
+      textColor: parsed.textColor,
+      backgroundColor: parsed.backgroundColor,
+      position: parsed.position,
+    };
   } catch {
     return null;
   }
@@ -205,11 +224,13 @@ async function stampExistsInSlide(slide: PowerPoint.Slide, context: PowerPoint.R
 function saveStampOptions(options: StampOptions) {
   Office.context.document.settings.set(STAMP_SETTINGS_KEY, JSON.stringify(options));
   Office.context.document.settings.saveAsync();
+  cachedOptions = options;
 }
 
 function clearStampOptions() {
   Office.context.document.settings.remove(STAMP_SETTINGS_KEY);
   Office.context.document.settings.saveAsync();
+  cachedOptions = null;
 }
 
 async function getSlides(context: PowerPoint.RequestContext): Promise<PowerPoint.Slide[]> {
