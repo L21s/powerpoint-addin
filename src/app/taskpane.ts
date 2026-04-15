@@ -4,7 +4,7 @@ import {initializeSearchDrawerListener} from "./listener/searchDrawer";
 import {initializeImageBackgroundEditorListener} from "./listener/backgroundFills";
 import {initializeLogoDropdownListener} from "./listener/logos";
 import {initializeBannerListener} from "./listener/banner";
-import {initializeStorerListener} from "./listener/storer";
+import {initializeStampListener} from "./listener/stamp";
 
 // sticky notes
 export const stickyNotes = document.querySelectorAll(".sticky-note");
@@ -48,12 +48,12 @@ export const bannerTextColorInput = document.getElementById("banner-text-color")
 export const bannerBackgroundColorInput = document.getElementById("banner-background-color") as HTMLInputElement;
 export const bannerPositionSelect = document.getElementById("banner-position") as HTMLSelectElement;
 
-// störer
-export const addStorerButton = document.getElementById("add-storer") as HTMLButtonElement;
-export const removeStorerButton = document.getElementById("remove-storer") as HTMLButtonElement;
-export const storerTextInput = document.getElementById("storer-text") as HTMLInputElement;
-export const storerBackgroundColorInput = document.getElementById("storer-background-color") as HTMLInputElement;
-export const storerPositionSelect = document.getElementById("storer-position") as HTMLSelectElement;
+// stamp
+export const addStampButton = document.getElementById("add-stamp") as HTMLButtonElement;
+export const removeStampButton = document.getElementById("remove-stamp") as HTMLButtonElement;
+export const stampTextInput = document.getElementById("stamp-text") as HTMLInputElement;
+export const stampBackgroundColorInput = document.getElementById("stamp-background-color") as HTMLInputElement;
+export const stampPositionSelect = document.getElementById("stamp-position") as HTMLSelectElement;
 
 // popup
 export const popup = document.querySelector("sl-alert") as any;
@@ -65,5 +65,5 @@ export function initializeTaskPaneListener() {
   initializeImageBackgroundEditorListener()
   initializeLogoDropdownListener()
   initializeBannerListener()
-  initializeStorerListener()
+  initializeStampListener()
 }

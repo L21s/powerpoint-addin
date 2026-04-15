@@ -1,5 +1,5 @@
 import {ShapeType} from "./consts";
-import {BannerPosition, StorerPosition} from "./enums";
+import {BannerPosition, StampPosition} from "./enums";
 
 export type FetchIconResponse = {
   id: string;
@@ -18,10 +18,10 @@ export type BannerOptions = {
   position: BannerPosition;
 };
 
-export type StorerOptions = {
+export type StampOptions = {
   text: string;
   backgroundColor: string;
-  position: StorerPosition;
+  position: StampPosition;
 };
 
 export type ShapeTypeKey = keyof typeof ShapeType; // "Rectangle" | "Ellipse" | ...

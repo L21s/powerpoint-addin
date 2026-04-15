@@ -5,7 +5,7 @@ export enum BannerPosition {
   Bottom = "Bottom"
 }
 
-export enum StorerPosition {
+export enum StampPosition {
   Top = "Top",
   Left = "Left",
   Right = "Right"
