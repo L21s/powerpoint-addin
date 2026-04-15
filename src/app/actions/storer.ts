@@ -1,16 +1,19 @@
-import {SLIDE_WIDTH} from "../shared/consts";
+import {SLIDE_HEIGHT, SLIDE_WIDTH} from "../shared/consts";
+import {StorerPosition} from "../shared/enums";
 import {StorerOptions} from "../shared/types";
 
 const STORER_SHAPE_NAME = "Storer";
 const STORER_SETTINGS_KEY = "storerOptions";
-const STORER_TOP_OFFSET = 10;
-const STORER_WIDTH_PADDING = 20;
+const STORER_EDGE_OFFSET = 10;
+const STORER_HORIZONTAL_PADDING = 20;
+const STORER_VERTICAL_PADDING = 20;
 const STORER_FONT_SIZE = 18;
 const STORER_TEXT_COLOR = "#ffffff";
 const SYNC_INTERVAL_MS = 2000;
 
 export const DEFAULT_STORER_TEXT = "ENTWURF";
 export const DEFAULT_STORER_BACKGROUND = "#d92d20";
+export const DEFAULT_STORER_POSITION = StorerPosition.Top;
 
 let syncTimer: number | null = null;
 
@@ -30,7 +33,7 @@ export async function addStorer(options: StorerOptions) {
       setStorerText(shape, options);
       applyStorerStyle(shape, options);
       await autoResizeShape(context, shape);
-      positionStorerShape(shape);
+      positionStorerShape(shape, options.position);
     }
 
     await context.sync();
@@ -58,14 +61,19 @@ export function getSavedStorerOptions(): StorerOptions | null {
   const raw = Office.context.document.settings.get(STORER_SETTINGS_KEY);
   if (!raw) return null;
   try {
-    const parsed = JSON.parse(raw as string) as StorerOptions;
+    const parsed = JSON.parse(raw as string) as Partial<StorerOptions>;
     if (typeof parsed?.text !== "string" || typeof parsed?.backgroundColor !== "string") {
       return null;
     }
-    return parsed;
+    const position = isStorerPosition(parsed.position) ? parsed.position : DEFAULT_STORER_POSITION;
+    return {text: parsed.text, backgroundColor: parsed.backgroundColor, position};
   } catch {
     return null;
   }
+}
+
+function isStorerPosition(value: unknown): value is StorerPosition {
+  return value === StorerPosition.Top || value === StorerPosition.Left || value === StorerPosition.Right;
 }
 
 export async function syncStorerToAllSlides(): Promise<void> {
@@ -89,7 +97,7 @@ export async function syncStorerToAllSlides(): Promise<void> {
       setStorerText(shape, options);
       applyStorerStyle(shape, options);
       await autoResizeShape(context, shape);
-      positionStorerShape(shape);
+      positionStorerShape(shape, options.position);
     }
 
     await context.sync();
@@ -139,11 +147,15 @@ function createStorerShape(slide: PowerPoint.Slide): PowerPoint.Shape {
 
 function setStorerText(shape: PowerPoint.Shape, options: StorerOptions) {
   const range = shape.textFrame.textRange;
-  range.text = options.text;
+  range.text = options.position === StorerPosition.Top ? options.text : toVerticalText(options.text);
   range.font.color = STORER_TEXT_COLOR;
   range.font.bold = true;
   range.font.size = STORER_FONT_SIZE;
   range.paragraphFormat.horizontalAlignment = "Center";
+}
+
+function toVerticalText(text: string): string {
+  return text.split("").join("\n");
 }
 
 function applyStorerStyle(shape: PowerPoint.Shape, options: StorerOptions) {
@@ -157,10 +169,24 @@ async function autoResizeShape(context: PowerPoint.RequestContext, shape: PowerP
   shape.textFrame.autoSizeSetting = PowerPoint.ShapeAutoSize.autoSizeNone;
 }
 
-function positionStorerShape(shape: PowerPoint.Shape) {
-  shape.width += STORER_WIDTH_PADDING;
-  shape.left = (SLIDE_WIDTH - shape.width) / 2;
-  shape.top = STORER_TOP_OFFSET;
+function positionStorerShape(shape: PowerPoint.Shape, position: StorerPosition) {
+  switch (position) {
+    case StorerPosition.Top:
+      shape.width += STORER_HORIZONTAL_PADDING;
+      shape.left = (SLIDE_WIDTH - shape.width) / 2;
+      shape.top = STORER_EDGE_OFFSET;
+      break;
+    case StorerPosition.Left:
+      shape.height += STORER_VERTICAL_PADDING;
+      shape.left = STORER_EDGE_OFFSET;
+      shape.top = (SLIDE_HEIGHT - shape.height) / 2;
+      break;
+    case StorerPosition.Right:
+      shape.height += STORER_VERTICAL_PADDING;
+      shape.left = SLIDE_WIDTH - shape.width - STORER_EDGE_OFFSET;
+      shape.top = (SLIDE_HEIGHT - shape.height) / 2;
+      break;
+  }
 }
 
 async function deleteStorerFromSlide(slide: PowerPoint.Slide, context: PowerPoint.RequestContext) {

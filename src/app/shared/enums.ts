@@ -4,3 +4,9 @@ export enum BannerPosition {
   Right = "Right",
   Bottom = "Bottom"
 }
+
+export enum StorerPosition {
+  Top = "Top",
+  Left = "Left",
+  Right = "Right"
+}
