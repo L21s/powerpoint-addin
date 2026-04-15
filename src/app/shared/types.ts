@@ -18,4 +18,9 @@ export type BannerOptions = {
   position: BannerPosition;
 };
 
+export type StorerOptions = {
+  text: string;
+  backgroundColor: string;
+};
+
 export type ShapeTypeKey = keyof typeof ShapeType; // "Rectangle" | "Ellipse" | ...

@@ -300,6 +300,35 @@
           </sl-button>
         </div>
       </section>
+
+      <section>
+        <div class="title">
+          <sl-icon name="bookmark-star"></sl-icon>
+          <h3>Störer</h3>
+        </div>
+
+        <div class="column" style="gap: 1rem">
+          <div class="row banner-input-row">
+            <sl-input id="storer-text" placeholder="Text eingeben" value="ENTWURF" clearable>
+              <sl-icon slot="prefix" name="type"></sl-icon>
+            </sl-input>
+
+            <div class="row">
+              <sl-tooltip content="Hintergrundfarbe">
+                <input id="storer-background-color" type="color" value="#d92d20"/>
+              </sl-tooltip>
+            </div>
+          </div>
+
+          <sl-button id="add-storer">
+            Hinzufügen
+          </sl-button>
+          <sl-button id="remove-storer" class="delete" variant="danger" outline>
+            <sl-icon slot="prefix" src="assets/feather-icons-trash-2.svg"></sl-icon>
+            Delete
+          </sl-button>
+        </div>
+      </section>
     </div>
   </body>
 </html>
