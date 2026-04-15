@@ -15,12 +15,11 @@ export const DEFAULT_STAMP_POSITION = StampPosition.Top;
 
 let syncHandlerAttached = false;
 
-function onDocumentChanged() {
-  syncStampToAllSlides().catch(() => {
-    // Swallow errors from transient PowerPoint state; the next event will retry.
-  });
-}
-
+/**
+ * Stamps every slide in the presentation. Called when the user clicks
+ * "Hinzufügen". Persists the options so subsequent slide-change events
+ * can keep new slides in sync.
+ */
 export async function addStamp(options: StampOptions) {
   saveStampOptions(options);
 
@@ -28,16 +27,12 @@ export async function addStamp(options: StampOptions) {
     const slides = await getSlides(context);
 
     for (const slide of slides) {
-      await deleteStampFromSlide(slide, context);
+      await removeStampFromSlide(slide, context);
     }
     await context.sync();
 
     for (const slide of slides) {
-      const shape = createStampShape(slide);
-      setStampText(shape, options);
-      applyStampStyle(shape, options);
-      await autoResizeShape(context, shape);
-      positionStampShape(shape, options.position);
+      await addStampToSlide(slide, options, context);
     }
 
     await context.sync();
@@ -46,6 +41,10 @@ export async function addStamp(options: StampOptions) {
   startStampSync();
 }
 
+/**
+ * Removes the stamp from every slide and stops syncing new slides.
+ * Called when the user clicks the trash button.
+ */
 export async function removeStamp() {
   stopStampSync();
   clearStampOptions();
@@ -54,7 +53,7 @@ export async function removeStamp() {
     const slides = await getSlides(context);
 
     for (const slide of slides) {
-      await deleteStampFromSlide(slide, context);
+      await removeStampFromSlide(slide, context);
     }
 
     await context.sync();
@@ -80,39 +79,11 @@ function isStampPosition(value: unknown): value is StampPosition {
   return value === StampPosition.Top || value === StampPosition.Left || value === StampPosition.Right;
 }
 
-export async function syncStampToAllSlides(): Promise<void> {
-  const options = getSavedStampOptions();
-  if (!options) return;
-
-  await PowerPoint.run(async (context) => {
-    const slides = await getSlides(context);
-    const missing: PowerPoint.Slide[] = [];
-
-    for (const slide of slides) {
-      if (!(await stampExistsInSlide(slide, context))) {
-        missing.push(slide);
-      }
-    }
-
-    if (missing.length === 0) return;
-
-    for (const slide of missing) {
-      const shape = createStampShape(slide);
-      setStampText(shape, options);
-      applyStampStyle(shape, options);
-      await autoResizeShape(context, shape);
-      positionStampShape(shape, options.position);
-    }
-
-    await context.sync();
-  });
-}
-
 export function startStampSync() {
   if (syncHandlerAttached) return;
   Office.context.document.addHandlerAsync(
     Office.EventType.DocumentSelectionChanged,
-    onDocumentChanged,
+    onSlideChanged,
     (result) => {
       if (result.status === Office.AsyncResultStatus.Succeeded) {
         syncHandlerAttached = true;
@@ -125,13 +96,96 @@ export function stopStampSync() {
   if (!syncHandlerAttached) return;
   Office.context.document.removeHandlerAsync(
     Office.EventType.DocumentSelectionChanged,
-    {handler: onDocumentChanged},
+    {handler: onSlideChanged},
     (result) => {
       if (result.status === Office.AsyncResultStatus.Succeeded) {
         syncHandlerAttached = false;
       }
     }
   );
+}
+
+/**
+ * Handler that fires whenever the selection in the document changes.
+ * PowerPoint auto-selects newly inserted slides, so we use this as a
+ * slide-added signal: if the currently selected slide is missing its
+ * stamp, add it.
+ */
+function onSlideChanged() {
+  addStampToSelectedSlideIfMissing().catch(() => {
+    // Swallow errors from transient PowerPoint state; the next event will retry.
+  });
+}
+
+async function addStampToSelectedSlideIfMissing(): Promise<void> {
+  const options = getSavedStampOptions();
+  if (!options) return;
+
+  await PowerPoint.run(async (context) => {
+    const selected = context.presentation.getSelectedSlides();
+    selected.load("items");
+    await context.sync();
+
+    const slide = selected.items[0];
+    if (!slide) return;
+    if (await stampExistsInSlide(slide, context)) return;
+
+    await addStampToSlide(slide, options, context);
+    await context.sync();
+  });
+}
+
+/**
+ * Adds a stamp shape to a single slide using the given options.
+ * Caller is responsible for calling `context.sync()` to persist.
+ */
+async function addStampToSlide(
+  slide: PowerPoint.Slide,
+  options: StampOptions,
+  context: PowerPoint.RequestContext
+): Promise<void> {
+  const shape = slide.shapes.addTextBox(options.text);
+  shape.name = STAMP_SHAPE_NAME;
+  shape.textFrame.wordWrap = false;
+  shape.textFrame.verticalAlignment = PowerPoint.TextVerticalAlignment.middle;
+
+  const range = shape.textFrame.textRange;
+  // PowerPoint.js (as of 2026-04) exposes neither `Shape.rotation` nor a
+  // vertical text-orientation setting on `TextFrame`, so vertical stamps
+  // stack each character on its own line — the same workaround the
+  // existing Banner feature uses for its Left/Right positions.
+  range.text = options.position === StampPosition.Top ? options.text : toVerticalText(options.text);
+  range.font.color = STAMP_TEXT_COLOR;
+  range.font.bold = true;
+  range.font.size = STAMP_FONT_SIZE;
+  range.paragraphFormat.horizontalAlignment = "Center";
+
+  shape.fill.setSolidColor(options.backgroundColor);
+
+  await autoResizeShape(context, shape);
+  positionStampShape(shape, options.position);
+}
+
+function toVerticalText(text: string): string {
+  return text.split("").join("\n");
+}
+
+async function removeStampFromSlide(slide: PowerPoint.Slide, context: PowerPoint.RequestContext) {
+  const shapes = slide.shapes;
+  shapes.load("items/name");
+  await context.sync();
+
+  shapes.items
+    .filter((shape) => shape.name === STAMP_SHAPE_NAME)
+    .forEach((shape) => shape.delete());
+}
+
+async function stampExistsInSlide(slide: PowerPoint.Slide, context: PowerPoint.RequestContext): Promise<boolean> {
+  const shapes = slide.shapes;
+  shapes.load("items/name");
+  await context.sync();
+
+  return shapes.items.some((shape) => shape.name === STAMP_SHAPE_NAME);
 }
 
 function saveStampOptions(options: StampOptions) {
@@ -149,31 +203,6 @@ async function getSlides(context: PowerPoint.RequestContext): Promise<PowerPoint
   slides.load("items");
   await context.sync();
   return slides.items;
-}
-
-function createStampShape(slide: PowerPoint.Slide): PowerPoint.Shape {
-  const shape = slide.shapes.addTextBox(STAMP_SHAPE_NAME);
-  shape.name = STAMP_SHAPE_NAME;
-  shape.textFrame.wordWrap = false;
-  shape.textFrame.verticalAlignment = PowerPoint.TextVerticalAlignment.middle;
-  return shape;
-}
-
-function setStampText(shape: PowerPoint.Shape, options: StampOptions) {
-  const range = shape.textFrame.textRange;
-  range.text = options.position === StampPosition.Top ? options.text : toVerticalText(options.text);
-  range.font.color = STAMP_TEXT_COLOR;
-  range.font.bold = true;
-  range.font.size = STAMP_FONT_SIZE;
-  range.paragraphFormat.horizontalAlignment = "Center";
-}
-
-function toVerticalText(text: string): string {
-  return text.split("").join("\n");
-}
-
-function applyStampStyle(shape: PowerPoint.Shape, options: StampOptions) {
-  shape.fill.setSolidColor(options.backgroundColor);
 }
 
 async function autoResizeShape(context: PowerPoint.RequestContext, shape: PowerPoint.Shape) {
@@ -201,22 +230,4 @@ function positionStampShape(shape: PowerPoint.Shape, position: StampPosition) {
       shape.top = (SLIDE_HEIGHT - shape.height) / 2;
       break;
   }
-}
-
-async function deleteStampFromSlide(slide: PowerPoint.Slide, context: PowerPoint.RequestContext) {
-  const shapes = slide.shapes;
-  shapes.load("items/name");
-  await context.sync();
-
-  shapes.items
-    .filter((shape) => shape.name === STAMP_SHAPE_NAME)
-    .forEach((shape) => shape.delete());
-}
-
-async function stampExistsInSlide(slide: PowerPoint.Slide, context: PowerPoint.RequestContext): Promise<boolean> {
-  const shapes = slide.shapes;
-  shapes.load("items/name");
-  await context.sync();
-
-  return shapes.items.some((shape) => shape.name === STAMP_SHAPE_NAME);
 }

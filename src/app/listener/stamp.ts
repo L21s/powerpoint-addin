@@ -26,12 +26,12 @@ export function initializeStampListener() {
         };
 
         await addStamp(options);
-        toggleStampButtons(true);
+        showRemoveStampControls();
     });
 
     removeStampButton.addEventListener("click", async () => {
         await removeStamp();
-        toggleStampButtons(false);
+        showAddStampControls();
     });
 
     const saved = getSavedStampOptions();
@@ -39,14 +39,19 @@ export function initializeStampListener() {
         stampTextInput.value = saved.text;
         stampBackgroundColorInput.value = saved.backgroundColor;
         stampPositionSelect.value = saved.position;
-        toggleStampButtons(true);
+        showRemoveStampControls();
         startStampSync();
     } else {
-        toggleStampButtons(false);
+        showAddStampControls();
     }
 }
 
-function toggleStampButtons(stampExists: boolean) {
-    addStampButton.style.display = stampExists ? "none" : "inline-block";
-    removeStampButton.style.display = stampExists ? "inline-block" : "none";
+function showAddStampControls() {
+    addStampButton.style.display = "inline-block";
+    removeStampButton.style.display = "none";
+}
+
+function showRemoveStampControls() {
+    addStampButton.style.display = "none";
+    removeStampButton.style.display = "inline-block";
 }
