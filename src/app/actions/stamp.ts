@@ -4,18 +4,22 @@ import {StampOptions} from "../shared/types";
 
 const STAMP_SHAPE_NAME = "Stamp";
 const STAMP_SETTINGS_KEY = "stampOptions";
-const STAMP_EDGE_OFFSET = 10;
 const STAMP_HORIZONTAL_PADDING = 20;
 const STAMP_VERTICAL_PADDING = 20;
 const STAMP_FONT_SIZE = 18;
 const STAMP_TEXT_COLOR = "#ffffff";
-const SYNC_INTERVAL_MS = 2000;
 
 export const DEFAULT_STAMP_TEXT = "ENTWURF";
 export const DEFAULT_STAMP_BACKGROUND = "#d92d20";
 export const DEFAULT_STAMP_POSITION = StampPosition.Top;
 
-let syncTimer: number | null = null;
+let syncHandlerAttached = false;
+
+function onDocumentChanged() {
+  syncStampToAllSlides().catch(() => {
+    // Swallow errors from transient PowerPoint state; the next event will retry.
+  });
+}
 
 export async function addStamp(options: StampOptions) {
   saveStampOptions(options);
@@ -105,19 +109,29 @@ export async function syncStampToAllSlides(): Promise<void> {
 }
 
 export function startStampSync() {
-  if (syncTimer !== null) return;
-  syncTimer = window.setInterval(() => {
-    syncStampToAllSlides().catch(() => {
-      // Swallow errors from transient PowerPoint state; next tick will retry.
-    });
-  }, SYNC_INTERVAL_MS);
+  if (syncHandlerAttached) return;
+  Office.context.document.addHandlerAsync(
+    Office.EventType.DocumentSelectionChanged,
+    onDocumentChanged,
+    (result) => {
+      if (result.status === Office.AsyncResultStatus.Succeeded) {
+        syncHandlerAttached = true;
+      }
+    }
+  );
 }
 
 export function stopStampSync() {
-  if (syncTimer !== null) {
-    window.clearInterval(syncTimer);
-    syncTimer = null;
-  }
+  if (!syncHandlerAttached) return;
+  Office.context.document.removeHandlerAsync(
+    Office.EventType.DocumentSelectionChanged,
+    {handler: onDocumentChanged},
+    (result) => {
+      if (result.status === Office.AsyncResultStatus.Succeeded) {
+        syncHandlerAttached = false;
+      }
+    }
+  );
 }
 
 function saveStampOptions(options: StampOptions) {
@@ -174,16 +188,16 @@ function positionStampShape(shape: PowerPoint.Shape, position: StampPosition) {
     case StampPosition.Top:
       shape.width += STAMP_HORIZONTAL_PADDING;
       shape.left = (SLIDE_WIDTH - shape.width) / 2;
-      shape.top = STAMP_EDGE_OFFSET;
+      shape.top = 0;
       break;
     case StampPosition.Left:
       shape.height += STAMP_VERTICAL_PADDING;
-      shape.left = STAMP_EDGE_OFFSET;
+      shape.left = 0;
       shape.top = (SLIDE_HEIGHT - shape.height) / 2;
       break;
     case StampPosition.Right:
       shape.height += STAMP_VERTICAL_PADDING;
-      shape.left = SLIDE_WIDTH - shape.width - STAMP_EDGE_OFFSET;
+      shape.left = SLIDE_WIDTH - shape.width;
       shape.top = (SLIDE_HEIGHT - shape.height) / 2;
       break;
   }
