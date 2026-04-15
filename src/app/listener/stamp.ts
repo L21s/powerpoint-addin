@@ -2,6 +2,7 @@ import {
     addStampButton,
     removeStampButton,
     stampTextInput,
+    stampTextColorInput,
     stampBackgroundColorInput,
     stampPositionSelect,
 } from "../taskpane";
@@ -10,6 +11,7 @@ import {
     DEFAULT_STAMP_BACKGROUND,
     DEFAULT_STAMP_POSITION,
     DEFAULT_STAMP_TEXT,
+    DEFAULT_STAMP_TEXT_COLOR,
     getSavedStampOptions,
     removeStamp,
     startStampSync,
@@ -21,6 +23,7 @@ export function initializeStampListener() {
     addStampButton.addEventListener("click", async () => {
         const options: StampOptions = {
             text: stampTextInput.value || DEFAULT_STAMP_TEXT,
+            textColor: stampTextColorInput.value || DEFAULT_STAMP_TEXT_COLOR,
             backgroundColor: stampBackgroundColorInput.value || DEFAULT_STAMP_BACKGROUND,
             position: (stampPositionSelect.value as StampPosition) || DEFAULT_STAMP_POSITION,
         };
@@ -37,6 +40,7 @@ export function initializeStampListener() {
     const saved = getSavedStampOptions();
     if (saved) {
         stampTextInput.value = saved.text;
+        stampTextColorInput.value = saved.textColor;
         stampBackgroundColorInput.value = saved.backgroundColor;
         stampPositionSelect.value = saved.position;
         showRemoveStampControls();

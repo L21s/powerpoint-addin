@@ -1,5 +1,5 @@
 import {ShapeType} from "./consts";
-import {BannerPosition, StampPosition} from "./enums";
+import {StampPosition} from "./enums";
 
 export type FetchIconResponse = {
   id: string;
@@ -11,15 +11,9 @@ export type Employee = {
   name: string;
 };
 
-export type BannerOptions = {
-  text: string;
-  textColor: string;
-  backgroundColor: string;
-  position: BannerPosition;
-};
-
 export type StampOptions = {
   text: string;
+  textColor: string;
   backgroundColor: string;
   position: StampPosition;
 };

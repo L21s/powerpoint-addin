@@ -255,54 +255,6 @@
 
       <section>
         <div class="title">
-          <sl-icon name="align-top"></sl-icon>
-          <h3>Banner</h3>
-        </div>
-
-        <div class="column" style="gap: 1rem">
-          <sl-radio-group id="banner-position" value="Top">
-            <sl-radio-button value="Top">
-              <sl-icon slot="prefix" name="arrow-bar-up"></sl-icon>
-            </sl-radio-button>
-            <sl-radio-button value="Bottom">
-              <sl-icon slot="prefix" name="arrow-bar-down"></sl-icon>
-            </sl-radio-button>
-            <sl-radio-button value="Left">
-              <sl-icon slot="prefix" name="arrow-bar-left"></sl-icon>
-            </sl-radio-button>
-            <sl-radio-button value="Right">
-              <sl-icon slot="prefix" name="arrow-bar-right"></sl-icon>
-            </sl-radio-button>
-          </sl-radio-group>
-
-          <div class="row banner-input-row">
-            <sl-input id="banner-text" placeholder="Text eingeben" clearable>
-              <sl-icon slot="prefix" name="type"></sl-icon>
-            </sl-input>
-
-            <div class="row">
-              <sl-tooltip content="Textfarbe">
-                <input id="banner-text-color" type="color" value="#ffffff"/>
-              </sl-tooltip>
-
-              <sl-tooltip content="Hintergrundfarbe">
-                <input id="banner-background-color" type="color" value="#ff0000"/>
-              </sl-tooltip>
-            </div>
-          </div>
-
-          <sl-button id="add-banner">
-            Hinzufügen
-          </sl-button>
-          <sl-button id="remove-banner" class="delete" variant="danger" outline>
-            <sl-icon slot="prefix" src="assets/feather-icons-trash-2.svg"></sl-icon>
-            Delete
-          </sl-button>
-        </div>
-      </section>
-
-      <section>
-        <div class="title">
           <sl-icon name="bookmark-star"></sl-icon>
           <h3>Stamp</h3>
         </div>
@@ -323,12 +275,16 @@
             </sl-radio-button>
           </sl-radio-group>
 
-          <div class="row banner-input-row">
+          <div class="row stamp-input-row">
             <sl-input id="stamp-text" placeholder="Text eingeben" value="ENTWURF" clearable>
               <sl-icon slot="prefix" name="type"></sl-icon>
             </sl-input>
 
             <div class="row">
+              <sl-tooltip content="Textfarbe">
+                <input id="stamp-text-color" type="color" value="#ffffff"/>
+              </sl-tooltip>
+
               <sl-tooltip content="Hintergrundfarbe">
                 <input id="stamp-background-color" type="color" value="#d92d20"/>
               </sl-tooltip>

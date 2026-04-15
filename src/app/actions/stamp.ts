@@ -7,10 +7,10 @@ const STAMP_SETTINGS_KEY = "stampOptions";
 const STAMP_HORIZONTAL_PADDING = 20;
 const STAMP_VERTICAL_PADDING = 20;
 const STAMP_FONT_SIZE = 18;
-const STAMP_TEXT_COLOR = "#ffffff";
 
 export const DEFAULT_STAMP_TEXT = "ENTWURF";
 export const DEFAULT_STAMP_BACKGROUND = "#d92d20";
+export const DEFAULT_STAMP_TEXT_COLOR = "#ffffff";
 export const DEFAULT_STAMP_POSITION = StampPosition.Top;
 
 let syncHandlerAttached = false;
@@ -68,8 +68,9 @@ export function getSavedStampOptions(): StampOptions | null {
     if (typeof parsed?.text !== "string" || typeof parsed?.backgroundColor !== "string") {
       return null;
     }
+    const textColor = typeof parsed.textColor === "string" ? parsed.textColor : DEFAULT_STAMP_TEXT_COLOR;
     const position = isStampPosition(parsed.position) ? parsed.position : DEFAULT_STAMP_POSITION;
-    return {text: parsed.text, backgroundColor: parsed.backgroundColor, position};
+    return {text: parsed.text, textColor, backgroundColor: parsed.backgroundColor, position};
   } catch {
     return null;
   }
@@ -162,10 +163,9 @@ async function addStampToSlide(
   const range = shape.textFrame.textRange;
   // PowerPoint.js (as of 2026-04) exposes neither `Shape.rotation` nor a
   // vertical text-orientation setting on `TextFrame`, so vertical stamps
-  // stack each character on its own line — the same workaround the
-  // existing Banner feature uses for its Left/Right positions.
+  // stack each character on its own line as a fallback.
   range.text = isVerticalPosition(options.position) ? toVerticalText(options.text) : options.text;
-  range.font.color = STAMP_TEXT_COLOR;
+  range.font.color = options.textColor;
   range.font.bold = true;
   range.font.size = STAMP_FONT_SIZE;
   range.paragraphFormat.horizontalAlignment = "Center";
