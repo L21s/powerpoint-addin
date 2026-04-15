@@ -153,6 +153,11 @@ async function addStampToSlide(
   shape.name = STAMP_SHAPE_NAME;
   shape.textFrame.wordWrap = false;
   shape.textFrame.verticalAlignment = PowerPoint.TextVerticalAlignment.middle;
+  // PowerPoint.js doesn't expose a shape-lock/protection API (only Excel
+  // does via `lockAspectRatio`). A true edit-lock would require either
+  // moving the shape onto the slide master or low-level OOXML manipulation
+  // — both much larger changes. For now the stamp is freely editable; the
+  // DocumentSelectionChanged handler at least re-adds it if it gets deleted.
 
   const range = shape.textFrame.textRange;
   // PowerPoint.js (as of 2026-04) exposes neither `Shape.rotation` nor a
