@@ -14,9 +14,12 @@ export const DEFAULT_STAMP_TEXT_COLOR = "#ffffff";
 export const DEFAULT_STAMP_POSITION = StampPosition.Top;
 
 let syncHandlerAttached = false;
-// Cached parsed copy of the persisted options. `undefined` means "not yet
-// loaded from document settings"; `null` means "no stamp configured". This
-// avoids re-parsing the settings JSON on every selection-changed event.
+// Cached parsed copy of the persisted options, reused by the
+// DocumentSelectionChanged handler to avoid re-parsing settings JSON on
+// every selection change. Tri-state:
+//   undefined — not yet read from document settings
+//   null      — no stamp currently configured (fresh document, or after Delete)
+//   StampOptions — the parsed options
 let cachedOptions: StampOptions | null | undefined;
 
 /**
@@ -90,7 +93,8 @@ function readStampOptionsFromSettings(): StampOptions | null {
       backgroundColor: parsed.backgroundColor,
       position: parsed.position,
     };
-  } catch {
+  } catch (error) {
+    console.warn("Stamp: failed to parse persisted options; ignoring", error);
     return null;
   }
 }
